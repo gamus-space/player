@@ -5,18 +5,53 @@ body {
 	margin: 1em;
 }
 
-section {
-	width: calc(100% - 2em);
-}
 section.header {
+	width: calc(100% - 2em);
 	position: fixed;
 	top: 0;
 }
 section.body {
+	width: calc(100% - 1em);
 	position: absolute;
 	top: 8em;
 	height: calc(100vh - 8em);
-	overflow-y: scroll;
+	display: flex;
+}
+section.center {
+	width: calc(100% - 3em);
+	height: 100%;
+	overflow-y: auto;
+}
+#details_show {
+	position: absolute;
+	top: 0;
+	right: 4px;
+}
+section.right {
+	overflow-y: auto;
+	padding-left: 1em;
+	flex-basis: 40em;
+	transition: flex-basis 1s;
+}
+section.right_hidden {
+	flex-basis: 0;
+	overflow: hidden !important;
+}
+section.right_hidden * {
+	display: none;
+}
+section.right h1 {
+	font-size: 2.4em;
+	margin: 0 1em;
+}
+#details_hide {
+	float: right;
+	margin-left: 1em;
+	position: sticky;
+	top: 0;
+}
+.hidden {
+	display: none;
 }
 
 .controls {
@@ -26,7 +61,7 @@ section.body {
 	margin-top: 1em;
 }
 
-h1 {
+.controls h1 {
 	margin: 0.5em;
 	flex-grow: 0.5;
 	font-size: 2.6em;

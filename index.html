@@ -36,10 +36,31 @@
 		</div>
 	</section>
 	<section class="body">
-		<table id="library" width="100%">
-			<thead />
-			<tbody />
-		</table>
+		<section class="center">
+			<button id="details_show"><i class="fas fa-angle-double-left"></i></button>
+			<table id="library" width="100%">
+				<thead />
+				<tbody />
+			</table>
+		</section>
+		<section class="right right_hidden">
+			<button id="details_hide"><i class="fas fa-angle-double-right"></i></button>
+			<h1>
+				<span id="details_game">game</span>
+			</h1>
+			<h2><span id="details_song">song<span></h2>
+			<h2>by <span id="details_composer">composer</span></h2>
+			<h2>
+				<span id="details_platform">platform</span>
+				(<span id="details_year">year</span>)
+			</h2>
+			<h3><span id="details_size">size</span><span>kB</span></h3>
+			<h3>game developed by</h3>
+			<ul id="details_developers"></ul>
+			<h3>game published by</h3>
+			<ul id="details_publishers"></ul>
+			<h3>from <span id="details_source">source</span></h3>
+		</section>
 	</section>
 </body>
 
