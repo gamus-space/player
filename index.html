@@ -9,11 +9,13 @@
 	<meta charset="utf-8">
 	<title>Retro Game Music</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="assets/fontawesome-free-5.15.3-web/css/all.min.css">
 	<link rel="stylesheet" href="assets/fonts-DSEG_v046/dseg.css">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap">
 	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 	<script src="lib/scriptprocessor_player.js"></script>
 	<script src="lib/backend_xmp.js"></script>
 	<script type="module" src="script.js"></script>
@@ -34,7 +36,10 @@
 		</div>
 	</section>
 	<section class="body">
-		<ul id="list"></ul>
+		<table id="library" width="100%">
+			<thead />
+			<tbody />
+		</table>
 	</section>
 </body>
 

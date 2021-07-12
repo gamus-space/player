@@ -45,12 +45,26 @@ const songAutoscroll = new Autoscroll($('#song'), 24);
 
 fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
 	const compat = /\/(di|gmc|med|mod|np2|np3|ntp|p4x|pp21|pru2|sfx|xm)\.[^\/]+$/i;
-	db.reduce((flat, game) => [...flat, ...game.songs], []).forEach(song => {
-		$('#list').append(
-			$('<li>', { class: compat.test(song.path) ? null : 'no' }).append(
-				$('<a>', { text: song.path, href: `#${song.path}`, 'data-source': song.source }),
-			),
-		);
+	const songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, game }))], []);
+	$('#library').DataTable({
+		data: songs.map(song => ({
+			status: compat.test(song.path) ? '<i class="fas fa-stop"></i>' : '',
+			title: song.path.replace(/^[^\/]+\//, ''),
+			composer: song.composer,
+			game: song.game.title,
+			platform: song.platform,
+			path: song.path,
+			source: song.source,
+		})),
+		columns: [
+			{ data: "status" },
+			{ data: "game", title: "Game" },
+			{ data: "title", title: "Song" },
+			{ data: "composer", title: "Composer" },
+			{ data: "platform", title: "Platform" },
+		],
+		order: [1, 'asc'],
+		dom: 'lfrtip',
 	});
 	const format = /\/(\w+)\.[^\/]+$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
@@ -62,13 +76,19 @@ fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
 });
 
 function updateStatus(update) {
-	if (status.song)
-		$(`a:contains('${status.song}')`).parent('li').removeClass('playing');
+	if (status.song) {
+		const table = $('#library').DataTable();
+		const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().path === status.song);
+		row.data({ ...row.data(), status: '<i class="fas fa-stop"></i>' });
+	}
 	status = { ...status, ...update };
 	$('#playpause').attr('disabled', !status.song);
 	$('#playpause i').attr('class', `fas fa-${status.playing ? 'pause' : 'play'}`)
-	if (status.song)
-		$(`a:contains('${status.song}')`).parent('li').addClass('playing');
+	if (status.song) {
+		const table = $('#library').DataTable();
+		const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().path === status.song);
+		row.data({ ...row.data(), status: '<i class="fas fa-play"></i>' });
+	}
 
 	if (status.song) {
 		const info = ScriptNodePlayer.getInstance().getSongInfo();
@@ -82,12 +102,10 @@ function updateStatus(update) {
 		$('#time').text('00:00 / 00:00');
 }
 
-$('#list').on('click', event => {
-	if (event.target.nodeName != 'A') return;
-	event.preventDefault();
-	const song = event.target.innerText;
-	const url = `${DATA_ROOT}/${event.target.attributes['data-source'].value}/${song}`;
-	updateStatus({ song: null, playing: false, loadingSong: song, loadingUrl: url });
+$('#library tbody').on('click', 'tr', event => {
+	const data = $('#library').DataTable().row(event.currentTarget).data();
+	const url = `${DATA_ROOT}/${data.source}/${data.path}`;
+	updateStatus({ song: null, playing: false, loadingSong: data.path, loadingUrl: url });
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 });
 $('#volume').on('change', event => {

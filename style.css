@@ -6,7 +6,7 @@ body {
 }
 
 section {
-	width: calc(100% - 1em);
+	width: calc(100% - 2em);
 }
 section.header {
 	position: fixed;
@@ -108,15 +108,46 @@ button[disabled]:active {
 	box-shadow: inset -3px -3px #555, inset 3px 3px #bbb;
 }
 
-li {
-	list-style: square;
-}
-li.no {
-	list-style: none;
-}
-li.playing {
-	list-style: disclosure-closed;
-}
 a {
 	color: navy;
+}
+
+#library tbody tr {
+	background: none;
+}
+#library tbody tr:hover {
+	cursor: pointer;
+	background: #ffffff40;
+}
+#library thead .sorting {
+	filter: brightness(1.1);
+}
+#library thead .sorting_asc {
+	filter: grayscale(100%) brightness(0.75);
+}
+#library thead .sorting_desc {
+	filter: grayscale(100%) brightness(0.75);
+}
+#library_filter {
+	float: left;
+}
+#library_filter input {
+	border-radius: 0;
+	border: none;
+	background: #eee;
+	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
+	margin-left: 1em;
+	vertical-align: middle;
+}
+#library_filter input::-webkit-search-cancel-button {
+	filter: grayscale(100%) blur(1px);
+}
+#library_length {
+	float: right;
+}
+#library_length select {
+	border-radius: 0;
+	border: none;
+	background: #eee;
+	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
 }
