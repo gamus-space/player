@@ -84,6 +84,11 @@ fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
 		scrollCollapse: true,
 		paging: false,
 	});
+	$('#stats_songs_total').text(songs.length);
+	const supportedSongs = songs.filter(song => compat.test(song.path)).length;
+	$('#stats_songs_supported').text(supportedSongs);
+	$('#stats_bar .ui-slider-handle').text(Math.round(supportedSongs / songs.length * 100) + '%');
+	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: songs.length, disabled: true });
 	const format = /\/(\w+)\.[^\/]+$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
 		db.reduce((flat, game) => [...flat, ...game.songs], [])
@@ -135,6 +140,7 @@ function updateStatus(update) {
 		const volume = player.getVolume();
 		$('#volume').val(volume);
 		$('#volume').toggleClass('silent', volume == 0);
+		$('#volume2').slider({ value: volume });
 	} else
 		songAutoscroll.value = '~ Pick a song ~';
 
@@ -158,16 +164,23 @@ function setDetails(view) {
 	details = { ...details, view };
 	switch (details.view) {
 	case 'info':
+		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
 		$('.details.info').removeClass('details_hidden');
-		$('#info_show,#playlist_show').addClass('hidden');
+		$('#info_show,#playlist_show,#about_show').addClass('hidden');
 		break;
 	case 'playlist':
+		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
 		$('.details.playlist').removeClass('details_hidden');
-		$('#info_show,#playlist_show').addClass('hidden');
+		$('#info_show,#playlist_show,#about_show').addClass('hidden');
+		break;
+	case 'about':
+		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
+		$('.details.about').removeClass('details_hidden');
+		$('#info_show,#playlist_show,#about_show').addClass('hidden');
 		break;
 	case null:
-		$('.details.info,.details.playlist').addClass('details_hidden');
-		$('#info_show,#playlist_show').removeClass('hidden');
+		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
+		$('#info_show,#playlist_show,#about_show').removeClass('hidden');
 		break;
 	}
 }
@@ -191,11 +204,20 @@ $('#library tbody').on('click', 'tr', event => {
 	updateStatus({ song: null, playing: false, loadingSong: data.path, loadingUrl: url, autoplay: true, playlistEntry: null});
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 });
-$('#volume').on('change', event => {
-	const volume = event.target.value;
-	player.setVolume(volume);
-	$('#volume').toggleClass('silent', volume == 0);
-});
+if (typeof $().slider === 'function') {
+	$('#volume').replaceWith($('<div>', { id: 'volume2' }));
+	$('#volume2').slider({ orientation: 'vertical', range: 'min', min: 0, value: 1, max: 1, step: 0.05 });
+	$('#volume2').on('slide', (event, ui) => {
+		player.setVolume(ui.value);
+	});
+} else {
+	$('#volume').removeClass('hidden');
+	$('#volume').on('change', event => {
+		const volume = event.target.value;
+		player.setVolume(volume);
+		$('#volume').toggleClass('silent', volume == 0);
+	});
+}
 
 function onPlayerReady() {
 }
@@ -238,7 +260,10 @@ $('#info_show').on('click', () => {
 $('#playlist_show').on('click', () => {
 	setDetails('playlist');
 });
-$('#info_hide,#playlist_hide').on('click', () => {
+$('#about_show').on('click', () => {
+	setDetails('about');
+});
+$('#info_hide,#playlist_hide,#about_hide').on('click', () => {
 	setDetails(null);
 });
 

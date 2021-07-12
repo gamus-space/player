@@ -10,6 +10,12 @@ section.header {
 	position: fixed;
 	top: 0;
 }
+section.footer {
+	width: 100%;
+	text-align: center;
+	padding: 2px;
+	font-size: smaller;
+}
 section.body {
 	width: calc(100% - 1em);
 	position: absolute;
@@ -17,10 +23,10 @@ section.body {
 	height: calc(100vh - 8em);
 	display: flex;
 }
-section.main{
+section.main {
 	width: calc(100% - 3em);
 	height: 100%;
-	overflow-y: auto;
+	overflow: hidden;
 }
 #info_show {
 	position: absolute;
@@ -31,6 +37,12 @@ section.main{
 #playlist_show {
 	position: absolute;
 	top: 4em;
+	right: 4px;
+	width: 3em;
+}
+#about_show {
+	position: absolute;
+	top: 8em;
 	right: 4px;
 	width: 3em;
 }
@@ -52,7 +64,10 @@ section.details h1 {
 	font-size: 2.4em;
 	margin: 0 1em;
 }
-#info_hide,#playlist_hide {
+section.details h2 {
+	padding-top: 0.5em;
+}
+#info_hide,#playlist_hide,#about_hide {
 	float: right;
 	margin-left: 1em;
 	position: sticky;
@@ -78,6 +93,30 @@ section.playlist .title {
 #playlist li button {
 	margin-left: 1em;
 }
+#stats_bar {
+	margin: 1.2em 4em;
+
+	height: 0.8em;
+	background: #fff;
+	position: relative;
+}
+#stats_bar .ui-slider-range {
+	height: 100%;
+	background: #666;
+}
+#stats_bar .ui-slider-handle {
+	position: absolute;
+	z-index: 2;
+	top: -3px;
+}
+#stats_songs_total {
+	float: right;
+	padding: 0 0.5em;
+}
+#stats_songs_supported {
+	float: left;
+	padding: 0 0.5em;
+}
 
 .controls {
 	display: flex;
@@ -86,10 +125,18 @@ section.playlist .title {
 	margin-top: 1em;
 }
 
-.controls h1 {
-	margin: 0.5em;
+.controls .title {
 	flex-grow: 0.5;
+}
+.controls .title h1 {
+	margin: 10px;
 	font-size: 2.6em;
+	font-weight: bold;
+	font-style: italic;
+}
+.controls .title h2 {
+	margin: 10px;
+	font-size: 1.0em;
 	font-weight: bold;
 	font-style: italic;
 }
@@ -146,6 +193,20 @@ section.playlist .title {
 	width: 4px;
 	height: 10px;
 	background: #befc03;
+}
+#volume2 {
+	width: 0.5em;
+	height: 1.2em;
+	background: #8fbe02;
+	margin: 0 0.4em;
+	position: relative;
+	cursor: pointer;
+}
+#volume2 .ui-slider-range {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	background: #000;
 }
 
 button {
