@@ -15,6 +15,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap">
 	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 	<script src="lib/scriptprocessor_player.js"></script>
 	<script src="lib/backend_xmp.js"></script>
@@ -36,30 +37,39 @@
 		</div>
 	</section>
 	<section class="body">
-		<section class="center">
-			<button id="details_show"><i class="fas fa-angle-double-left"></i></button>
+		<section class="main">
+			<button id="info_show"><i class="fas fa-info"></i></button>
+			<button id="playlist_show"><i class="fas fa-list"></i></button>
 			<table id="library" width="100%">
 				<thead />
 				<tbody />
 			</table>
 		</section>
-		<section class="right right_hidden">
-			<button id="details_hide"><i class="fas fa-angle-double-right"></i></button>
+		<section class="details details_hidden info">
+			<button id="info_hide"><i class="fas fa-angle-double-right"></i></button>
 			<h1>
-				<span id="details_game">game</span>
+				<span id="info_game">game</span>
 			</h1>
-			<h2><span id="details_song">song<span></h2>
-			<h2>by <span id="details_composer">composer</span></h2>
+			<h2><span id="info_song">song<span></h2>
+			<h2>by <span id="info_composer">composer</span></h2>
 			<h2>
-				<span id="details_platform">platform</span>
-				(<span id="details_year">year</span>)
+				<span id="info_platform">platform</span>
+				(<span id="info_year">year</span>)
 			</h2>
-			<h3><span id="details_size">size</span><span>kB</span></h3>
+			<h3><span id="info_size">size</span><span>kB</span></h3>
 			<h3>game developed by</h3>
-			<ul id="details_developers"></ul>
+			<ul id="info_developers"></ul>
 			<h3>game published by</h3>
-			<ul id="details_publishers"></ul>
-			<h3>from <span id="details_source">source</span></h3>
+			<ul id="info_publishers"></ul>
+			<h3>from <span id="info_source">source</span></h3>
+		</section>
+		<section class="details details_hidden playlist">
+			<button id="playlist_hide"><i class="fas fa-angle-double-right"></i></button>
+			<div class="title">
+				<h1>playlist</h1>
+				<button id="playlist_clear" disabled><i class="fas fa-times"></i></button>
+			</div>
+			<ul id="playlist"></ul>
 		</section>
 	</section>
 </body>

@@ -2,8 +2,14 @@
 
 const DATA_ROOT = '../scraper/data';
 
-let status = { song: null, playing: false, loadingSong: null, loadingUrl: null, autoplay: null };
+let status = {
+	song: null, playing: false,
+	loadingSong: null, loadingUrl: null, autoplay: null,
+	usePlaylist: null, playlist: [],
+};
 let songs;
+
+let details = { view: null };
 
 function time(t) {
 	t = t.toFixed(0);
@@ -14,6 +20,9 @@ function time(t) {
 
 function path2title(path) {
 	return path.replace(/^[^\/]+\//, '');
+}
+function path2url({ path, source} ) {
+	return `${DATA_ROOT}/${source}/${path}`;
 }
 
 class Autoscroll {
@@ -85,6 +94,12 @@ fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
 });
 
 function updateStatus(update) {
+	if (update.playlist) {
+		status.playlist = update.playlist;
+		$('#playlist_clear').attr('disabled', !status.playlist.length);
+		return;
+	}
+
 	if (status.song) {
 		const table = $('#library').DataTable();
 		const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().path === status.song);
@@ -115,26 +130,53 @@ function updateStatus(update) {
 
 	if (status.song) {
 		const song = songs.find(song => song.path === status.song);
-		$('#details_game').text(song.game.title);
-		$('#details_platform').text(song.platform);
-		$('#details_year').text(song.game.year);
-		$('#details_song').text(path2title(song.path).replaceAll('/', ' / '));
-		$('#details_composer').text(song.composer);
-		$('#details_size').text(Math.round(song.size / 1024));
-		$('#details_source').text(song.source);
-		$('#details_developers').empty().append(...song.game.developers.map(developer => $('<li>', { text: developer })));
-		$('#details_publishers').empty().append(...song.game.publishers.map(publisher => $('<li>', { text: publisher })));
-		if (status.playing) {
-			$('section.right').removeClass('right_hidden');
-			$('#details_show').addClass('hidden');
-		}
+		$('#info_game').text(song.game.title);
+		$('#info_platform').text(song.platform);
+		$('#info_year').text(song.game.year);
+		$('#info_song').text(path2title(song.path).replaceAll('/', ' / '));
+		$('#info_composer').text(song.composer);
+		$('#info_size').text(Math.round(song.size / 1024));
+		$('#info_source').text(song.source);
+		$('#info_developers').empty().append(...song.game.developers.map(developer => $('<li>', { text: developer })));
+		$('#info_publishers').empty().append(...song.game.publishers.map(publisher => $('<li>', { text: publisher })));
+		if (status.playing && details.view !== 'playlist')
+			setDetails('info');
+	}
+}
+
+function setDetails(view) {
+	details = { ...details, view };
+	switch (details.view) {
+	case 'info':
+		$('.details.info').removeClass('details_hidden');
+		$('#info_show,#playlist_show').addClass('hidden');
+		break;
+	case 'playlist':
+		$('.details.playlist').removeClass('details_hidden');
+		$('#info_show,#playlist_show').addClass('hidden');
+		break;
+	case null:
+		$('.details.info,.details.playlist').addClass('details_hidden');
+		$('#info_show,#playlist_show').removeClass('hidden');
+		break;
 	}
 }
 
 $('#library tbody').on('click', 'tr', event => {
 	const data = $('#library').DataTable().row(event.currentTarget).data();
-	const url = `${DATA_ROOT}/${data.source}/${data.path}`;
-	updateStatus({ song: null, playing: false, loadingSong: data.path, loadingUrl: url, autoplay: true });
+	const url = path2url(data);
+	if (data.status === '')
+		return;
+	if (details.view === 'playlist') {
+		$('#playlist').append(
+			$('<li>', { text: `${data.game} - ${data.title}`, 'data-path': data.path, 'data-source': data.source }).append(
+				$('<button>', { class: 'small' }).append($('<i>', { class: 'fas fa-times' }))
+			)
+		);
+		updatePlaylist();
+		return;
+	}
+	updateStatus({ song: null, playing: false, loadingSong: data.path, loadingUrl: url, autoplay: true, usePlaylist: false });
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 });
 $('#volume').on('change', event => {
@@ -146,12 +188,23 @@ $('#volume').on('change', event => {
 function onPlayerReady() {
 }
 function onTrackReadyToPlay() {
-	updateStatus({ song: status.loadingSong, playing: status.autoplay, loadingUrl: null, loadingSong: null, autoplay: null });
+	updateStatus({ song: status.loadingSong, playing: status.autoplay, autoplay: null });
 }
 function onTrackEnd() {
-	// updateStatus({ song: null, playing: false });
 	const p = ScriptNodePlayer.getInstance();
 	status.autoplay = false;
+	if (status.usePlaylist) {
+		const nextElement = $('#playlist li[class="playing"]').first().next();
+		const next = nextElement.get().map(li => ({ path: $(li).attr('data-path'), source: $(li).attr('data-source') }))[0];
+		$(`#playlist li[data-path='${status.loadingSong}']`).removeClass('playing');
+		if (next) {
+			nextElement.addClass('playing');
+			updateStatus({ song: null, playing: false, loadingSong: next.path, loadingUrl: path2url(next), autoplay: true, usePlaylist: true });
+			p.loadMusicFromURL(path2url(next), {}, () => {}, () => {});
+		} else
+			updateStatus({ song: null, playing: false });
+		return;
+	}
 	p.loadMusicFromURL(status.loadingUrl, {}, () => {}, () => {});
 	p.pause();
 	$('#time').text(`${time(0)} / ${time(p.getMaxPlaybackPosition() / 1000)}`);
@@ -167,13 +220,14 @@ $('#playpause').on('click', () => {
 	updateStatus({ playing: !status.playing });
 });
 
-$('#details_show').on('click', () => {
-	$('section.right').removeClass('right_hidden');
-	$('#details_show').addClass('hidden');
+$('#info_show').on('click', () => {
+	setDetails('info');
 });
-$('#details_hide').on('click', () => {
-	$('section.right').addClass('right_hidden');
-	$('#details_show').removeClass('hidden');
+$('#playlist_show').on('click', () => {
+	setDetails('playlist');
+});
+$('#info_hide,#playlist_hide').on('click', () => {
+	setDetails(null);
 });
 
 ScriptNodePlayer.createInstance(new XMPBackendAdapter(), '', [], false, onPlayerReady, onTrackReadyToPlay, onTrackEnd);
@@ -189,3 +243,31 @@ function updateTime(timestamp) {
 	$('#time').text(time(p.getPlaybackPosition() / 1000) + ' / ' + time(p.getMaxPlaybackPosition() / 1000));
 }
 updateTime();
+
+$('#playlist').sortable({ axis: 'y' });
+$('#playlist').on('click', 'li', event => {
+	const path = event.target.attributes['data-path'].value;
+	const source = event.target.attributes['data-source'].value;
+	const url = path2url({ path, source });
+	$(`#playlist li[data-path='${status.song}']`).removeClass('playing');
+	$(event.target).addClass('playing');
+	updateStatus({ song: null, playing: false, loadingSong: path, loadingUrl: url, autoplay: true, usePlaylist: true });
+	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
+});
+$('#playlist').on('click', 'button', event => {
+	event.stopPropagation();
+	$(event.target).parents('li').remove();
+	updatePlaylist();
+});
+$('#playlist_clear').on('click', () => {
+	$('#playlist').empty();
+	updatePlaylist();
+});
+$('#playlist').on('sortupdate', () => {
+	updatePlaylist();
+});
+
+function updatePlaylist() {
+	const playlist = $('#playlist li').get().map(li => ({ path: $(li).attr('data-path'), source: $(li).attr('data-source') }));
+	updateStatus({ playlist });
+}

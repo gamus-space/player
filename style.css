@@ -17,34 +17,42 @@ section.body {
 	height: calc(100vh - 8em);
 	display: flex;
 }
-section.center {
+section.main{
 	width: calc(100% - 3em);
 	height: 100%;
 	overflow-y: auto;
 }
-#details_show {
+#info_show {
 	position: absolute;
 	top: 0;
 	right: 4px;
+	width: 3em;
 }
-section.right {
+#playlist_show {
+	position: absolute;
+	top: 4em;
+	right: 4px;
+	width: 3em;
+}
+section.details {
 	overflow-y: auto;
 	padding-left: 1em;
 	flex-basis: 40em;
 	transition: flex-basis 1s;
 }
-section.right_hidden {
+section.details_hidden {
 	flex-basis: 0;
 	overflow: hidden !important;
+	padding-left: 0;
 }
-section.right_hidden * {
+section.details_hidden * {
 	display: none;
 }
-section.right h1 {
+section.details h1 {
 	font-size: 2.4em;
 	margin: 0 1em;
 }
-#details_hide {
+#info_hide,#playlist_hide {
 	float: right;
 	margin-left: 1em;
 	position: sticky;
@@ -52,6 +60,23 @@ section.right h1 {
 }
 .hidden {
 	display: none;
+}
+section.playlist .title {
+	display: flex;
+}
+#playlist {
+	list-style: square;
+	padding-left: 1em;
+}
+#playlist li {
+	line-height: 2em;
+	cursor: crosshair;
+}
+#playlist li.playing {
+	list-style: circle;
+}
+#playlist li button {
+	margin-left: 1em;
 }
 
 .controls {
@@ -141,6 +166,10 @@ button[disabled]:hover {
 }
 button[disabled]:active {
 	box-shadow: inset -3px -3px #555, inset 3px 3px #bbb;
+}
+button.small {
+	font-size: 0.7em;
+	padding: 0.8em;
 }
 
 a {
