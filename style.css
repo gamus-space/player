@@ -1,0 +1,72 @@
+body {
+	background: url("assets/illust31.jpg");
+	font-family: 'Orbitron', sans-serif;
+	overflow: hidden;
+	margin: 1em;
+}
+
+section {
+	width: calc(100% - 1em);
+}
+section.header {
+	position: fixed;
+	top: 0;
+}
+section.body {
+	position: absolute;
+	top: 8em;
+	height: calc(100vh - 8em);
+	overflow-y: scroll;
+}
+
+h1 {
+	font-weight: bold;
+	font-style: italic;
+	display: inline-block;
+	margin: 1em;
+	vertical-align: middle;
+}
+.controls {
+	text-align: center;
+}
+#song, #time {
+	display: block;
+	text-align: center;
+}
+
+button {
+	background: #ffffff60;
+	border: none;
+	padding: 1em;
+	box-shadow: inset -3px -3px #555, inset 3px 3px #bbb;
+	cursor: pointer;
+}
+button:hover {
+	background: #ffffffa0;
+}
+button:active {
+	box-shadow: inset -3px -3px #bbb, inset 3px 3px #555;
+}
+button[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+button[disabled]:hover {
+	background: #ffffff60;
+}
+button[disabled]:active {
+	box-shadow: inset -3px -3px #555, inset 3px 3px #bbb;
+}
+
+li {
+	list-style: square;
+}
+li.no {
+	list-style: none;
+}
+li.playing {
+	list-style: disclosure-closed;
+}
+a {
+	color: navy;
+}
