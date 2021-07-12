@@ -94,10 +94,6 @@ section.playlist .title {
 	font-style: italic;
 }
 
-#playpause {
-	margin: 1em;
-}
-
 .status {
 	display: flex;
 	flex-direction: column;
@@ -112,6 +108,14 @@ section.playlist .title {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+}
+.multi_info a {
+	color: #000;
+	cursor: pointer;
+}
+.multi_info a[disabled] {
+	opacity: 0.25;
+	cursor: not-allowed;
 }
 #song, #time {
 	padding: 2px;

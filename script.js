@@ -5,7 +5,7 @@ const DATA_ROOT = '../scraper/data';
 let status = {
 	song: null, playing: false,
 	loadingSong: null, loadingUrl: null, autoplay: null,
-	usePlaylist: null, playlist: [],
+	playlistEntry: null, playlist: [],
 };
 let songs;
 
@@ -93,10 +93,19 @@ fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
 	).sort(((a, b) => b[1]-a[1])));
 });
 
+function updatePlaylistStatus() {
+	$('#pos').text(status.playlistEntry ? `${status.playlistEntry}/${status.playlist.length}` : '');
+	$('#previous').attr('disabled', !status.playlistEntry || status.playlistEntry === 1);
+	$('#next').attr('disabled', !status.playlistEntry || status.playlistEntry === status.playlist.length);
+}
+
 function updateStatus(update) {
 	if (update.playlist) {
 		status.playlist = update.playlist;
+		if (update.playlistEntry != null)
+			status.playlistEntry = update.playlistEntry;
 		$('#playlist_clear').attr('disabled', !status.playlist.length);
+		updatePlaylistStatus();
 		return;
 	}
 
@@ -110,6 +119,7 @@ function updateStatus(update) {
 
 	$('#playpause').attr('disabled', !status.song);
 	$('#playpause i').attr('class', `fas fa-${status.playing ? 'pause' : 'play'}`)
+	updatePlaylistStatus();
 	if (!status.song)
 		$('#time').text('00:00 / 00:00');
 
@@ -176,7 +186,9 @@ $('#library tbody').on('click', 'tr', event => {
 		updatePlaylist();
 		return;
 	}
-	updateStatus({ song: null, playing: false, loadingSong: data.path, loadingUrl: url, autoplay: true, usePlaylist: false });
+	if (status.playlistEntry)
+		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
+	updateStatus({ song: null, playing: false, loadingSong: data.path, loadingUrl: url, autoplay: true, playlistEntry: null});
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 });
 $('#volume').on('change', event => {
@@ -193,16 +205,16 @@ function onTrackReadyToPlay() {
 function onTrackEnd() {
 	const p = ScriptNodePlayer.getInstance();
 	status.autoplay = false;
-	if (status.usePlaylist) {
-		const nextElement = $('#playlist li[class="playing"]').first().next();
-		const next = nextElement.get().map(li => ({ path: $(li).attr('data-path'), source: $(li).attr('data-source') }))[0];
-		$(`#playlist li[data-path='${status.loadingSong}']`).removeClass('playing');
+	if (status.playlistEntry != null) {
+		const next = status.playlistEntry === 0 ? null : status.playlist[status.playlistEntry];
+		if (status.playlistEntry)
+			$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 		if (next) {
-			nextElement.addClass('playing');
-			updateStatus({ song: null, playing: false, loadingSong: next.path, loadingUrl: path2url(next), autoplay: true, usePlaylist: true });
+			$(`#playlist li:nth-child(${status.playlistEntry+1})`).addClass('playing');
+			updateStatus({ song: null, playing: false, loadingSong: next.path, loadingUrl: path2url(next), autoplay: true, playlistEntry: status.playlistEntry + 1 });
 			p.loadMusicFromURL(path2url(next), {}, () => {}, () => {});
 		} else
-			updateStatus({ song: null, playing: false });
+			updateStatus({ song: null, playing: false, playlistEntry: null });
 		return;
 	}
 	p.loadMusicFromURL(status.loadingUrl, {}, () => {}, () => {});
@@ -246,28 +258,52 @@ updateTime();
 
 $('#playlist').sortable({ axis: 'y' });
 $('#playlist').on('click', 'li', event => {
-	const path = event.target.attributes['data-path'].value;
-	const source = event.target.attributes['data-source'].value;
-	const url = path2url({ path, source });
-	$(`#playlist li[data-path='${status.song}']`).removeClass('playing');
-	$(event.target).addClass('playing');
-	updateStatus({ song: null, playing: false, loadingSong: path, loadingUrl: url, autoplay: true, usePlaylist: true });
-	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
+	playPlaylist($(event.target).index()+1);
 });
 $('#playlist').on('click', 'button', event => {
 	event.stopPropagation();
+	const position = $(event.target).parents('li').index() + 1;
+	const entry = position === status.playlistEntry ? 0: status.playlistEntry - (position < status.playlistEntry ? 1 : 0);
 	$(event.target).parents('li').remove();
-	updatePlaylist();
+	updatePlaylist(entry);
 });
 $('#playlist_clear').on('click', () => {
 	$('#playlist').empty();
-	updatePlaylist();
+	updatePlaylist(0);
 });
-$('#playlist').on('sortupdate', () => {
-	updatePlaylist();
+let sortedPosition;
+$('#playlist').on('sortstart', (event, ui) => {
+	sortedPosition = ui.item.index() + 1;
+});
+$('#playlist').on('sortupdate', (event, ui) => {
+	const newPosition = ui.item.index() + 1;
+	const entry =
+		sortedPosition === status.playlistEntry ? newPosition :
+		sortedPosition < status.playlistEntry && newPosition >= status.playlistEntry ? status.playlistEntry - 1 :
+		sortedPosition > status.playlistEntry && newPosition <= status.playlistEntry ? status.playlistEntry + 1 :
+		null;
+	updatePlaylist(entry);
+});
+$('#next').on('click', () => {
+	playPlaylist(status.playlistEntry + 1);
+});
+$('#previous').on('click', () => {
+	playPlaylist(status.playlistEntry - 1);
 });
 
-function updatePlaylist() {
+function updatePlaylist(playlistEntry) {
 	const playlist = $('#playlist li').get().map(li => ({ path: $(li).attr('data-path'), source: $(li).attr('data-source') }));
-	updateStatus({ playlist });
+	updateStatus({ playlist, playlistEntry });
+}
+
+function playPlaylist(playlistEntry) {
+	const song = status.playlist[playlistEntry-1];
+	if (!song)
+		return;
+	const url = path2url(song);
+	if (status.playlistEntry)
+		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
+	$(`#playlist li:nth-child(${playlistEntry})`).addClass('playing');
+	updateStatus({ song: null, playing: false, loadingSong: song.path, loadingUrl: url, autoplay: true, playlistEntry });
+	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 }
