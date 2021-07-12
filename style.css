@@ -19,19 +19,69 @@ section.body {
 	overflow-y: scroll;
 }
 
+.controls {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 1em;
+}
+
 h1 {
+	margin: 0.5em;
+	flex-grow: 0.5;
+	font-size: 2.6em;
 	font-weight: bold;
 	font-style: italic;
-	display: inline-block;
-	margin: 1em;
-	vertical-align: middle;
 }
-.controls {
-	text-align: center;
+
+#playpause {
+	margin: 1em;
+}
+
+.status {
+	display: flex;
+	flex-direction: column;
+	width: 20em;
+
+	padding: 6px;
+	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
+	background: #befc03;
+	font-family: "D14ML";
+}
+.multi_info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 #song, #time {
-	display: block;
-	text-align: center;
+	padding: 2px;
+}
+
+#volume {
+	transform: rotate(270deg);
+	width: 1.5em;
+	height: 10px;
+	-webkit-appearance: none;
+	background: #000;
+	border: 1px solid black;
+	cursor: pointer;
+}
+#volume.silent {
+	background: #befc03;
+}
+#volume::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	border: 1px solid black;
+	width: 4px;
+	height: 10px;
+	background: #befc03;
+}
+#volume::-moz-range-thumb {
+	border: 1px solid black;
+	border-radius: 0;
+	width: 4px;
+	height: 10px;
+	background: #befc03;
 }
 
 button {

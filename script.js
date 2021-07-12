@@ -1,13 +1,47 @@
 'use strict';
 
-// display: 30 filename, 22 player
-// vol
-// seek
-
 const DATA_ROOT = '../scraper/data';
 
-let status = { song: null, playing: false };
-let loadingSong = null;
+let status = { song: null, playing: false, loadingSong: null, loadingUrl: null };
+
+function time(t) {
+	t = t.toFixed(0);
+	const sec = t % 60;
+	const min = Math.floor(t/60);
+	return `${min < 10 ? '0' : ''}${min}:${sec<10 ? '0' : ''}${sec}`;
+}
+
+class Autoscroll {
+	constructor(el, len) {
+		this._element = el;
+		this._length = len;
+		this._delay = 1000;
+	}
+	get value() {
+		return this._value;
+	}
+	set value(v) {
+		const mapping = { ' ': '!', '.': '.!' };
+		if (v.length < this._length)
+			v = ' '.repeat((this._length - v.length)/2) + v;
+		this._chars = v.split('').map(v => mapping[v] || v);
+		this._scroll = -1;
+		this.tick();
+		clearInterval(this._interval);
+		if (v.length > this._length)
+			this._interval = setInterval(this.tick.bind(this), this._delay);
+		else
+			this._interval = null;
+	}
+	tick() {
+		if (this._scroll + this._length < this._chars.length)
+			this._scroll++;
+		else
+			this._scroll = 0;
+		this._element.text(this._chars.slice(this._scroll, this._scroll + this._length).join(''));
+	}
+}
+const songAutoscroll = new Autoscroll($('#song'), 24);
 
 fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
 	const compat = /\/(di|gmc|med|mod|np2|np3|ntp|p4x|pp21|pru2|sfx|xm)\.[^\/]+$/i;
@@ -18,20 +52,32 @@ fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
 			),
 		);
 	});
+	const format = /\/(\w+)\.[^\/]+$/i;
+	window.statByFormat = () => Object.fromEntries(Object.entries(
+		db.reduce((flat, game) => [...flat, ...game.songs], [])
+		.filter(song => !/\/songs\//.test(song.path))
+		.map(song => format.exec(song.path)?.[1])
+		.reduce((res, fmt) => ({ ...res, [fmt]: (res[fmt]||0)+1 }), {})
+	).sort(((a, b) => b[1]-a[1])));
 });
 
 function updateStatus(update) {
 	if (status.song)
 		$(`a:contains('${status.song}')`).parent('li').removeClass('playing');
 	status = { ...status, ...update };
-	$('#song').text(status.song || 'Pick a song!');
 	$('#playpause').attr('disabled', !status.song);
 	$('#playpause i').attr('class', `fas fa-${status.playing ? 'pause' : 'play'}`)
 	if (status.song)
 		$(`a:contains('${status.song}')`).parent('li').addClass('playing');
 
-	if (status.song)
-		console.log(ScriptNodePlayer.getInstance().getSongInfo());
+	if (status.song) {
+		const info = ScriptNodePlayer.getInstance().getSongInfo();
+		songAutoscroll.value = '>>> ' + [status.song, info?.player, info?.title].map(s => s).join(' ~ ') + ' <<<';
+		const volume = player.getVolume();
+		$('#volume').val(volume);
+		$('#volume').toggleClass('silent', volume == 0);
+	} else
+		songAutoscroll.value = '~ Pick a song ~';
 	if (!status.song)
 		$('#time').text('00:00 / 00:00');
 }
@@ -41,18 +87,27 @@ $('#list').on('click', event => {
 	event.preventDefault();
 	const song = event.target.innerText;
 	const url = `${DATA_ROOT}/${event.target.attributes['data-source'].value}/${song}`;
-	updateStatus({ song: null, playing: false });
-	loadingSong = song;
+	updateStatus({ song: null, playing: false, loadingSong: song, loadingUrl: url });
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
+});
+$('#volume').on('change', event => {
+	const volume = event.target.value;
+	player.setVolume(volume);
+	$('#volume').toggleClass('silent', volume == 0);
 });
 
 function onPlayerReady() {
 }
 function onTrackReadyToPlay() {
-	updateStatus({ song: loadingSong, playing: true });
+	updateStatus({ song: status.loadingSong, playing: true });
 }
 function onTrackEnd() {
-	updateStatus({ song: null, playing: false });
+	// updateStatus({ song: null, playing: false });
+	const p = ScriptNodePlayer.getInstance();
+	p.loadMusicFromURL(status.loadingUrl, {}, () => {}, () => {});
+	p.pause();
+	updateStatus({ playing: false });
+	$('#time').text(`${time(0)} / ${time(p.getMaxPlaybackPosition() / 1000)}`);
 }
 
 $('#playpause').on('click', () => {
@@ -70,13 +125,8 @@ updateStatus({});
 
 let lastUpdate = 0;
 function updateTime(timestamp) {
-	function time(t) {
-		t = t.toFixed(0);
-		const sec = t % 60;
-		return `${Math.floor(t/60)}:${sec<10 ? '0' : ''}${sec}`;
-	}
 	requestAnimationFrame(updateTime);
-	if (timestamp - lastUpdate < 200 || !status.song)
+	if (timestamp - lastUpdate < 200 || !status.song || !status.playing)
 		return;
 	lastUpdate = timestamp;
 	const p = ScriptNodePlayer.getInstance();
