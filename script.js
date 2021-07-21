@@ -1,6 +1,6 @@
 'use strict';
 
-const DATA_ROOT = '../scraper/data';
+const DATA_ROOT = location.hostname === 'localhost' ? '../scraper/data' : 'https://db.gamus.space';
 
 let status = {
 	song: null, playing: false,
@@ -57,7 +57,7 @@ class Autoscroll {
 }
 const songAutoscroll = new Autoscroll($('#song'), 24);
 
-fetch(`${DATA_ROOT}/db.json`).then(response => response.json()).then(db => {
+fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = /\/(di|gmc|med|mod|np2|np3|ntp|p4x|pp21|pru2|sfx|xm)\.[^\/]+$/i;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, game }))], []);
 	$('#library').DataTable({
