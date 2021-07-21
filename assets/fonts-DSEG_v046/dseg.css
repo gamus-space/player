@@ -1,0 +1,291 @@
+/*
+For DSEG font family.
+CSS Level 3 Optimized.
+2017-03-15 by Keshikan
+
+Notice:
+ In order not to apply load to traffic, DO NOT access or link directly *.woff files in this server(www.keshikan.net).
+ If you want to use *.woff files, please upload to your own server.
+
+注意：
+　負荷の原因となるので、本サーバ(www.keshikan.net)上のwoffファイルに対しては、他のサイトやサービスから直接アクセスしないで下さい。
+　woffファイルをネットワーク経由でご使用の際は、ご自身でサーバを用意頂き、woffファイルをアップロードした上で、そこにアクセスするようにお願い致します。
+*/
+
+
+/*Add DSEG family to font types.*/
+/*DSEG 7 Modern*/
+@font-face {
+  font-family: "D7ML";
+  src: url("./fonts/DSEG7Modern-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MLI";
+  src: url("./fonts/DSEG7Modern-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MR";
+  src: url("./fonts/DSEG7Modern-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MI";
+  src: url("./fonts/DSEG7Modern-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MB";
+  src: url("./fonts/DSEG7Modern-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MBI";
+  src: url("./fonts/DSEG7Modern-BoldItalic.woff") format('woff');
+}
+
+/*DSEG 7 Modern Mini*/
+@font-face {
+  font-family: "D7MML";
+  src: url("./fonts/DSEG7ModernMini-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MMLI";
+  src: url("./fonts/DSEG7ModernMini-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MMR";
+  src: url("./fonts/DSEG7ModernMini-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MMI";
+  src: url("./fonts/DSEG7ModernMini-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MMB";
+  src: url("./fonts/DSEG7ModernMini-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7MMBI";
+  src: url("./fonts/DSEG7ModernMini-BoldItalic.woff") format('woff');
+}
+
+/*DSEG 7 Classic*/
+@font-face {
+  font-family: "D7CL";
+  src: url("./fonts/DSEG7Classic-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CLI";
+  src: url("./fonts/DSEG7Classic-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CR";
+  src: url("./fonts/DSEG7Classic-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CI";
+  src: url("./fonts/DSEG7Classic-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CB";
+  src: url("./fonts/DSEG7Classic-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CBI";
+  src: url("./fonts/DSEG7Classic-BoldItalic.woff") format('woff');
+}
+
+
+/*DSEG 7 Classic Mini*/
+@font-face {
+  font-family: "D7CML";
+  src: url("./fonts/DSEG7ClassicMini-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CMLI";
+  src: url("./fonts/DSEG7ClassicMini-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CMR";
+  src: url("./fonts/DSEG7ClassicMini-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CMI";
+  src: url("./fonts/DSEG7ClassicMini-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CMB";
+  src: url("./fonts/DSEG7ClassicMini-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D7CMBI";
+  src: url("./fonts/DSEG7ClassicMini-BoldItalic.woff") format('woff');
+}
+
+
+/*DSEG 14 Modern*/
+@font-face {
+  font-family: "D14ML";
+  src: url("./fonts/DSEG14Modern-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MLI";
+  src: url("./fonts/DSEG14Modern-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MR";
+  src: url("./fonts/DSEG14Modern-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MI";
+  src: url("./fonts/DSEG14Modern-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MB";
+  src: url("./fonts/DSEG14Modern-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MBI";
+  src: url("./fonts/DSEG14Modern-BoldItalic.woff") format('woff');
+}
+
+/*DSEG 14 Modern Mini*/
+@font-face {
+  font-family: "D14MML";
+  src: url("./fonts/DSEG14ModernMini-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MMLI";
+  src: url("./fonts/DSEG14ModernMini-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MMR";
+  src: url("./fonts/DSEG14ModernMini-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MMI";
+  src: url("./fonts/DSEG14ModernMini-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MMB";
+  src: url("./fonts/DSEG14ModernMini-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14MMBI";
+  src: url("./fonts/DSEG14ModernMini-BoldItalic.woff") format('woff');
+}
+
+/*DSEG 14 Classic*/
+@font-face {
+  font-family: "D14CL";
+  src: url("./fonts/DSEG14Classic-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CLI";
+  src: url("./fonts/DSEG14Classic-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CR";
+  src: url("./fonts/DSEG14Classic-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CI";
+  src: url("./fonts/DSEG14Classic-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CB";
+  src: url("./fonts/DSEG14Classic-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CBI";
+  src: url("./fonts/DSEG14Classic-BoldItalic.woff") format('woff');
+}
+
+
+/*DSEG 14 Classic Mini*/
+@font-face {
+  font-family: "D14CML";
+  src: url("./fonts/DSEG14ClassicMini-Light.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CMLI";
+  src: url("./fonts/DSEG14ClassicMini-LightItalic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CMR";
+  src: url("./fonts/DSEG14ClassicMini-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CMI";
+  src: url("./fonts/DSEG14ClassicMini-Italic.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CMB";
+  src: url("./fonts/DSEG14ClassicMini-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: "D14CMBI";
+  src: url("./fonts/DSEG14ClassicMini-BoldItalic.woff") format('woff');
+}
+
+
+/*DSEG Weather*/
+@font-face {
+  font-family: "DWEATHER";
+  src: url("./fonts/DSEGWeather.woff") format('woff');
+}
+
+.D7MI {
+font-family: "D7MI";
+}
+
+.D7MBI {
+font-family: "D7MBI";
+}
+
+.D14MI {
+font-family: "D14MI";
+}
+
+.DWEATHER {
+font-family: "DWEATHER";
+font-size:72px;
+height:72px;
+}
