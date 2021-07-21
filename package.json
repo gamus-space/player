@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "serve": "node utils/serve.js"
+    "serve": "node utils/serve.js",
+    "build": "mkdir -p dist && cp -R index.html script.js style.css assets/ lib/ dist/"
   },
   "author": "krzykos",
   "license": "ISC",
