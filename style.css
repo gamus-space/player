@@ -4,6 +4,9 @@ body {
 	overflow: hidden;
 	margin: 1em;
 }
+.hidden {
+	display: none;
+}
 
 section.header {
 	width: calc(100% - 2em);
@@ -28,23 +31,14 @@ section.main {
 	height: 100%;
 	overflow: hidden;
 }
-#info_show {
+.menu {
 	position: absolute;
-	top: 0;
 	right: 4px;
-	width: 3em;
 }
-#playlist_show {
-	position: absolute;
-	top: 4em;
-	right: 4px;
+.show_details {
+	display: block;
 	width: 3em;
-}
-#about_show {
-	position: absolute;
-	top: 8em;
-	right: 4px;
-	width: 3em;
+	margin-bottom: 1em;
 }
 section.details {
 	overflow-y: auto;
@@ -67,16 +61,20 @@ section.details h1 {
 section.details h2 {
 	padding-top: 0.5em;
 }
-#info_hide,#playlist_hide,#about_hide {
+section.details .hide {
 	float: right;
 	margin-left: 1em;
 	position: sticky;
 	top: 0;
 }
-.hidden {
-	display: none;
+section.details.news h2 {
+	margin-bottom: 0.2em;
 }
-section.playlist .title {
+section.details.news h3 {
+	margin-top: 0;
+	font-size: 1em;
+}
+section.details.playlist .title {
 	display: flex;
 }
 #playlist {
@@ -111,11 +109,11 @@ section.playlist .title {
 }
 #stats_songs_total {
 	float: right;
-	padding: 0 0.5em;
+	margin: -0.2em 0.5em;
 }
 #stats_songs_supported {
 	float: left;
-	padding: 0 0.5em;
+	margin: -0.2em 0.5em;
 }
 
 .controls {

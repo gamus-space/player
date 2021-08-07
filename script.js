@@ -155,34 +155,19 @@ function updateStatus(update) {
 		$('#info_source').text(song.source);
 		$('#info_developers').empty().append(...song.game.developers.map(developer => $('<li>', { text: developer })));
 		$('#info_publishers').empty().append(...song.game.publishers.map(publisher => $('<li>', { text: publisher })));
-		if (status.playing && details.view !== 'playlist')
+		if (status.playing && details.view === null)
 			setDetails('info');
 	}
 }
 
 function setDetails(view) {
 	details = { ...details, view };
-	switch (details.view) {
-	case 'info':
-		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
-		$('.details.info').removeClass('details_hidden');
-		$('#info_show,#playlist_show,#about_show').addClass('hidden');
-		break;
-	case 'playlist':
-		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
-		$('.details.playlist').removeClass('details_hidden');
-		$('#info_show,#playlist_show,#about_show').addClass('hidden');
-		break;
-	case 'about':
-		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
-		$('.details.about').removeClass('details_hidden');
-		$('#info_show,#playlist_show,#about_show').addClass('hidden');
-		break;
-	case null:
-		$('.details.info,.details.playlist,.details.about').addClass('details_hidden');
-		$('#info_show,#playlist_show,#about_show').removeClass('hidden');
-		break;
-	}
+	$('.details').addClass('details_hidden');
+	$('.menu').addClass('hidden');
+	if (details.view != null)
+		$(`.details.${details.view}`).removeClass('details_hidden');
+	else
+		$('.menu').removeClass('hidden');
 }
 
 $('#library tbody').on('click', 'tr', event => {
@@ -254,16 +239,10 @@ $('#playpause').on('click', () => {
 	updateStatus({ playing: !status.playing });
 });
 
-$('#info_show').on('click', () => {
-	setDetails('info');
+$('.show_details').on('click', event => {
+	setDetails(event.currentTarget.attributes['data-details'].value);
 });
-$('#playlist_show').on('click', () => {
-	setDetails('playlist');
-});
-$('#about_show').on('click', () => {
-	setDetails('about');
-});
-$('#info_hide,#playlist_hide,#about_hide').on('click', () => {
+$('.details > .hide').on('click', () => {
 	setDetails(null);
 });
 
@@ -281,7 +260,7 @@ function updateTime(timestamp) {
 }
 updateTime();
 
-$('#playlist').sortable({ axis: 'y' });
+$('#playlist').sortable({ axis: 'y', helper: 'clone' });
 $('#playlist').on('click', 'li', event => {
 	playPlaylist($(event.target).index()+1);
 });
