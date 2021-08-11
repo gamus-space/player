@@ -238,6 +238,9 @@ button.small {
 a {
 	color: navy;
 }
+i.issue {
+	color: maroon;
+}
 
 #library tbody tr {
 	background: none;

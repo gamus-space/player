@@ -11,6 +11,19 @@ let songs;
 
 let details = { view: null };
 
+const issues = [
+	{ name: "The Player 4.1a issues", groups: [
+		{ name: "volume", songs: ["UnExoticA/Mortal_Kombat_2/p4x.ingame_3", "UnExoticA/Mortal_Kombat_2/p4x.intro", "UnExoticA/Mortal_Kombat_2/p4x.title", "UnExoticA/Lost_Vikings/p4x.ingame4", "UnExoticA/Lost_Vikings/p4x.ingame5", "UnExoticA/Lost_Vikings/p4x.intro"]},
+		{ name: "repeat", songs: ["UnExoticA/Mortal_Kombat_2/p4x.ingame_4", "UnExoticA/Lost_Vikings/p4x.ingame4", "UnExoticA/Lost_Vikings/p4x.ingame5"]},
+		{ name: "jitter", songs: ["UnExoticA/Body_Blows_Galactic/p4x.earth", "UnExoticA/Lost_Vikings/p4x.death"]},
+	]},
+];
+const issuesMap = issues
+	.map(issue => issue.groups.map(group => group.songs.map(song => ({ song, group: group.name, issue: issue.name }))).reduce((a, e) => [...a, ...e], []))
+	.reduce((a, e) => [...a, ...e], [])
+	.map(({ song, group, issue }) => [song, `${issue} - ${group}`])
+	.reduce((res, [song, issue]) => ({ ...res, [song]: [...res[song] || [], issue] }), {});
+
 function time(t) {
 	t = t.toFixed(0);
 	const sec = t % 60;
@@ -63,7 +76,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	$('#library').DataTable({
 		data: songs.map(song => ({
 			status: compat.test(song.path) ? '<i class="fas fa-stop"></i>' : '',
-			title: path2title(song.path),
+			title: path2title(song.path) + (issuesMap[`${song.source}/${song.path}`] ?` <i class="issue fas fa-exclamation-circle" title="${issuesMap[`${song.source}/${song.path}`].join(`\n`)}"></i>` : ""),
 			composer: song.composer,
 			game: song.game.title,
 			platform: song.platform,
@@ -244,6 +257,9 @@ $('.show_details').on('click', event => {
 });
 $('.details > .hide').on('click', () => {
 	setDetails(null);
+});
+$('.details').on('transitionend', () => {
+	$('#library').DataTable().draw();
 });
 
 ScriptNodePlayer.createInstance(new XMPBackendAdapter(), '', [], false, onPlayerReady, onTrackReadyToPlay, onTrackEnd);
