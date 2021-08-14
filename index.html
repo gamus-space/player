@@ -43,19 +43,24 @@
 	</section>
 	<section class="body">
 		<section class="main">
-			<button id="info_show" title="Song information"><i class="fas fa-info"></i></button>
-			<button id="playlist_show" title="Playlist"><i class="fas fa-list"></i></button>
-			<button id="about_show" title="About this site"><i class="fas fa-question"></i></button>
+			<div class="menu">
+				<button class="show_details" data-details="news" title="News"><i class="fas fa-bell"></i></button>
+				<button class="show_details" data-details="info" title="Song information"><i class="fas fa-info"></i></button>
+				<button class="show_details" data-details="playlist" title="Playlist"><i class="fas fa-list"></i></button>
+				<button class="show_details" data-details="about" title="About this site"><i class="fas fa-question"></i></button>
+			</div>
 			<table id="library" width="100%">
 				<thead />
 				<tbody />
 			</table>
 			<section class="footer">
 				&copy; 2021 krzykos
+				<a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a>
+				<a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>
 			</section>
 		</section>
 		<section class="details details_hidden info">
-			<button id="info_hide"><i class="fas fa-angle-double-right"></i></button>
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
 			<h1>
 				<span id="info_game">game</span>
 			</h1>
@@ -73,7 +78,7 @@
 			<h3>from <span id="info_source">source</span></h3>
 		</section>
 		<section class="details details_hidden playlist">
-			<button id="playlist_hide"><i class="fas fa-angle-double-right"></i></button>
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
 			<div class="title">
 				<h1>playlist</h1>
 				<button id="playlist_clear" disabled><i class="fas fa-times"></i></button>
@@ -81,10 +86,10 @@
 			<ul id="playlist"></ul>
 		</section>
 		<section class="details details_hidden about">
-			<button id="about_hide"><i class="fas fa-angle-double-right"></i></button>
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
 			<h1>about</h1>
 			<p>GAMUS player</p>
-			<h2>song support</h2>
+			<h2>working songs</h2>
 			<span>
 				<span id="stats_songs_total">0</span>
 				<span id="stats_songs_supported">0</span>
@@ -92,6 +97,10 @@
 					<div class="ui-slider-handle"></div>
 				</div>
 			</span>
+			<h2>user requests</h2>
+			<p>use the <a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a> to report bugs or request enhancements</p>
+			<h2>project support</h2>
+			<p>feel free to support on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a></p>
 			<h2>credits</h2>
 			<ul>
 				<li><a href="http://xmp.sourceforge.net/" target="_blank">XMP</a> - the module player</li>
@@ -100,6 +109,20 @@
 				<li><a href="https://www.myfreetextures.com/" target="_blank">My Free Textures</a> - background collection</li>
 				<li><a href="https://www.keshikan.net/fonts-e.html" target="_blank">DSEG</a> - segment display font</li>
 			</ul>
+		</section>
+		<section class="details details_hidden news">
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+			<h1>news</h1>
+			<div>
+				<h2>Patreon created</h2>
+				<h3>2021-08-13</h3>
+				<p>If you like the project, please support it on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>. Adding more music eats up plenty of time...</p>
+			</div>
+			<div>
+				<h2>First release!</h2>
+				<h3>2021-07-21</h3>
+				<p>First version released, supporting 528/784 songs. Now development will focus on Amiga music support.</p>
+			</div>
 		</section>
 	</section>
 </body>
