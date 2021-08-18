@@ -259,7 +259,7 @@ $('.details > .hide').on('click', () => {
 	setDetails(null);
 });
 $('.details').on('transitionend', () => {
-	$('#library').DataTable().draw();
+	$('#library').DataTable().columns.adjust();
 });
 
 ScriptNodePlayer.createInstance(new XMPBackendAdapter(), '', [], false, onPlayerReady, onTrackReadyToPlay, onTrackEnd);
