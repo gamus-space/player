@@ -3,7 +3,7 @@
 const DATA_ROOT = location.hostname === 'localhost' ? '../scraper/data' : 'https://db.gamus.space';
 
 let status = {
-	song: null, playing: false,
+	song: null, url: null, playing: false,
 	loadingSong: null, loadingUrl: null, autoplay: null,
 	playlistEntry: null, playlist: [],
 };
@@ -31,11 +31,11 @@ function time(t) {
 	return `${min < 10 ? '0' : ''}${min}:${sec<10 ? '0' : ''}${sec}`;
 }
 
-function path2title(path) {
-	return path.replace(/^[^\/]+\//, '');
+function song2title({ game, song }) {
+	return `${game}/${song}`;
 }
-function path2url({ path, source} ) {
-	return `${DATA_ROOT}/${source}/${path}`;
+function song2url({ song_link }) {
+	return `${DATA_ROOT}/${song_link}`;
 }
 
 class Autoscroll {
@@ -71,22 +71,22 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 24);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /\/(di|gmc|med|mod|np2|np3|ntp|p4x|pp21|pru2|sfx|xm)\.[^\/]+$/i;
-	songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, game }))], []);
+	const compat = /(^|\/)(di|gmc|med|mod|np2|np3|ntp|p4x|pp21|pru2|sfx|xm)\.[^\/]+$/i;
+	songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, ...game, song_url: song2url(song) }))], []);
 	$('#library').DataTable({
 		data: songs.map(song => ({
-			status: compat.test(song.path) ? '<i class="fas fa-stop"></i>' : '',
-			title: path2title(song.path) + (issuesMap[`${song.source}/${song.path}`] ?` <i class="issue fas fa-exclamation-circle" title="${issuesMap[`${song.source}/${song.path}`].join(`\n`)}"></i>` : ""),
+			status: compat.test(song.song) ? '<i class="fas fa-stop"></i>' : '',
+			song: song.song + (issuesMap[song.song_link] ? ` <i class="issue fas fa-exclamation-circle" title="${issuesMap[song.song_link].join(`\n`)}"></i>` : ""),
 			composer: song.composer,
-			game: song.game.title,
+			game: song.game,
 			platform: song.platform,
-			path: song.path,
-			source: song.source,
+			song_link: song.song_link,
+			song_url: song.song_url,
 		})),
 		columns: [
 			{ data: "status" },
 			{ data: "game", title: "Game" },
-			{ data: "title", title: "Song" },
+			{ data: "song", title: "Song" },
 			{ data: "composer", title: "Composer" },
 			{ data: "platform", title: "Platform" },
 		],
@@ -98,15 +98,15 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		paging: false,
 	});
 	$('#stats_songs_total').text(songs.length);
-	const supportedSongs = songs.filter(song => compat.test(song.path)).length;
+	const supportedSongs = songs.filter(song => compat.test(song.song)).length;
 	$('#stats_songs_supported').text(supportedSongs);
 	$('#stats_bar .ui-slider-handle').text(Math.round(supportedSongs / songs.length * 100) + '%');
 	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: songs.length, disabled: true });
-	const format = /\/(\w+)\.[^\/]+$/i;
+	const format = /(^|\/)(\w+)\.[^\/]+$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
 		db.reduce((flat, game) => [...flat, ...game.songs], [])
-		.filter(song => !/\/songs\//.test(song.path))
-		.map(song => format.exec(song.path)?.[1])
+		.filter(song => !/\/songs\//.test(song.song_link))
+		.map(song => format.exec(song.song)?.[2])
 		.reduce((res, fmt) => ({ ...res, [fmt]: (res[fmt]||0)+1 }), {})
 	).sort(((a, b) => b[1]-a[1])));
 });
@@ -129,7 +129,7 @@ function updateStatus(update) {
 
 	if (status.song) {
 		const table = $('#library').DataTable();
-		const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().path === status.song);
+		const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().song_url === status.url);
 		row.data({ ...row.data(), status: '<i class="fas fa-stop"></i>' });
 	}
 
@@ -143,7 +143,7 @@ function updateStatus(update) {
 
 	if (status.song) {
 		const table = $('#library').DataTable();
-		const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().path === status.song);
+		const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().song_url === status.url);
 		row.data({ ...row.data(), status: '<i class="fas fa-play"></i>' });
 	}
 
@@ -158,16 +158,16 @@ function updateStatus(update) {
 		songAutoscroll.value = '~ Pick a song ~';
 
 	if (status.song) {
-		const song = songs.find(song => song.path === status.song);
-		$('#info_game').text(song.game.title);
+		const song = songs.find(song => song.song_url === status.url);
+		$('#info_game').text(song.game);
 		$('#info_platform').text(song.platform);
-		$('#info_year').text(song.game.year);
-		$('#info_song').text(path2title(song.path).replaceAll('/', ' / '));
+		$('#info_year').text(song.year);
+		$('#info_song').text(song.song);
 		$('#info_composer').text(song.composer);
 		$('#info_size').text(Math.round(song.size / 1024));
-		$('#info_source').text(song.source);
-		$('#info_developers').empty().append(...song.game.developers.map(developer => $('<li>', { text: developer })));
-		$('#info_publishers').empty().append(...song.game.publishers.map(publisher => $('<li>', { text: publisher })));
+		$('#info_source').text(song.source).attr('href', song.source_link);
+		$('#info_developers').empty().append(...song.developers.map(developer => $('<li>', { text: developer })));
+		$('#info_publishers').empty().append(...song.publishers.map(publisher => $('<li>', { text: publisher })));
 		if (status.playing && details.view === null)
 			setDetails('info');
 	}
@@ -185,12 +185,11 @@ function setDetails(view) {
 
 $('#library tbody').on('click', 'tr', event => {
 	const data = $('#library').DataTable().row(event.currentTarget).data();
-	const url = path2url(data);
 	if (data.status === '')
 		return;
 	if (details.view === 'playlist') {
 		$('#playlist').append(
-			$('<li>', { text: `${data.game} - ${data.title}`, 'data-path': data.path, 'data-source': data.source }).append(
+			$('<li>', { text: `${data.game} - ${data.song}`, 'data-song': song2title(data), 'data-song-link': data.song_link}).append(
 				$('<button>', { class: 'small' }).append($('<i>', { class: 'fas fa-times' }))
 			)
 		);
@@ -199,7 +198,8 @@ $('#library tbody').on('click', 'tr', event => {
 	}
 	if (status.playlistEntry)
 		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
-	updateStatus({ song: null, playing: false, loadingSong: data.path, loadingUrl: url, autoplay: true, playlistEntry: null});
+	const url = song2url(data);
+	updateStatus({ song: null, url: null, playing: false, loadingSong: song2title(data), loadingUrl: url, autoplay: true, playlistEntry: null });
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 });
 if (typeof $().slider === 'function') {
@@ -220,7 +220,7 @@ if (typeof $().slider === 'function') {
 function onPlayerReady() {
 }
 function onTrackReadyToPlay() {
-	updateStatus({ song: status.loadingSong, playing: status.autoplay, autoplay: null });
+	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
 function onTrackEnd() {
 	const p = ScriptNodePlayer.getInstance();
@@ -231,10 +231,11 @@ function onTrackEnd() {
 			$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 		if (next) {
 			$(`#playlist li:nth-child(${status.playlistEntry+1})`).addClass('playing');
-			updateStatus({ song: null, playing: false, loadingSong: next.path, loadingUrl: path2url(next), autoplay: true, playlistEntry: status.playlistEntry + 1 });
-			p.loadMusicFromURL(path2url(next), {}, () => {}, () => {});
+			const nextUrl = song2url(next);
+			updateStatus({ song: null, url: null, playing: false, loadingSong: next.song, loadingUrl: nextUrl, autoplay: true, playlistEntry: status.playlistEntry + 1 });
+			p.loadMusicFromURL(nextUrl, {}, () => {}, () => {});
 		} else
-			updateStatus({ song: null, playing: false, playlistEntry: null });
+			updateStatus({ song: null, url: null, playing: false, playlistEntry: null });
 		return;
 	}
 	p.loadMusicFromURL(status.loadingUrl, {}, () => {}, () => {});
@@ -312,18 +313,18 @@ $('#previous').on('click', () => {
 });
 
 function updatePlaylist(playlistEntry) {
-	const playlist = $('#playlist li').get().map(li => ({ path: $(li).attr('data-path'), source: $(li).attr('data-source') }));
+	const playlist = $('#playlist li').get().map(li => ({ song: $(li).attr('data-song'), song_link: $(li).attr('data-song-link') }));
 	updateStatus({ playlist, playlistEntry });
 }
 
 function playPlaylist(playlistEntry) {
-	const song = status.playlist[playlistEntry-1];
-	if (!song)
+	const entry = status.playlist[playlistEntry-1];
+	if (!entry)
 		return;
-	const url = path2url(song);
 	if (status.playlistEntry)
 		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 	$(`#playlist li:nth-child(${playlistEntry})`).addClass('playing');
-	updateStatus({ song: null, playing: false, loadingSong: song.path, loadingUrl: url, autoplay: true, playlistEntry });
+	const url = song2url(entry);
+	updateStatus({ song: null, url: null, playing: false, loadingSong: entry.song, loadingUrl: url, autoplay: true, playlistEntry });
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 }
