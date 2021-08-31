@@ -8,6 +8,7 @@ let status = {
 	playlistEntry: null, playlist: [],
 };
 let songs;
+let games;
 
 let details = { view: null };
 
@@ -72,6 +73,7 @@ const songAutoscroll = new Autoscroll($('#song'), 24);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = /(^|\/)(di|gmc|med|mod|np2|np3|ntp|p4x|pp21|pru2|sfx|xm)\.[^\/]+$/i;
+	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, ...game, song_url: song2url(song) }))], []);
 	$('#library').DataTable({
 		data: songs.map(song => ({
@@ -84,19 +86,32 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 			song_url: song.song_url,
 		})),
 		columns: [
-			{ data: "status" },
-			{ data: "game", title: "Game" },
-			{ data: "song", title: "Song" },
-			{ data: "composer", title: "Composer" },
-			{ data: "platform", title: "Platform" },
+			{ name: "status", data: "status" },
+			{ name: "game", data: "game", title: "Game" },
+			{ name: "song", data: "song", title: "Song" },
+			{ name: "composer", data: "composer", title: "Composer" },
+			{ name: "platform", data: "platform", title: "Platform" },
 		],
 		order: [1, 'asc'],
 		lengthMenu: [[10, 100, 1000, -1], [10, 100, 1000, "All"]],
-		dom: 'flrtip',
+		dom: 'f<"library_filters">lrtip',
 		scrollY: 'calc(100vh - 16em)',
 		scrollCollapse: true,
 		paging: false,
 	});
+	$('.library_filters').text('Filter:').append([
+		$('<select>', { id: 'filter_platform'}),
+		$('<i>', { class: "fas fa-chevron-right" }),
+		$('<select>', { id: 'filter_game'}),
+		$('<i>', { class: "fas fa-chevron-right" }),
+		$('<select>', { id: 'filter_song'}),
+	]);
+	$('#filter_platform').on('change', filterChangePlatform);
+	$('#filter_game').on('change', filterChangeGame);
+	$('#filter_song').on('change', filterChangeSong);
+	updateFiltersPlatform();
+	updateFiltersGame();
+	updateFiltersSong();
 	$('#stats_songs_total').text(songs.length);
 	const supportedSongs = songs.filter(song => compat.test(song.song)).length;
 	$('#stats_songs_supported').text(supportedSongs);
@@ -327,4 +342,44 @@ function playPlaylist(playlistEntry) {
 	const url = song2url(entry);
 	updateStatus({ song: null, url: null, playing: false, loadingSong: entry.song, loadingUrl: url, autoplay: true, playlistEntry });
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
+}
+
+const filters = { platform: '', game: '', song: '' };
+
+function setOptions(select, options, all) {
+	select.empty().append(options.map(option => $('<option>', { value: option, text: option || all })));
+}
+function updateFiltersPlatform() {
+	setOptions($('#filter_platform'), ['', 'Amiga'], '(Platform)');
+}
+function updateFiltersGame() {
+	setOptions($('#filter_game'), [''].concat(games.map(game => game.game)), '(Game)');
+}
+function updateFiltersSong() {
+	const songs = games.find(game => game.game === filters.game)?.songs || [];
+	setOptions($('#filter_song'), [''].concat(songs.map(song => song.song)), '(Song)');
+}
+function filterChangePlatform(event) {
+	filters.platform = event.target.value;
+	filters.game = '';
+	filters.song = '';
+	updateFiltersGame();
+	updateFiltersSong();
+	const table = $('#library').DataTable();
+	table.column('platform:name').search(filters.platform && `^${$.fn.dataTable.util.escapeRegex(filters.platform)}$`, true).draw();
+	table.column('game:name').search('').draw();
+	table.column('song:name').search('').draw();
+}
+function filterChangeGame(event) {
+	filters.game = event.target.value;
+	filters.song = '';
+	updateFiltersSong();
+	const table = $('#library').DataTable();
+	table.column('game:name').search(filters.game && `^${$.fn.dataTable.util.escapeRegex(filters.game)}$`, true).draw();
+	table.column('song:name').search('').draw();
+}
+function filterChangeSong(event) {
+	filters.song = event.target.value;
+	const table = $('#library').DataTable();
+	table.column('song:name').search(filters.song && `^${$.fn.dataTable.util.escapeRegex(filters.song)}$`, true).draw();
 }

@@ -286,3 +286,19 @@ i.issue {
 	background: #eee;
 	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
 }
+.library_filters {
+	display: inline-block;
+	margin-left: 2em;
+}
+.library_filters select:first-child {
+	margin-left: 1em;
+}
+.library_filters select {
+	border-radius: 0;
+	border: none;
+	background: #eee;
+	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
+	margin: 0 0.5em;
+	vertical-align: middle;
+	height: 26px;
+}
