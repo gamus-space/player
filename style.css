@@ -137,6 +137,9 @@ section.details.playlist .title {
 	font-weight: bold;
 	font-style: italic;
 }
+.controls .title h1 a {
+	color: black;
+}
 .controls .title h2 {
 	margin: 10px;
 	font-size: 1.0em;
@@ -301,4 +304,8 @@ i.issue {
 	margin: 0 0.5em;
 	vertical-align: middle;
 	height: 26px;
+}
+.library_filters select.active {
+	background: #888;
+	color: #eee;
 }

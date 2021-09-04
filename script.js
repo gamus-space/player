@@ -1,6 +1,7 @@
 'use strict';
 
-const DATA_ROOT = location.hostname === 'localhost' ? '../scraper/data' : 'https://db.gamus.space';
+const ROOT_PATH = document.getElementsByTagName('base')[0].attributes.href.value;
+const DATA_ROOT = location.hostname === 'localhost' ? '/scraper/data' : 'https://db.gamus.space';
 
 let status = {
 	song: null, url: null, playing: false,
@@ -103,15 +104,13 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		$('<select>', { id: 'filter_platform'}),
 		$('<i>', { class: "fas fa-chevron-right" }),
 		$('<select>', { id: 'filter_game'}),
-		$('<i>', { class: "fas fa-chevron-right" }),
+		$('<i>', { id: 'filter_song_chevron', class: "fas fa-chevron-right" }),
 		$('<select>', { id: 'filter_song'}),
 	]);
 	$('#filter_platform').on('change', filterChangePlatform);
 	$('#filter_game').on('change', filterChangeGame);
 	$('#filter_song').on('change', filterChangeSong);
-	updateFiltersPlatform();
-	updateFiltersGame();
-	updateFiltersSong();
+	updateRoute(history.state);
 	$('#stats_songs_total').text(songs.length);
 	const supportedSongs = songs.filter(song => compat.test(song.song)).length;
 	$('#stats_songs_supported').text(supportedSongs);
@@ -360,26 +359,46 @@ function updateFiltersSong() {
 	setOptions($('#filter_song'), [''].concat(songs.map(song => song.song)), '(Song)');
 }
 function filterChangePlatform(event) {
-	filters.platform = event.target.value;
-	filters.game = '';
-	filters.song = '';
-	updateFiltersGame();
-	updateFiltersSong();
-	const table = $('#library').DataTable();
-	table.column('platform:name').search(filters.platform && `^${$.fn.dataTable.util.escapeRegex(filters.platform)}$`, true).draw();
-	table.column('game:name').search('').draw();
-	table.column('song:name').search('').draw();
+	enterState({ platform: event.target.value });
 }
 function filterChangeGame(event) {
-	filters.game = event.target.value;
-	filters.song = '';
-	updateFiltersSong();
-	const table = $('#library').DataTable();
-	table.column('game:name').search(filters.game && `^${$.fn.dataTable.util.escapeRegex(filters.game)}$`, true).draw();
-	table.column('song:name').search('').draw();
+	enterState({ platform: filters.platform, game: event.target.value });
 }
 function filterChangeSong(event) {
-	filters.song = event.target.value;
+	enterState({ platform: filters.platform, game: filters.game, song: event.target.value });
+}
+function enterState(state) {
+	const routePath = (root, segments) => `${root}${segments.map(s => encodeURIComponent(s)).join('/')}`;
+	const segments = [state.platform, state.game, state.song].filter(s => s != null);
+	history.pushState(state, '', routePath(ROOT_PATH, segments));
+	updateRoute(history.state);
+}
+function updateRoute(state) {
+	state ||= initRoute(location.pathname);
+	filters.platform = state?.platform || '';
+	filters.game = state?.game || '';
+	filters.song = state?.song || '';
+	updateFiltersPlatform();
+	updateFiltersGame();
+	updateFiltersSong();
+	$('#filter_platform').val(filters.platform);
+	$('#filter_game').val(filters.game);
+	$('#filter_song').val(filters.song);
+	$('#filter_platform').toggleClass('active', filters.platform !== '');
+	$('#filter_game').toggleClass('active', filters.game !== '');
+	$('#filter_song').toggleClass('active', filters.song !== '');
+	$('#filter_song, #filter_song_chevron').css('display', filters.game !== '' ? 'initial' : 'none');
 	const table = $('#library').DataTable();
+	table.column('platform:name').search(filters.platform && `^${$.fn.dataTable.util.escapeRegex(filters.platform)}$`, true).draw();
+	table.column('game:name').search(filters.game && `^${$.fn.dataTable.util.escapeRegex(filters.game)}$`, true).draw();
 	table.column('song:name').search(filters.song && `^${$.fn.dataTable.util.escapeRegex(filters.song)}$`, true).draw();
 }
+function initRoute(path) {
+	const stripPrefix = (s, p) => s.startsWith(p) ? s.slice(p.length) : s;
+	const split = (s, d) => s === '' ? [] : s.split(d);
+	const segments = split(stripPrefix(path, ROOT_PATH), '/').map(s => decodeURIComponent(s));
+	return { platform: segments[0], game: segments[1], song: segments[2] };
+}
+window.onpopstate = (event) => {
+	updateRoute(event.state);
+};
