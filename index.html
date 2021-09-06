@@ -5,6 +5,9 @@
 <head>
 	<meta charset="utf-8">
 	<title>GAMUS</title>
+	<script type="text/javascript">
+		document.write('<base href="' + (location.hostname == 'localhost' ? '/player/' : '/') + '">');
+	</script>
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="assets/fontawesome-free-5.15.3-web/css/all.min.css">
@@ -23,7 +26,7 @@
 	<section class="header">
 		<div class="controls">
 			<div class="title">
-				<h1>GAme MUSic</h1>
+				<h1><a href=".">GAme MUSic</a></h1>
 				<h2>space of retro game music</h2>
 			</div>
 			<div class="status">
@@ -80,8 +83,9 @@
 		<section class="details details_hidden playlist">
 			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
 			<div class="title">
+				<button id="playlist_add" title="Add all"><i class="fas fa-plus-square"></i></button>
 				<h1>playlist</h1>
-				<button id="playlist_clear" disabled><i class="fas fa-times"></i></button>
+				<button id="playlist_clear" title="Remove all" disabled><i class="fas fa-times"></i></button>
 			</div>
 			<ul id="playlist"></ul>
 		</section>
