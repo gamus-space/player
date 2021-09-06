@@ -2,6 +2,7 @@
 
 const ROOT_PATH = document.getElementsByTagName('base')[0].attributes.href.value;
 const DATA_ROOT = location.hostname === 'localhost' ? '/scraper/data' : 'https://db.gamus.space';
+const DOC_TITLE = document.title;
 
 let status = {
 	song: null, url: null, playing: false,
@@ -202,12 +203,7 @@ $('#library tbody').on('click', 'tr', event => {
 	if (data.status === '')
 		return;
 	if (details.view === 'playlist') {
-		$('#playlist').append(
-			$('<li>', { text: `${data.game} - ${data.song}`, 'data-song': song2title(data), 'data-song-link': data.song_link}).append(
-				$('<button>', { class: 'small' }).append($('<i>', { class: 'fas fa-times' }))
-			)
-		);
-		updatePlaylist();
+		addToPlaylist(data);
 		return;
 	}
 	if (status.playlistEntry)
@@ -302,6 +298,10 @@ $('#playlist').on('click', 'button', event => {
 	$(event.target).parents('li').remove();
 	updatePlaylist(entry);
 });
+$('#playlist_add').on('click', () => {
+	const table = $('#library').DataTable();
+	table.rows({ search: 'applied' }).data().toArray().filter(({ status }) => status != '').forEach(addToPlaylist);
+});
 $('#playlist_clear').on('click', () => {
 	$('#playlist').empty();
 	updatePlaylist(0);
@@ -325,6 +325,15 @@ $('#next').on('click', () => {
 $('#previous').on('click', () => {
 	playPlaylist(status.playlistEntry - 1);
 });
+
+function addToPlaylist(data) {
+	$('#playlist').append(
+		$('<li>', { text: `${data.game} - ${data.song}`, 'data-song': song2title(data), 'data-song-link': data.song_link}).append(
+			$('<button>', { class: 'small' }).append($('<i>', { class: 'fas fa-times' }))
+		)
+	);
+	updatePlaylist();
+}
 
 function updatePlaylist(playlistEntry) {
 	const playlist = $('#playlist li').get().map(li => ({ song: $(li).attr('data-song'), song_link: $(li).attr('data-song-link') }));
@@ -392,6 +401,7 @@ function updateRoute(state) {
 	table.column('platform:name').search(filters.platform && `^${$.fn.dataTable.util.escapeRegex(filters.platform)}$`, true).draw();
 	table.column('game:name').search(filters.game && `^${$.fn.dataTable.util.escapeRegex(filters.game)}$`, true).draw();
 	table.column('song:name').search(filters.song && `^${$.fn.dataTable.util.escapeRegex(filters.song)}$`, true).draw();
+	document.title = [filters.platform, filters.game, filters.song, DOC_TITLE].filter(s => s !== '').join(' - ');
 }
 function initRoute(path) {
 	const stripPrefix = (s, p) => s.startsWith(p) ? s.slice(p.length) : s;
