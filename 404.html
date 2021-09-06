@@ -1,0 +1,134 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>GAMUS</title>
+	<script type="text/javascript">
+		document.write('<base href="' + (location.hostname == 'localhost' ? '/player/' : '/') + '">');
+	</script>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="assets/fontawesome-free-5.15.3-web/css/all.min.css">
+	<link rel="stylesheet" href="assets/fonts-DSEG_v046/dseg.css">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap">
+	<script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+	<script src="lib/scriptprocessor_player.js"></script>
+	<script src="lib/backend_xmp.js"></script>
+	<script type="module" src="script.js"></script>
+</head>
+
+<body>
+	<section class="header">
+		<div class="controls">
+			<div class="title">
+				<h1><a href=".">GAme MUSic</a></h1>
+				<h2>space of retro game music</h2>
+			</div>
+			<div class="status">
+				<div id="song"></div>
+				<div class="multi_info">
+					<div id="pos"></div>
+					<span>
+						<a id="previous"><i class="fas fa-step-backward"></i></a>
+						<a id="playpause"><i class="fas fa-stop"></i></a>
+						<a id="next"><i class="fas fa-step-forward"></i></a>
+					</span>
+					<div id="time"></div>
+					<input id="volume" type="range" min="0" max="1" value="1" step="0.1" class="hidden" />
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="body">
+		<section class="main">
+			<div class="menu">
+				<button class="show_details" data-details="news" title="News"><i class="fas fa-bell"></i></button>
+				<button class="show_details" data-details="info" title="Song information"><i class="fas fa-info"></i></button>
+				<button class="show_details" data-details="playlist" title="Playlist"><i class="fas fa-list"></i></button>
+				<button class="show_details" data-details="about" title="About this site"><i class="fas fa-question"></i></button>
+			</div>
+			<table id="library" width="100%">
+				<thead />
+				<tbody />
+			</table>
+			<section class="footer">
+				&copy; 2021 krzykos
+				<a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a>
+				<a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>
+			</section>
+		</section>
+		<section class="details details_hidden info">
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+			<h1>
+				<span id="info_game">game</span>
+			</h1>
+			<h2><span id="info_song">song<span></h2>
+			<h2>by <span id="info_composer">composer</span></h2>
+			<h2>
+				<span id="info_platform">platform</span>
+				(<span id="info_year">year</span>)
+			</h2>
+			<h3><span id="info_size">size</span><span>kB</span></h3>
+			<h3>game developed by</h3>
+			<ul id="info_developers"></ul>
+			<h3>game published by</h3>
+			<ul id="info_publishers"></ul>
+			<h3>from <a id="info_source" href="#" target="_blank">source</a></h3>
+		</section>
+		<section class="details details_hidden playlist">
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+			<div class="title">
+				<button id="playlist_add" title="Add all"><i class="fas fa-plus-square"></i></button>
+				<h1>playlist</h1>
+				<button id="playlist_clear" title="Remove all" disabled><i class="fas fa-times"></i></button>
+			</div>
+			<ul id="playlist"></ul>
+		</section>
+		<section class="details details_hidden about">
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+			<h1>about</h1>
+			<p>GAMUS player</p>
+			<h2>working songs</h2>
+			<span>
+				<span id="stats_songs_total">0</span>
+				<span id="stats_songs_supported">0</span>
+				<div id="stats_bar">
+					<div class="ui-slider-handle"></div>
+				</div>
+			</span>
+			<h2>user requests</h2>
+			<p>use the <a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a> to report bugs or request enhancements</p>
+			<h2>project support</h2>
+			<p>feel free to support on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a></p>
+			<h2>credits</h2>
+			<ul>
+				<li><a href="http://xmp.sourceforge.net/" target="_blank">XMP</a> - the module player</li>
+				<li><a href="https://www.wothke.ch/webxmp/" target="_blank">WebXMP</a> - web version of XMP</li>
+				<li><a href="https://www.exotica.org.uk/wiki/UnExoticA" target="_blank">UnExoticA</a> - source of Amiga music</li>
+				<li><a href="https://www.myfreetextures.com/" target="_blank">My Free Textures</a> - background collection</li>
+				<li><a href="https://www.keshikan.net/fonts-e.html" target="_blank">DSEG</a> - segment display font</li>
+			</ul>
+		</section>
+		<section class="details details_hidden news">
+			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+			<h1>news</h1>
+			<div>
+				<h2>Patreon created</h2>
+				<h3>2021-08-13</h3>
+				<p>If you like the project, please support it on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>. Adding more music eats up plenty of time...</p>
+			</div>
+			<div>
+				<h2>First release!</h2>
+				<h3>2021-07-21</h3>
+				<p>First version released, supporting 528/784 songs. Now development will focus on Amiga music support.</p>
+			</div>
+		</section>
+	</section>
+</body>
+
+</html>
