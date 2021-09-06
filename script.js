@@ -1,5 +1,6 @@
 'use strict';
 
+const ROOT_URL = document.getElementsByTagName('base')[0].href;
 const ROOT_PATH = document.getElementsByTagName('base')[0].attributes.href.value;
 const DATA_ROOT = location.hostname === 'localhost' ? '/scraper/data' : 'https://db.gamus.space';
 const DOC_TITLE = document.title;
@@ -379,7 +380,7 @@ function filterChangeSong(event) {
 function enterState(state) {
 	const routePath = (root, segments) => `${root}${segments.map(s => encodeURIComponent(s)).join('/')}`;
 	const segments = [state.platform, state.game, state.song].filter(s => s != null);
-	history.pushState(state, '', routePath(ROOT_PATH, segments));
+	history.pushState(state, '', routePath(ROOT_URL, segments));
 	updateRoute(history.state);
 }
 function updateRoute(state) {
