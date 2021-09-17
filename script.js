@@ -267,7 +267,7 @@ $('#playpause').on('click', () => {
 $('.show_details').on('click', event => {
 	setDetails(event.currentTarget.attributes['data-details'].value);
 });
-$('.details > .hide').on('click', () => {
+$('.details .hide').on('click', () => {
 	setDetails(null);
 });
 $('.details').on('transitionend', () => {

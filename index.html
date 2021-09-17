@@ -63,73 +63,89 @@
 			</section>
 		</section>
 		<section class="details details_hidden info">
-			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
-			<h1>
-				<span id="info_game">game</span>
-			</h1>
-			<h2><span id="info_song">song<span></h2>
-			<h2>by <span id="info_composer">composer</span></h2>
-			<h2>
-				<span id="info_platform">platform</span>
-				(<span id="info_year">year</span>)
-			</h2>
-			<h3><span id="info_size">size</span><span>kB</span></h3>
-			<h3>game developed by</h3>
-			<ul id="info_developers"></ul>
-			<h3>game published by</h3>
-			<ul id="info_publishers"></ul>
-			<h3>from <a id="info_source" href="#" target="_blank">source</a></h3>
+			<div class="header">
+				<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+				<h1>
+					<span id="info_game">game</span>
+				</h1>
+			</div>
+			<div class="content">
+				<h2><span id="info_song">song<span></h2>
+				<h2>by <span id="info_composer">composer</span></h2>
+				<h2>
+					<span id="info_platform">platform</span>
+					(<span id="info_year">year</span>)
+				</h2>
+				<h3><span id="info_size">size</span><span>kB</span></h3>
+				<h3>game developed by</h3>
+				<ul id="info_developers"></ul>
+				<h3>game published by</h3>
+				<ul id="info_publishers"></ul>
+				<h3>from <a id="info_source" href="#" target="_blank">source</a></h3>
+			</div>
 		</section>
 		<section class="details details_hidden playlist">
-			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
-			<div class="title">
-				<button id="playlist_add" title="Add all"><i class="fas fa-plus-square"></i></button>
-				<h1>playlist</h1>
-				<button id="playlist_clear" title="Remove all" disabled><i class="fas fa-times"></i></button>
+			<div class="header">
+				<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+				<div class="title">
+					<button id="playlist_add" title="Add all"><i class="fas fa-plus-square"></i></button>
+					<h1>playlist</h1>
+					<button id="playlist_clear" title="Remove all" disabled><i class="fas fa-times"></i></button>
+				</div>
 			</div>
-			<ul id="playlist"></ul>
+			<div class="content">
+				<ol id="playlist"></ol>
+			</div>
 		</section>
 		<section class="details details_hidden about">
-			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
-			<h1>about</h1>
-			<p>GAMUS player</p>
-			<h2>working songs</h2>
-			<span>
-				<span id="stats_songs_total">0</span>
-				<span id="stats_songs_supported">0</span>
-				<div id="stats_bar">
-					<div class="ui-slider-handle"></div>
-				</div>
-			</span>
-			<h2>user requests</h2>
-			<p>use the <a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a> to report bugs or request enhancements</p>
-			<h2>project support</h2>
-			<p>feel free to support on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a></p>
-			<h2>credits</h2>
-			<ul>
-				<li><a href="http://xmp.sourceforge.net/" target="_blank">XMP</a> - the module player</li>
-				<li><a href="https://www.wothke.ch/webxmp/" target="_blank">WebXMP</a> - web version of XMP</li>
-				<li><a href="https://www.exotica.org.uk/wiki/UnExoticA" target="_blank">UnExoticA</a> - source of Amiga music</li>
-				<li><a href="https://www.myfreetextures.com/" target="_blank">My Free Textures</a> - background collection</li>
-				<li><a href="https://www.keshikan.net/fonts-e.html" target="_blank">DSEG</a> - segment display font</li>
-			</ul>
-			<h2>resources</h2>
-			<ul>
-				<li><a href="https://music.cryptofolio.live/" target="_blank">webaudio-mod-player</a> - previous version, prototype of this player</li>
-			</ul>
+			<div class="header">
+				<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+				<h1>about</h1>
+			</div>
+			<div class="content">
+				<p>GAMUS player</p>
+				<h2>working songs</h2>
+				<span>
+					<span id="stats_songs_total">0</span>
+					<span id="stats_songs_supported">0</span>
+					<div id="stats_bar">
+						<div class="ui-slider-handle"></div>
+					</div>
+				</span>
+				<h2>user requests</h2>
+				<p>use the <a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a> to report bugs or request enhancements</p>
+				<h2>project support</h2>
+				<p>feel free to support on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a></p>
+				<h2>credits</h2>
+				<ul>
+					<li><a href="http://xmp.sourceforge.net/" target="_blank">XMP</a> - the module player</li>
+					<li><a href="https://www.wothke.ch/webxmp/" target="_blank">WebXMP</a> - web version of XMP</li>
+					<li><a href="https://www.exotica.org.uk/wiki/UnExoticA" target="_blank">UnExoticA</a> - source of Amiga music</li>
+					<li><a href="https://www.myfreetextures.com/" target="_blank">My Free Textures</a> - background collection</li>
+					<li><a href="https://www.keshikan.net/fonts-e.html" target="_blank">DSEG</a> - segment display font</li>
+				</ul>
+				<h2>resources</h2>
+				<ul>
+					<li><a href="https://music.cryptofolio.live/" target="_blank">webaudio-mod-player</a> - previous version, prototype of this player</li>
+				</ul>
+			</div>
 		</section>
 		<section class="details details_hidden news">
-			<button class="hide"><i class="fas fa-angle-double-right"></i></button>
-			<h1>news</h1>
-			<div>
-				<h2>Patreon created</h2>
-				<h3>2021-08-13</h3>
-				<p>If you like the project, please support it on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>. Adding more music eats up plenty of time...</p>
+			<div class="header">
+				<button class="hide"><i class="fas fa-angle-double-right"></i></button>
+				<h1>news</h1>
 			</div>
-			<div>
-				<h2>First release!</h2>
-				<h3>2021-07-21</h3>
-				<p>First version released, supporting 528/784 songs. Now development will focus on Amiga music support.</p>
+			<div class="content">
+				<div>
+					<h2>Patreon created</h2>
+					<h3>2021-08-13</h3>
+					<p>If you like the project, please support it on <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>. Adding more music eats up plenty of time...</p>
+				</div>
+				<div>
+					<h2>First release!</h2>
+					<h3>2021-07-21</h3>
+					<p>First version released, supporting 528/784 songs. Now development will focus on Amiga music support.</p>
+				</div>
 			</div>
 		</section>
 	</section>
