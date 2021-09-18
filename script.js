@@ -81,7 +81,8 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	$('#library').DataTable({
 		data: songs.map(song => ({
 			status: compat.test(song.song) ? '<i class="fas fa-stop"></i>' : '',
-			song: song.song + (issuesMap[song.song_link] ? ` <i class="issue fas fa-exclamation-circle" title="${issuesMap[song.song_link].join(`\n`)}"></i>` : ""),
+			song: song.song,
+			song_label: song.song + (issuesMap[song.song_link] ? ` <i class="issue fas fa-exclamation-circle" title="${issuesMap[song.song_link].join(`\n`)}"></i>` : ""),
 			composer: song.composer,
 			game: song.game,
 			platform: song.platform,
@@ -91,7 +92,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		columns: [
 			{ name: "status", data: "status" },
 			{ name: "game", data: "game", title: "Game" },
-			{ name: "song", data: "song", title: "Song" },
+			{ name: "song", data: "song_label", title: "Song" },
 			{ name: "composer", data: "composer", title: "Composer" },
 			{ name: "platform", data: "platform", title: "Platform" },
 		],
@@ -166,10 +167,8 @@ function updateStatus(update) {
 	if (status.song) {
 		const info = ScriptNodePlayer.getInstance().getSongInfo();
 		songAutoscroll.value = '>>> ' + [status.song, info?.player, info?.title].map(s => s).join(' ~ ') + ' <<<';
-		const volume = player.getVolume();
-		$('#volume').val(volume);
-		$('#volume').toggleClass('silent', volume == 0);
-		$('#volume2').slider({ value: volume });
+		const volume = $('#volume2').length ? $('#volume2').slider('option', 'value') : $('#volume').val();
+		player.setVolume(volume);
 	} else
 		songAutoscroll.value = '~ Pick a song ~';
 
@@ -214,17 +213,24 @@ $('#library tbody').on('click', 'tr', event => {
 	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
 });
 if (typeof $().slider === 'function') {
+	const volume = localStorage.getItem('volume') ?? 1;
 	$('#volume').replaceWith($('<div>', { id: 'volume2' }));
-	$('#volume2').slider({ orientation: 'vertical', range: 'min', min: 0, value: 1, max: 1, step: 0.05 });
+	$('#volume2').slider({ orientation: 'vertical', range: 'min', min: 0, value: volume, max: 1, step: 0.05 });
 	$('#volume2').on('slide', (event, ui) => {
-		player.setVolume(ui.value);
+		const volume = ui.value;
+		player.setVolume(volume);
+		localStorage.setItem('volume', volume);
 	});
 } else {
+	const volume = localStorage.getItem('volume') ?? 1;
+	$('#volume').val(volume);
+	$('#volume').toggleClass('silent', volume == 0);
 	$('#volume').removeClass('hidden');
 	$('#volume').on('change', event => {
 		const volume = event.target.value;
 		player.setVolume(volume);
 		$('#volume').toggleClass('silent', volume == 0);
+		localStorage.setItem('volume', volume);
 	});
 }
 
@@ -329,16 +335,19 @@ $('#previous').on('click', () => {
 
 function addToPlaylist(data) {
 	$('#playlist').append(
-		$('<li>', { text: `${data.game} - ${data.song}`, 'data-song': song2title(data), 'data-song-link': data.song_link}).append(
+		$('<li>', { text: `${data.game} - ${data.song}`, 'data-game': data.game, 'data-song': data.song, 'data-song-link': data.song_link}).append(
 			$('<button>', { class: 'small' }).append($('<i>', { class: 'fas fa-times' }))
 		)
 	);
 	updatePlaylist();
 }
 
+(localStorage.getItem('playlist') ? JSON.parse(localStorage.getItem('playlist')) : []).forEach(addToPlaylist);
+
 function updatePlaylist(playlistEntry) {
-	const playlist = $('#playlist li').get().map(li => ({ song: $(li).attr('data-song'), song_link: $(li).attr('data-song-link') }));
-	updateStatus({ playlist, playlistEntry });
+	const playlist = $('#playlist li').get().map(li => ({ game: $(li).attr('data-game'), song: $(li).attr('data-song'), song_link: $(li).attr('data-song-link') }));
+	updateStatus({ playlist: playlist.map(e => ({ song: song2title(e), song_link: e.song_link })), playlistEntry });
+	localStorage.setItem('playlist', JSON.stringify(playlist));
 }
 
 function playPlaylist(playlistEntry) {
