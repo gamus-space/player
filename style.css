@@ -50,6 +50,7 @@ section.details {
 	padding-left: 1em;
 	flex-basis: 40em;
 	transition: flex-basis 1s;
+	position: relative;
 }
 section.details_hidden {
 	flex-basis: 0;
@@ -58,6 +59,19 @@ section.details_hidden {
 }
 section.details_hidden * {
 	display: none;
+}
+section.details .header {
+	position: absolute;
+	left: 1em;
+	right: 4px;
+}
+section.details .content {
+	position: absolute;
+	top: 4em;
+	bottom: 0;
+	overflow-y: auto;
+	left: 1em;
+	right: 0;
 }
 section.details h1 {
 	font-size: 2.4em;
@@ -83,15 +97,20 @@ section.details.playlist .title {
 	display: flex;
 }
 #playlist {
-	list-style: square;
-	padding-left: 1em;
+	padding-left: 3em;
 }
 #playlist li {
 	line-height: 2em;
 	cursor: crosshair;
 }
+#playlist li:hover {
+	background: #ffffff40;
+}
+#playlist li.ui-sortable-helper {
+	list-style: none;
+}
 #playlist li.playing {
-	list-style: circle;
+	text-decoration: underline;
 }
 #playlist li button {
 	margin-left: 1em;
