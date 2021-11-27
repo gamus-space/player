@@ -17,9 +17,17 @@ let details = { view: null };
 
 const issues = [
 	{ name: "The Player 4.1a issues", groups: [
-		{ name: "volume", songs: ["UnExoticA/Mortal_Kombat_2/p4x.ingame_3", "UnExoticA/Mortal_Kombat_2/p4x.intro", "UnExoticA/Mortal_Kombat_2/p4x.title", "UnExoticA/Lost_Vikings/p4x.ingame4", "UnExoticA/Lost_Vikings/p4x.ingame5", "UnExoticA/Lost_Vikings/p4x.intro"]},
-		{ name: "repeat", songs: ["UnExoticA/Mortal_Kombat_2/p4x.ingame_4", "UnExoticA/Lost_Vikings/p4x.ingame4", "UnExoticA/Lost_Vikings/p4x.ingame5"]},
-		{ name: "jitter", songs: ["UnExoticA/Body_Blows_Galactic/p4x.earth", "UnExoticA/Lost_Vikings/p4x.death"]},
+		{ name: "order", songs: ["UnExoticA/Alien_Breed_2/AGA_Version/p4x.title", "UnExoticA/Alien_Breed_2/p4x.title", "UnExoticA/Body_Blows_Galactic/p4x.options", "UnExoticA/Body_Blows_Galactic/p4x.titanica", "UnExoticA/Body_Blows_Galactic/p4x.title", "UnExoticA/Mortal_Kombat/p4x.ingame_1", "UnExoticA/Mortal_Kombat/p4x.ingame_3", "UnExoticA/Mortal_Kombat/p4x.title", "UnExoticA/Mortal_Kombat_2/p4x.ingame_1", "UnExoticA/Mortal_Kombat_2/p4x.ingame_2", "UnExoticA/Mortal_Kombat_2/p4x.ingame_3", "UnExoticA/Mortal_Kombat_2/p4x.ingame_4", "UnExoticA/Mortal_Kombat_2/p4x.intro", "UnExoticA/Superfrog/p4x.L5mu", "UnExoticA/Superfrog/p4x.L6mu", "UnExoticA/Superfrog/p4x.Musc", "UnExoticA/Lion_King/p4x.level_3", "UnExoticA/Lion_King/p4x.level_4", "UnExoticA/Lion_King/p4x.level_5", "UnExoticA/Lion_King/p4x.level_7", "UnExoticA/Lion_King/p4x.level_8", "UnExoticA/Lion_King/p4x.title", "UnExoticA/Lost_Vikings/p4x.ingame2", "UnExoticA/Lost_Vikings/p4x.ingame3", "UnExoticA/Lost_Vikings/p4x.ingame4", "UnExoticA/Lost_Vikings/p4x.ingame5"] },
+		{ name: "samples", songs: ["UnExoticA/Mortal_Kombat/p4x.ingame_2", "UnExoticA/Superfrog/p4x.L1mu", "UnExoticA/Superfrog/p4x.L2mu", "UnExoticA/Superfrog/p4x.Lbmu", "UnExoticA/Superfrog/Unused/p4x.L2mu", "UnExoticA/Lost_Vikings/p4x.ingame1"] },
+		{ name: "clipped", songs: ["UnExoticA/Superfrog/p4x.intro_tune_5"] },
+	]},
+	{ name: "SoundTracker issues", groups: [
+		{ name: "silence", songs: ["UnExoticA/Prehistorik/mod.prehistoboy16", "UnExoticA/Prehistorik/mod.prehistorik1", "UnExoticA/Prehistorik/mod.prehistorik6", "UnExoticA/Prehistorik/mod.prehistorocky", "UnExoticA/Titus_the_Fox/mod.lagagnexport2", "UnExoticA/Titus_the_Fox/mod.lagbonus", "UnExoticA/Titus_the_Fox/mod.lagjeu1", "UnExoticA/Titus_the_Fox/mod.lagjeu3export", "UnExoticA/Titus_the_Fox/mod.lagjeu4export", "UnExoticA/Titus_the_Fox/mod.lagjeu5", "UnExoticA/Aventures_de_Moktar/mod.laggagne", "UnExoticA/Aventures_de_Moktar/mod.lagbonus", "UnExoticA/Aventures_de_Moktar/mod.lagjeu1", "UnExoticA/Aventures_de_Moktar/mod.lagjeu3", "UnExoticA/Aventures_de_Moktar/mod.lagjeu4", "UnExoticA/Aventures_de_Moktar/mod.lagjeu5"] },
+		{ name: "hops", songs: ["UnExoticA/Titus_the_Fox/mod.lagpres2", "UnExoticA/Aventures_de_Moktar/mod.lagpres2"] },
+	]},
+	{ name: "RichardJoseph issues", groups: [
+		{ name: "silence", songs: ["UnExoticA/Chaos_Engine/rjp.ingame_2.zip"] },
+		{ name: "not playing", songs: ["UnExoticA/Chaos_Engine/rjp.menu.zip"] },
 	]},
 ];
 const issuesMap = issues
@@ -75,7 +83,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 24);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /(^|\/)(di|gmc|med|mod|np2|np3|ntp|p4x|pp21|pru2|sfx|xm)\.[^\/]+$/i;
+	const compat = /(^|\/)(bp|dw|gmc|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, ...game, song_url: song2url(song) }))], []);
 	$('#library').DataTable({
@@ -165,10 +173,9 @@ function updateStatus(update) {
 	}
 
 	if (status.song) {
-		const info = ScriptNodePlayer.getInstance().getSongInfo();
-		songAutoscroll.value = '>>> ' + [status.song, info?.player, info?.title].map(s => s).join(' ~ ') + ' <<<';
+		songAutoscroll.value = '>>> ' + [status.song, player.formats()[player.version], loader.packer, player.title].filter(s => s).join(' ~ ') + ' <<<';
 		const volume = $('#volume2').length ? $('#volume2').slider('option', 'value') : $('#volume').val();
-		player.setVolume(volume);
+		player.volume = volume;
 	} else
 		songAutoscroll.value = '~ Pick a song ~';
 
@@ -210,7 +217,7 @@ $('#library tbody').on('click', 'tr', event => {
 		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 	const url = song2url(data);
 	updateStatus({ song: null, url: null, playing: false, loadingSong: song2title(data), loadingUrl: url, autoplay: true, playlistEntry: null });
-	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
+	loadMusicFromURL(url);
 });
 if (typeof $().slider === 'function') {
 	const volume = localStorage.getItem('volume') ?? 1;
@@ -218,7 +225,7 @@ if (typeof $().slider === 'function') {
 	$('#volume2').slider({ orientation: 'vertical', range: 'min', min: 0, value: volume, max: 1, step: 0.05 });
 	$('#volume2').on('slide', (event, ui) => {
 		const volume = ui.value;
-		player.setVolume(volume);
+		player.volume = volume;
 		localStorage.setItem('volume', volume);
 	});
 } else {
@@ -228,20 +235,16 @@ if (typeof $().slider === 'function') {
 	$('#volume').removeClass('hidden');
 	$('#volume').on('change', event => {
 		const volume = event.target.value;
-		player.setVolume(volume);
+		player.volume = volume;
 		$('#volume').toggleClass('silent', volume == 0);
 		localStorage.setItem('volume', volume);
 	});
 }
 
-function onPlayerReady() {
-}
 function onTrackReadyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
 function onTrackEnd() {
-	const p = ScriptNodePlayer.getInstance();
-	status.autoplay = false;
 	if (status.playlistEntry != null) {
 		const next = status.playlistEntry === 0 ? null : status.playlist[status.playlistEntry];
 		if (status.playlistEntry)
@@ -250,23 +253,22 @@ function onTrackEnd() {
 			$(`#playlist li:nth-child(${status.playlistEntry+1})`).addClass('playing');
 			const nextUrl = song2url(next);
 			updateStatus({ song: null, url: null, playing: false, loadingSong: next.song, loadingUrl: nextUrl, autoplay: true, playlistEntry: status.playlistEntry + 1 });
-			p.loadMusicFromURL(nextUrl, {}, () => {}, () => {});
+			loadMusicFromURL(nextUrl);
 		} else
 			updateStatus({ song: null, url: null, playing: false, playlistEntry: null });
 		return;
 	}
-	p.loadMusicFromURL(status.loadingUrl, {}, () => {}, () => {});
-	p.pause();
-	$('#time').text(`${time(0)} / ${time(p.getMaxPlaybackPosition() / 1000)}`);
+	updateStatus({ playing: false });
+	$('#time').text(`${time(0)} / ${time(player.duration / 1000)}`);
 }
 
 $('#playpause').on('click', () => {
 	if (!status.song)
 		return;
 	if (status.playing)
-		ScriptNodePlayer.getInstance().pause();
+		player.pause();
 	else
-		ScriptNodePlayer.getInstance().play();
+		player.play();
 	updateStatus({ playing: !status.playing });
 });
 
@@ -280,17 +282,13 @@ $('.details').on('transitionend', () => {
 	$('#library').DataTable().columns.adjust();
 });
 
-ScriptNodePlayer.createInstance(new XMPBackendAdapter(), '', [], false, onPlayerReady, onTrackReadyToPlay, onTrackEnd);
-updateStatus({});
-
 let lastUpdate = 0;
 function updateTime(timestamp) {
 	requestAnimationFrame(updateTime);
 	if (timestamp - lastUpdate < 200 || !status.song || !status.playing)
 		return;
 	lastUpdate = timestamp;
-	const p = ScriptNodePlayer.getInstance();
-	$('#time').text(time(p.getPlaybackPosition() / 1000) + ' / ' + time(p.getMaxPlaybackPosition() / 1000));
+	$('#time').text(time(player.position / 1000) + ' / ' + time(player.duration / 1000));
 }
 updateTime();
 
@@ -359,7 +357,7 @@ function playPlaylist(playlistEntry) {
 	$(`#playlist li:nth-child(${playlistEntry})`).addClass('playing');
 	const url = song2url(entry);
 	updateStatus({ song: null, url: null, playing: false, loadingSong: entry.song, loadingUrl: url, autoplay: true, playlistEntry });
-	ScriptNodePlayer.getInstance().loadMusicFromURL(url, {}, () => {}, () => {});
+	loadMusicFromURL(url);
 }
 
 const filters = { platform: '', game: '', song: '' };
@@ -422,3 +420,23 @@ function initRoute(path) {
 window.onpopstate = (event) => {
 	updateRoute(event.state);
 };
+
+let unloading = false;
+function loadMusicFromURL(url) {
+	const xhr = new XMLHttpRequest();
+	xhr.open("GET", url, true);
+	xhr.responseType = "arraybuffer";
+	xhr.onreadystatechange = () => {
+		unloading = true;
+		if (!loader.load(xhr.response)) return;
+		unloading = false;
+		player.play();
+		onTrackReadyToPlay();
+	};
+	xhr.send();
+}
+
+const loader = window.neoart.FileLoader();
+const player = loader.player;
+document.addEventListener("flodStop", () => { if (!unloading) onTrackEnd(); });
+updateStatus({});
