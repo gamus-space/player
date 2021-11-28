@@ -21,10 +21,6 @@ const issues = [
 		{ name: "samples", songs: ["UnExoticA/Mortal_Kombat/p4x.ingame_2", "UnExoticA/Superfrog/p4x.L1mu", "UnExoticA/Superfrog/p4x.L2mu", "UnExoticA/Superfrog/p4x.Lbmu", "UnExoticA/Superfrog/Unused/p4x.L2mu", "UnExoticA/Lost_Vikings/p4x.ingame1"] },
 		{ name: "clipped", songs: ["UnExoticA/Superfrog/p4x.intro_tune_5"] },
 	]},
-	{ name: "SoundTracker issues", groups: [
-		{ name: "silence", songs: ["UnExoticA/Prehistorik/mod.prehistoboy16", "UnExoticA/Prehistorik/mod.prehistorik1", "UnExoticA/Prehistorik/mod.prehistorik6", "UnExoticA/Prehistorik/mod.prehistorocky", "UnExoticA/Titus_the_Fox/mod.lagagnexport2", "UnExoticA/Titus_the_Fox/mod.lagbonus", "UnExoticA/Titus_the_Fox/mod.lagjeu1", "UnExoticA/Titus_the_Fox/mod.lagjeu3export", "UnExoticA/Titus_the_Fox/mod.lagjeu4export", "UnExoticA/Titus_the_Fox/mod.lagjeu5", "UnExoticA/Aventures_de_Moktar/mod.laggagne", "UnExoticA/Aventures_de_Moktar/mod.lagbonus", "UnExoticA/Aventures_de_Moktar/mod.lagjeu1", "UnExoticA/Aventures_de_Moktar/mod.lagjeu3", "UnExoticA/Aventures_de_Moktar/mod.lagjeu4", "UnExoticA/Aventures_de_Moktar/mod.lagjeu5"] },
-		{ name: "hops", songs: ["UnExoticA/Titus_the_Fox/mod.lagpres2", "UnExoticA/Aventures_de_Moktar/mod.lagpres2"] },
-	]},
 	{ name: "RichardJoseph issues", groups: [
 		{ name: "silence", songs: ["UnExoticA/Chaos_Engine/rjp.ingame_2.zip"] },
 		{ name: "not playing", songs: ["UnExoticA/Chaos_Engine/rjp.menu.zip"] },
@@ -325,9 +321,11 @@ $('#playlist').on('sortupdate', (event, ui) => {
 	updatePlaylist(entry);
 });
 $('#next').on('click', () => {
+	if (!status.playlistEntry) return;
 	playPlaylist(status.playlistEntry + 1);
 });
 $('#previous').on('click', () => {
+	if (!status.playlistEntry) return;
 	playPlaylist(status.playlistEntry - 1);
 });
 
@@ -406,9 +404,9 @@ function updateRoute(state) {
 	$('#filter_song').toggleClass('active', filters.song !== '');
 	$('#filter_song, #filter_song_chevron').css('display', filters.game !== '' ? 'initial' : 'none');
 	const table = $('#library').DataTable();
-	table.column('platform:name').search(filters.platform && `^${$.fn.dataTable.util.escapeRegex(filters.platform)}$`, true).draw();
-	table.column('game:name').search(filters.game && `^${$.fn.dataTable.util.escapeRegex(filters.game)}$`, true).draw();
-	table.column('song:name').search(filters.song && `^${$.fn.dataTable.util.escapeRegex(filters.song)}$`, true).draw();
+	table.column('platform:name').search(filters.platform && `^${$.fn.dataTable.util.escapeRegex(filters.platform)}$`, true, false).draw();
+	table.column('game:name').search(filters.game && `^${$.fn.dataTable.util.escapeRegex(filters.game)}$`, true, false).draw();
+	table.column('song:name').search(filters.song && `^${$.fn.dataTable.util.escapeRegex(filters.song)}($| )`, true, false).draw();
 	document.title = [filters.platform, filters.game, filters.song, DOC_TITLE].filter(s => s !== '').join(' - ');
 }
 function initRoute(path) {
