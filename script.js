@@ -17,8 +17,6 @@ let details = { view: null };
 
 const issues = [
 	{ name: "The Player 4.1a issues", groups: [
-		{ name: "sequence", songs: ["UnExoticA/Lost_Vikings/p4x.ingame4"] },
-		{ name: "volume", songs: ["UnExoticA/Superfrog/p4x.L1mu", "UnExoticA/Superfrog/p4x.Lbmu"] },
 		{ name: "clipped", songs: ["UnExoticA/Superfrog/p4x.intro_tune_5"] },
 	]},
 	{ name: "RichardJoseph issues", groups: [
