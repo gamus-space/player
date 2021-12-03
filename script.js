@@ -17,13 +17,10 @@ let details = { view: null };
 
 const issues = [
 	{ name: "The Player 4.1a issues", groups: [
-		{ name: "order", songs: ["UnExoticA/Alien_Breed_2/AGA_Version/p4x.title", "UnExoticA/Alien_Breed_2/p4x.title", "UnExoticA/Body_Blows_Galactic/p4x.options", "UnExoticA/Body_Blows_Galactic/p4x.titanica", "UnExoticA/Body_Blows_Galactic/p4x.title", "UnExoticA/Mortal_Kombat/p4x.ingame_1", "UnExoticA/Mortal_Kombat/p4x.ingame_3", "UnExoticA/Mortal_Kombat/p4x.title", "UnExoticA/Mortal_Kombat_2/p4x.ingame_1", "UnExoticA/Mortal_Kombat_2/p4x.ingame_2", "UnExoticA/Mortal_Kombat_2/p4x.ingame_3", "UnExoticA/Mortal_Kombat_2/p4x.ingame_4", "UnExoticA/Mortal_Kombat_2/p4x.intro", "UnExoticA/Superfrog/p4x.L5mu", "UnExoticA/Superfrog/p4x.L6mu", "UnExoticA/Superfrog/p4x.Musc", "UnExoticA/Lion_King/p4x.level_3", "UnExoticA/Lion_King/p4x.level_4", "UnExoticA/Lion_King/p4x.level_5", "UnExoticA/Lion_King/p4x.level_7", "UnExoticA/Lion_King/p4x.level_8", "UnExoticA/Lion_King/p4x.title", "UnExoticA/Lost_Vikings/p4x.ingame2", "UnExoticA/Lost_Vikings/p4x.ingame3", "UnExoticA/Lost_Vikings/p4x.ingame4", "UnExoticA/Lost_Vikings/p4x.ingame5"] },
-		{ name: "samples", songs: ["UnExoticA/Mortal_Kombat/p4x.ingame_2", "UnExoticA/Superfrog/p4x.L1mu", "UnExoticA/Superfrog/p4x.L2mu", "UnExoticA/Superfrog/p4x.Lbmu", "UnExoticA/Superfrog/Unused/p4x.L2mu", "UnExoticA/Lost_Vikings/p4x.ingame1"] },
 		{ name: "clipped", songs: ["UnExoticA/Superfrog/p4x.intro_tune_5"] },
 	]},
 	{ name: "RichardJoseph issues", groups: [
 		{ name: "silence", songs: ["UnExoticA/Chaos_Engine/rjp.ingame_2.zip"] },
-		{ name: "not playing", songs: ["UnExoticA/Chaos_Engine/rjp.menu.zip"] },
 	]},
 ];
 const issuesMap = issues
