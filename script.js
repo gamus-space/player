@@ -21,7 +21,6 @@ const issues = [
 	]},
 	{ name: "RichardJoseph issues", groups: [
 		{ name: "silence", songs: ["UnExoticA/Chaos_Engine/rjp.ingame_2.zip"] },
-		{ name: "not playing", songs: ["UnExoticA/Chaos_Engine/rjp.menu.zip"] },
 	]},
 ];
 const issuesMap = issues
