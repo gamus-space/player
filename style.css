@@ -194,7 +194,7 @@ section.details.playlist .title {
 .status {
 	display: flex;
 	flex-direction: column;
-	width: 22em;
+	width: 23.4em;
 
 	padding: 6px;
 	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
