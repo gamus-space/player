@@ -205,7 +205,7 @@ section.details.playlist .title {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: 15px;
+	gap: 5px;
 }
 .multi_info a {
 	color: #000;
@@ -214,6 +214,9 @@ section.details.playlist .title {
 .multi_info a[disabled] {
 	opacity: 0.25;
 	cursor: not-allowed;
+}
+.multi_info a.inactive {
+	opacity: 0.25;
 }
 #song, #time {
 	padding: 2px;

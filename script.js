@@ -9,6 +9,7 @@ let status = {
 	song: null, url: null, playing: false,
 	loadingSong: null, loadingUrl: null, autoplay: null,
 	playlistEntry: null, playlist: [],
+	repeat: null,
 };
 let songs;
 let games;
@@ -161,6 +162,8 @@ function updateStatus(update) {
 		$('#time_slider').slider({ value: 0, max: 0 });
 		$('#time_slider').slider('option', 'disabled', true);
 	}
+	$('#repeat').toggleClass('inactive', !status.repeat);
+	player.loop = status.playlistEntry != null ? false : status.repeat;
 
 	if (status.song) {
 		const table = $('#library').DataTable();
@@ -240,19 +243,24 @@ $('#time_slider').slider({ orientation: 'horizontal', range: 'min', min: 0, valu
 $('#time_slider').on('slide', (event, ui) => {
 	player.seek(ui.value * 1000);
 });
+$('#repeat').on('click', () => {
+	updateStatus({ repeat: !status.repeat });
+	localStorage.setItem('repeat', status.repeat);
+});
 
 function onTrackReadyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
 function onTrackEnd() {
 	if (status.playlistEntry != null) {
-		const next = status.playlistEntry === 0 ? null : status.playlist[status.playlistEntry];
+		const nextEntry = status.playlist[status.playlistEntry] ? status.playlistEntry+1 : (status.repeat ? 1 : null);
+		const next = status.playlistEntry === 0 ? null : status.playlist[nextEntry];
 		if (status.playlistEntry)
 			$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 		if (next) {
 			$(`#playlist li:nth-child(${status.playlistEntry+1})`).addClass('playing');
 			const nextUrl = song2url(next);
-			updateStatus({ song: null, url: null, playing: false, loadingSong: next.song, loadingUrl: nextUrl, autoplay: true, playlistEntry: status.playlistEntry + 1 });
+			updateStatus({ song: null, url: null, playing: false, loadingSong: next.song, loadingUrl: nextUrl, autoplay: true, playlistEntry: nextEntry });
 			loadMusicFromURL(nextUrl);
 		} else
 			updateStatus({ song: null, url: null, playing: false, playlistEntry: null });
@@ -445,4 +453,4 @@ function loadMusicFromURL(url) {
 const loader = window.neoart.FileLoader();
 const player = loader.player;
 document.addEventListener("flodStop", () => { if (!unloading) onTrackEnd(); });
-updateStatus({});
+updateStatus({ repeat: localStorage.getItem('repeat') == 'true' });
