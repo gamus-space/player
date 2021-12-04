@@ -73,7 +73,7 @@ class Autoscroll {
 		this._element.text(this._chars.slice(this._scroll, this._scroll + this._length).join(''));
 	}
 }
-const songAutoscroll = new Autoscroll($('#song'), 24);
+const songAutoscroll = new Autoscroll($('#song'), 26);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = /(^|\/)(bp|dw|gmc|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
@@ -156,8 +156,11 @@ function updateStatus(update) {
 	$('#playpause').attr('disabled', !status.song);
 	$('#playpause i').attr('class', `fas fa-${status.playing ? 'pause' : 'play'}`)
 	updatePlaylistStatus();
-	if (!status.song)
+	if (!status.song) {
 		$('#time').text('00:00 / 00:00');
+		$('#time_slider').slider({ value: 0, max: 0 });
+		$('#time_slider').slider('option', 'disabled', true);
+	}
 
 	if (status.song) {
 		const table = $('#library').DataTable();
@@ -233,6 +236,10 @@ if (typeof $().slider === 'function') {
 		localStorage.setItem('volume', volume);
 	});
 }
+$('#time_slider').slider({ orientation: 'horizontal', range: 'min', min: 0, value: 0, max: 0, step: 1 });
+$('#time_slider').on('slide', (event, ui) => {
+	player.seek(ui.value * 1000);
+});
 
 function onTrackReadyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
@@ -253,6 +260,8 @@ function onTrackEnd() {
 	}
 	updateStatus({ playing: false });
 	$('#time').text(`${time(0)} / ${time(player.duration / 1000)}`);
+	$('#time_slider').slider({ value: 0, max: player.duration / 1000 });
+	$('#time_slider').slider('option', 'disabled', true);
 }
 
 $('#playpause').on('click', () => {
@@ -282,6 +291,8 @@ function updateTime(timestamp) {
 		return;
 	lastUpdate = timestamp;
 	$('#time').text(time(player.position / 1000) + ' / ' + time(player.duration / 1000));
+	$('#time_slider').slider({ value: player.position / 1000, max: player.duration / 1000 });
+	$('#time_slider').slider('option', 'disabled', false);
 }
 updateTime();
 
