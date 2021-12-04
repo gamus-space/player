@@ -9,7 +9,7 @@ let status = {
 	song: null, url: null, playing: false,
 	loadingSong: null, loadingUrl: null, autoplay: null,
 	playlistEntry: null, playlist: [],
-	repeat: null, random: null,
+	repeat: null, random: null, availableSongs: null,
 };
 let songs;
 let games;
@@ -34,7 +34,7 @@ function time(t) {
 	t = t.toFixed(0);
 	const sec = t % 60;
 	const min = Math.floor(t/60);
-	return `${min < 10 ? '0' : ''}${min}:${sec<10 ? '0' : ''}${sec}`;
+	return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
 function randomInt(n) {
 	return Math.floor(Math.random() * n);
@@ -107,6 +107,8 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		scrollY: 'calc(100vh - 16em)',
 		scrollCollapse: true,
 		paging: false,
+	}).on('search.dt', (...a) => {
+		updateStatus({ availableSongs: playableSongs().length > 0 });
 	});
 	$('.library_filters').text('Filter:').append([
 		$('<select>', { id: 'filter_platform'}),
@@ -134,12 +136,17 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 });
 
 function updatePlaylistStatus() {
-	$('#pos').text(status.playlistEntry ? `${status.playlistEntry}/${status.playlist.length}` : '');
-	$('#previous').attr('disabled', !status.playlistEntry || status.playlistEntry === 1 || status.random);
-	$('#next').attr('disabled', !status.playlistEntry || status.playlistEntry === status.playlist.length);
+	$('#pos').text(status.playlistEntry ? `${String(status.playlistEntry).padStart(String(status.playlist.length).length, '0')}/${status.playlist.length}` : '');
+	$('#previous').attr('disabled', ((status.playlistEntry || !status.availableSongs) && (!status.playlistEntry || status.playlistEntry === 1)) || status.random);
+	$('#next').attr('disabled', (status.playlistEntry || !status.availableSongs) && (!status.playlistEntry || (status.playlistEntry === status.playlist.length && !status.random)));
 }
 
 function updateStatus(update) {
+	if (update.availableSongs) {
+		status.availableSongs = update.availableSongs;
+		updatePlaylistStatus();
+		return;
+	}
 	if (update.playlist) {
 		status.playlist = update.playlist;
 		if (update.playlistEntry != null)
@@ -222,9 +229,7 @@ $('#library tbody').on('click', 'tr', event => {
 	}
 	if (status.playlistEntry)
 		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
-	const url = song2url(data);
-	updateStatus({ song: null, url: null, playing: false, loadingSong: song2title(data), loadingUrl: url, autoplay: true, playlistEntry: null });
-	loadMusicFromURL(url);
+	playSong(data);
 });
 if (typeof $().slider === 'function') {
 	const volume = localStorage.getItem('volume') ?? 1;
@@ -258,6 +263,25 @@ $('#random').on('click', () => {
 	updateStatus({ random: !status.random});
 });
 
+function playableSongs() {
+	return $('#library').DataTable().rows({ search: 'applied' }).data().toArray().filter(({ status }) => status != '');
+}
+
+function playSong(data) {
+	const url = song2url(data);
+	updateStatus({ song: null, url: null, playing: false, loadingSong: song2title(data), loadingUrl: url, autoplay: true, playlistEntry: null });
+	loadMusicFromURL(url);
+}
+
+function playRandomSong() {
+	const songs = playableSongs();
+	if (songs.length > 0) {
+		playSong(songs[randomInt(songs.length)]);
+		return true;
+	}
+	return false;
+}
+
 function onTrackReadyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
@@ -276,14 +300,7 @@ function onTrackEnd() {
 			updateStatus({ song: null, url: null, playing: false, playlistEntry: null });
 		return;
 	}
-	const songs = $('#library').DataTable().rows({ search: 'applied' }).data().toArray().filter(({ status }) => status != '');
-	if (status.random && songs.length > 0) {
-		const data = songs[randomInt(songs.length)];
-		const url = song2url(data);
-		updateStatus({ song: null, url: null, playing: false, loadingSong: song2title(data), loadingUrl: url, autoplay: true, playlistEntry: null });
-		loadMusicFromURL(url);
-		return;
-	}
+	if (status.random && playRandomSong()) return;
 	updateStatus({ playing: false });
 	$('#time').text(`${time(0)} / ${time(player.duration / 1000)}`);
 	$('#time_slider').slider({ value: 0, max: player.duration / 1000 });
@@ -334,8 +351,7 @@ $('#playlist').on('click', 'button', event => {
 	updatePlaylist(entry);
 });
 $('#playlist_add').on('click', () => {
-	const table = $('#library').DataTable();
-	table.rows({ search: 'applied' }).data().toArray().filter(({ status }) => status != '').forEach(addToPlaylist);
+	playableSongs().forEach(addToPlaylist);
 });
 $('#playlist_clear').on('click', () => {
 	$('#playlist').empty();
@@ -355,14 +371,31 @@ $('#playlist').on('sortupdate', (event, ui) => {
 	updatePlaylist(entry);
 });
 $('#next').on('click', () => {
-	if (!status.playlistEntry) return;
+	if (!status.playlistEntry) {
+		if (status.random) {
+			playRandomSong();
+		} else {
+			const songs = playableSongs();
+			if (songs.length === 0) return;
+			const i = songs.findIndex(song => song.song_url === status.url);
+			playSong(songs[i < songs.length-1 ? i+1 : 0]);
+		}
+		return;
+	}
 	if (status.random)
 		playPlaylist(randomInt(status.playlist.length) + 1);
 	else
 		playPlaylist(status.playlistEntry + 1);
 });
 $('#previous').on('click', () => {
-	if (!status.playlistEntry) return;
+	if (status.random) return;
+	if (!status.playlistEntry) {
+		const songs = playableSongs();
+		if (songs.length === 0) return;
+		const i = songs.findIndex(song => song.song_url === status.url);
+		playSong(songs[i > 0 ? i-1 : songs.length-1]);
+		return;
+	}
 	playPlaylist(status.playlistEntry - 1);
 });
 
