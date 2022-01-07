@@ -23,6 +23,10 @@ const issues = [
 	{ name: "RichardJoseph issues", groups: [
 		{ name: "silence", songs: ["UnExoticA/Chaos_Engine/rjp.ingame_2.zip"] },
 	]},
+	{ name: "TFMX issues", groups: [
+		{ name: "SID not supported", songs: ["UnExoticA/Turrican_2/mdat.loader.zip", "UnExoticA/Turrican_3/mdat.loader.zip"] },
+		{ name: "tuning", songs: ["UnExoticA/Apidya/mdat.ingame_4.zip"] },
+	]},
 ];
 const issuesMap = issues
 	.map(issue => issue.groups.map(group => group.songs.map(song => ({ song, group: group.name, issue: issue.name }))).reduce((a, e) => [...a, ...e], []))
@@ -80,7 +84,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 28);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /(^|\/)(bp|dw|gmc|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
+	const compat = /(^|\/)(bp|dw|gmc|mdat|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, ...game, song_url: song2url(song) }))], []);
 	$('#library').DataTable({
@@ -495,6 +499,7 @@ function loadMusicFromURL(url) {
 	xhr.open("GET", url, true);
 	xhr.responseType = "arraybuffer";
 	xhr.onreadystatechange = () => {
+		if (xhr.readyState !== XMLHttpRequest.DONE) return;
 		unloading = true;
 		if (!loader.load(xhr.response)) return;
 		unloading = false;
