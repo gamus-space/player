@@ -16,12 +16,20 @@ let games;
 
 let details = { view: null };
 
+const invalidSongs = ["UnExoticA/Turrican_2/mdat.world_1.zip#31", "UnExoticA/Turrican_2/Unused/mdat.world_1.zip#31", "UnExoticA/Turrican_2/mdat.world_3.zip#31", "UnExoticA/Turrican_2/mdat.world_4.zip#31", "UnExoticA/Turrican_3/mdat.world_3.zip#10","UnExoticA/Turrican/mdat.ingame_1.zip#6", "UnExoticA/Turrican/mdat.ingame_2.zip#4", "UnExoticA/Turrican/mdat.ingame_3.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#9", "UnExoticA/Turrican/mdat.ingame_5.zip#6", "UnExoticA/Turrican/mdat.title.zip#4", "UnExoticA/Turrican/mdat.title.zip#5", "UnExoticA/Apidya/mdat.title.zip#2", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#17", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#18", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#19", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#20"];
+
 const issues = [
 	{ name: "The Player 4.1a issues", groups: [
 		{ name: "clipped", songs: ["UnExoticA/Superfrog/p4x.intro_tune_5"] },
 	]},
 	{ name: "RichardJoseph issues", groups: [
 		{ name: "silence", songs: ["UnExoticA/Chaos_Engine/rjp.ingame_2.zip"] },
+	]},
+	{ name: "TFMX issues", groups: [
+		{ name: "SID not supported", songs: ["UnExoticA/Turrican_2/mdat.loader.zip#1", "UnExoticA/Turrican_2/Unfixed_Loader/mdat.loader.zip#1",  "UnExoticA/Turrican_3/mdat.loader.zip#1", "UnExoticA/Turrican_3/mdat.loader.zip#2", "UnExoticA/Turrican_3/mdat.loader.zip#3"] },
+		{ name: "tuning", songs: ["UnExoticA/Apidya/mdat.ingame_4.zip#1", "UnExoticA/Apidya/mdat.ingame_4.zip#2", "UnExoticA/Apidya/mdat.ingame_4.zip#5", "UnExoticA/Apidya/mdat.ingame_4.zip#6", "UnExoticA/Turrican_3/mdat.world_5.zip#2", "UnExoticA/Turrican_3/mdat.world_5.zip#3"] },
+		{ name: "sample", songs: ["UnExoticA/Turrican/mdat.ingame_4.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#6", "UnExoticA/Turrican/mdat.ingame_4.zip#8"] },
+		{ name: "instant end", songs: ["UnExoticA/Apidya/mdat.ingame_5.zip#2"] },
 	]},
 ];
 const issuesMap = issues
@@ -57,7 +65,7 @@ class Autoscroll {
 		return this._value;
 	}
 	set value(v) {
-		const mapping = { ' ': '!', '.': '.!' };
+		const mapping = { ' ': '!', '.': '.!', '#': '*' };
 		if (v.length < this._length)
 			v = ' '.repeat((this._length - v.length)/2) + v;
 		this._chars = v.split('').map(v => mapping[v] || v);
@@ -80,9 +88,12 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 28);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /(^|\/)(bp|dw|gmc|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
+	const compat = /(^|\/)(bp|dw|gmc|mdat|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
 	games = db;
-	songs = db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, ...game, song_url: song2url(song) }))], []);
+	songs = db.reduce((flat, game) => [...flat, ...game.songs
+		.filter(song => !invalidSongs.includes(song.song_link))
+		.map(song => ({ ...song, ...game, song_url: song2url(song) }))
+	], []);
 	$('#library').DataTable({
 		data: songs.map(song => ({
 			status: compat.test(song.song) ? '<i class="fas fa-stop"></i>' : '',
@@ -129,6 +140,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const format = /(^|\/)(\w+)\.[^\/]+$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
 		db.reduce((flat, game) => [...flat, ...game.songs], [])
+		.filter(song => !invalidSongs.includes(song.song_link))
 		.filter(song => !/\/songs\//.test(song.song_link))
 		.map(song => format.exec(song.song)?.[2])
 		.reduce((res, fmt) => ({ ...res, [fmt]: (res[fmt]||0)+1 }), {})
@@ -495,7 +507,9 @@ function loadMusicFromURL(url) {
 	xhr.open("GET", url, true);
 	xhr.responseType = "arraybuffer";
 	xhr.onreadystatechange = () => {
+		if (xhr.readyState !== XMLHttpRequest.DONE) return;
 		unloading = true;
+		player.startingSong = url.indexOf('#') < 0 ? 1 : Number(url.replace(/^.*\#/, ''));
 		if (!loader.load(xhr.response)) return;
 		unloading = false;
 		player.play();
