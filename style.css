@@ -112,6 +112,9 @@ section.details.playlist .title {
 #playlist li.playing {
 	text-decoration: underline;
 }
+#playlist li.invalid {
+	text-decoration: line-through;
+}
 #playlist li button {
 	margin-left: 1em;
 }

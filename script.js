@@ -299,17 +299,7 @@ function onTrackReadyToPlay() {
 }
 function onTrackEnd() {
 	if (status.playlistEntry != null) {
-		const nextEntry = status.random ? randomInt(status.playlist.length) : status.playlist[status.playlistEntry] ? status.playlistEntry : (status.repeat ? 0 : null);
-		const next = status.playlistEntry === 0 ? null : status.playlist[nextEntry];
-		if (status.playlistEntry)
-			$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
-		if (next) {
-			$(`#playlist li:nth-child(${nextEntry+1})`).addClass('playing');
-			const nextUrl = song2url(next);
-			updateStatus({ song: null, url: null, playing: false, loadingSong: next.song, loadingUrl: nextUrl, autoplay: true, playlistEntry: nextEntry+1 });
-			loadMusicFromURL(nextUrl);
-		} else
-			updateStatus({ song: null, url: null, playing: false, playlistEntry: null });
+		playNext();
 		return;
 	}
 	if (status.random && playRandomSong()) return;
@@ -382,7 +372,8 @@ $('#playlist').on('sortupdate', (event, ui) => {
 		null;
 	updatePlaylist(entry);
 });
-$('#next').on('click', () => {
+
+function playNext() {
 	if (!status.playlistEntry) {
 		if (status.random) {
 			playRandomSong();
@@ -395,10 +386,20 @@ $('#next').on('click', () => {
 		return;
 	}
 	if (status.random)
-		playPlaylist(randomInt(status.playlist.length) + 1);
-	else
-		playPlaylist(status.playlistEntry + 1);
-});
+		while (!playPlaylist(randomInt(status.playlist.length) + 1)) {}
+	else {
+		let i;
+		for (i = status.playlistEntry + 1; i <= status.playlist.length; i++) {
+			if (playPlaylist(i)) break;
+		}
+		if (i > status.playlist.length && status.repeat) {
+			for (i = 1; i <= status.playlist.length; i++) {
+				if (playPlaylist(i)) break;
+			}
+		}
+	}
+}
+$('#next').on('click', () => playNext());
 $('#previous').on('click', () => {
 	if (status.random) return;
 	if (!status.playlistEntry) {
@@ -408,7 +409,9 @@ $('#previous').on('click', () => {
 		playSong(songs[i > 0 ? i-1 : songs.length-1]);
 		return;
 	}
-	playPlaylist(status.playlistEntry - 1);
+	for (let i = status.playlistEntry - 1; i >= 1; i--) {
+		if (playPlaylist(i)) break;
+	}
 });
 
 function addToPlaylist(data) {
@@ -431,13 +434,21 @@ function updatePlaylist(playlistEntry) {
 function playPlaylist(playlistEntry) {
 	const entry = status.playlist[playlistEntry-1];
 	if (!entry)
-		return;
+		return false;
+	const url = song2url(entry);
+	const table = $('#library').DataTable();
+	const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().song_url === url);
+	if (!row) {
+		$(`#playlist li:nth-child(${playlistEntry})`).addClass('invalid');
+		return false;
+	}
 	if (status.playlistEntry)
 		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 	$(`#playlist li:nth-child(${playlistEntry})`).addClass('playing');
-	const url = song2url(entry);
+
 	updateStatus({ song: null, url: null, playing: false, loadingSong: entry.song, loadingUrl: url, autoplay: true, playlistEntry });
 	loadMusicFromURL(url);
+	return true;
 }
 
 const filters = { platform: '', game: '', song: '' };
