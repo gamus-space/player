@@ -385,9 +385,11 @@ function playNext() {
 		}
 		return;
 	}
-	if (status.random)
-		while (!playPlaylist(randomInt(status.playlist.length) + 1)) {}
-	else {
+	if (status.random) {
+		for (let i = 0; i < status.playlist.length; i++) {
+			if (playPlaylist(randomInt(status.playlist.length) + 1)) break;
+		}
+	} else {
 		let i;
 		for (i = status.playlistEntry + 1; i <= status.playlist.length; i++) {
 			if (playPlaylist(i)) break;
