@@ -16,7 +16,7 @@ let games;
 
 let details = { view: null };
 
-const invalidSongs = ["UnExoticA/Turrican_2/mdat.world_1.zip#31", "UnExoticA/Turrican_2/Unused/mdat.world_1.zip#31", "UnExoticA/Turrican_2/mdat.world_3.zip#31", "UnExoticA/Turrican_2/mdat.world_4.zip#31", "UnExoticA/Turrican_3/mdat.world_3.zip#10","UnExoticA/Turrican/mdat.ingame_1.zip#6", "UnExoticA/Turrican/mdat.ingame_2.zip#4", "UnExoticA/Turrican/mdat.ingame_3.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#9", "UnExoticA/Turrican/mdat.ingame_5.zip#6", "UnExoticA/Turrican/mdat.title.zip#4", "UnExoticA/Turrican/mdat.title.zip#5", "UnExoticA/Apidya/mdat.title.zip#2", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#17", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#18", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#19", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#20", "UnExoticA/Agony/Unused/mod.foret#30", "UnExoticA/Project-X/mod.px.bladswede remix!#37"];
+const invalidSongs = ["UnExoticA/Turrican_2/mdat.world_1.zip#31", "UnExoticA/Turrican_2/Unused/mdat.world_1.zip#31", "UnExoticA/Turrican_2/mdat.world_3.zip#31", "UnExoticA/Turrican_2/mdat.world_4.zip#31", "UnExoticA/Turrican_3/mdat.world_3.zip#10","UnExoticA/Turrican/mdat.ingame_1.zip#6", "UnExoticA/Turrican/mdat.ingame_2.zip#4", "UnExoticA/Turrican/mdat.ingame_3.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#9", "UnExoticA/Turrican/mdat.ingame_5.zip#6", "UnExoticA/Turrican/mdat.title.zip#4", "UnExoticA/Turrican/mdat.title.zip#5", "UnExoticA/Apidya/mdat.title.zip#2", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#17", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#18", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#19", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#20", "UnExoticA/Agony/Unused/mod.foret#30", "UnExoticA/Project-X/mod.px.bladswede remix!#37", "UnExoticA/Pinball_Dreams/di.steelwheels#45", "UnExoticA/Pinball_Dreams/di.steelwheels#52", "UnExoticA/Pinball_Dreams/di.steelwheels#60"];
 
 const issues = [
 	{ name: "The Player 4.1a issues", groups: [
@@ -88,7 +88,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 28);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /(^|\/)(bp|dw|gmc|mdat|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
+	const compat = /(^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs
 		.filter(song => !invalidSongs.includes(song.song_link))
@@ -299,17 +299,7 @@ function onTrackReadyToPlay() {
 }
 function onTrackEnd() {
 	if (status.playlistEntry != null) {
-		const nextEntry = status.random ? randomInt(status.playlist.length) : status.playlist[status.playlistEntry] ? status.playlistEntry : (status.repeat ? 0 : null);
-		const next = status.playlistEntry === 0 ? null : status.playlist[nextEntry];
-		if (status.playlistEntry)
-			$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
-		if (next) {
-			$(`#playlist li:nth-child(${nextEntry+1})`).addClass('playing');
-			const nextUrl = song2url(next);
-			updateStatus({ song: null, url: null, playing: false, loadingSong: next.song, loadingUrl: nextUrl, autoplay: true, playlistEntry: nextEntry+1 });
-			loadMusicFromURL(nextUrl);
-		} else
-			updateStatus({ song: null, url: null, playing: false, playlistEntry: null });
+		playNext();
 		return;
 	}
 	if (status.random && playRandomSong()) return;
@@ -382,7 +372,8 @@ $('#playlist').on('sortupdate', (event, ui) => {
 		null;
 	updatePlaylist(entry);
 });
-$('#next').on('click', () => {
+
+function playNext() {
 	if (!status.playlistEntry) {
 		if (status.random) {
 			playRandomSong();
@@ -395,10 +386,20 @@ $('#next').on('click', () => {
 		return;
 	}
 	if (status.random)
-		playPlaylist(randomInt(status.playlist.length) + 1);
-	else
-		playPlaylist(status.playlistEntry + 1);
-});
+		while (!playPlaylist(randomInt(status.playlist.length) + 1)) {}
+	else {
+		let i;
+		for (i = status.playlistEntry + 1; i <= status.playlist.length; i++) {
+			if (playPlaylist(i)) break;
+		}
+		if (i > status.playlist.length && status.repeat) {
+			for (i = 1; i <= status.playlist.length; i++) {
+				if (playPlaylist(i)) break;
+			}
+		}
+	}
+}
+$('#next').on('click', () => playNext());
 $('#previous').on('click', () => {
 	if (status.random) return;
 	if (!status.playlistEntry) {
@@ -408,7 +409,9 @@ $('#previous').on('click', () => {
 		playSong(songs[i > 0 ? i-1 : songs.length-1]);
 		return;
 	}
-	playPlaylist(status.playlistEntry - 1);
+	for (let i = status.playlistEntry - 1; i >= 1; i--) {
+		if (playPlaylist(i)) break;
+	}
 });
 
 function addToPlaylist(data) {
@@ -431,13 +434,21 @@ function updatePlaylist(playlistEntry) {
 function playPlaylist(playlistEntry) {
 	const entry = status.playlist[playlistEntry-1];
 	if (!entry)
-		return;
+		return false;
+	const url = song2url(entry);
+	const table = $('#library').DataTable();
+	const row = table.rows().nodes().toArray().map(node => table.row(node)).find(row => row.data().song_url === url);
+	if (!row) {
+		$(`#playlist li:nth-child(${playlistEntry})`).addClass('invalid');
+		return false;
+	}
 	if (status.playlistEntry)
 		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 	$(`#playlist li:nth-child(${playlistEntry})`).addClass('playing');
-	const url = song2url(entry);
+
 	updateStatus({ song: null, url: null, playing: false, loadingSong: entry.song, loadingUrl: url, autoplay: true, playlistEntry });
 	loadMusicFromURL(url);
+	return true;
 }
 
 const filters = { platform: '', game: '', song: '' };
