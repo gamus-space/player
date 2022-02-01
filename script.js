@@ -88,7 +88,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 28);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /(^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
+	const compat = /(^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs
 		.filter(song => !invalidSongs.includes(song.song_link))
@@ -385,9 +385,11 @@ function playNext() {
 		}
 		return;
 	}
-	if (status.random)
-		while (!playPlaylist(randomInt(status.playlist.length) + 1)) {}
-	else {
+	if (status.random) {
+		for (let i = 0; i < status.playlist.length; i++) {
+			if (playPlaylist(randomInt(status.playlist.length) + 1)) break;
+		}
+	} else {
 		let i;
 		for (i = status.playlistEntry + 1; i <= status.playlist.length; i++) {
 			if (playPlaylist(i)) break;

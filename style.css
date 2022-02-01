@@ -133,6 +133,9 @@ section.details.playlist .title {
 	position: absolute;
 	z-index: 2;
 	top: -3px;
+	margin-left: -3em;
+	color: #fff;
+	font-size: 0.95em;
 }
 #stats_songs_total {
 	float: right;
