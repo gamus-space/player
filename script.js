@@ -135,7 +135,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	$('#stats_songs_total').text(songs.length);
 	const supportedSongs = songs.filter(song => compat.test(song.song)).length;
 	$('#stats_songs_supported').text(supportedSongs);
-	$('#stats_bar .ui-slider-handle').text(Math.round(supportedSongs / songs.length * 100) + '%');
+	$('#stats_bar .ui-slider-handle').text((supportedSongs / songs.length * 100).toFixed(1) + '%');
 	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: songs.length, disabled: true });
 	const format = /(^|\/)(\w+)\.[^\/]+$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
@@ -522,7 +522,7 @@ function loadMusicFromURL(url) {
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState !== XMLHttpRequest.DONE) return;
 		unloading = true;
-		player.startingSong = url.indexOf('#') < 0 ? 1 : Number(url.replace(/^.*\#/, ''));
+		player.startingSong = url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
 		if (!loader.load(xhr.response)) return;
 		unloading = false;
 		player.play();
