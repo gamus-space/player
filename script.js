@@ -31,9 +31,6 @@ const issues = [
 		{ name: "sample", songs: ["UnExoticA/Turrican/mdat.ingame_4.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#6", "UnExoticA/Turrican/mdat.ingame_4.zip#8"] },
 		{ name: "instant end", songs: ["UnExoticA/Apidya/mdat.ingame_5.zip#2"] },
 	]},
-	{ name: "TakeTracker issues", groups: [
-		{ name: "invalid sound", songs: ["World of Game MODs/Lemmings/tim2.mod"] },
-	]},
 ];
 const issuesMap = issues
 	.map(issue => issue.groups.map(group => group.songs.map(song => ({ song, group: group.name, issue: issue.name }))).reduce((a, e) => [...a, ...e], []))
