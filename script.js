@@ -31,6 +31,9 @@ const issues = [
 		{ name: "sample", songs: ["UnExoticA/Turrican/mdat.ingame_4.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#6", "UnExoticA/Turrican/mdat.ingame_4.zip#8"] },
 		{ name: "instant end", songs: ["UnExoticA/Apidya/mdat.ingame_5.zip#2"] },
 	]},
+	{ name: "TakeTracker issues", groups: [
+		{ name: "invalid sound", songs: ["World of Game MODs/Lemmings/tim2.mod"] },
+	]},
 ];
 const issuesMap = issues
 	.map(issue => issue.groups.map(group => group.songs.map(song => ({ song, group: group.name, issue: issue.name }))).reduce((a, e) => [...a, ...e], []))
@@ -88,7 +91,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 28);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /(^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+$/i;
+	const compat = /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm))$/i;
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs
 		.filter(song => !invalidSongs.includes(song.song_link))
@@ -462,7 +465,7 @@ function updateFiltersPlatform() {
 	setOptions($('#filter_platform'), ['', 'Amiga'], '(Platform)');
 }
 function updateFiltersGame() {
-	setOptions($('#filter_game'), [''].concat(games.map(game => game.game)), '(Game)');
+	setOptions($('#filter_game'), [''].concat([...new Set(games.map(game => game.game))]), '(Game)');
 }
 function updateFiltersSong() {
 	const songs = games.find(game => game.game === filters.game)?.songs || [];
