@@ -137,12 +137,14 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	$('#stats_songs_supported').text(supportedSongs);
 	$('#stats_bar .ui-slider-handle').text((supportedSongs / songs.length * 100).toFixed(1) + '%');
 	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: songs.length, disabled: true });
-	const format = /(^|\/)(\w+)\.[^\/]+$/i;
+	const formatPrefix = /(?:^|\/)(\w+)\.[^\/]+$/i;
+	const formatSuffix = /\.(\w+)$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
-		db.reduce((flat, game) => [...flat, ...game.songs], [])
+		db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, source: game.source }))], [])
 		.filter(song => !invalidSongs.includes(song.song_link))
 		.filter(song => !/\/songs\//.test(song.song_link))
-		.map(song => format.exec(song.song)?.[2])
+		.map(song => (song.source === "UnExoticA" ? formatPrefix : formatSuffix).exec(song.song)?.[1])
+		.map(fmt => fmt?.toLowerCase())
 		.reduce((res, fmt) => ({ ...res, [fmt]: (res[fmt]||0)+1 }), {})
 	).sort(((a, b) => b[1]-a[1])));
 });
@@ -459,10 +461,11 @@ function setOptions(select, options, all) {
 	select.empty().append(options.map(option => $('<option>', { value: option, text: option || all })));
 }
 function updateFiltersPlatform() {
-	setOptions($('#filter_platform'), ['', 'Amiga'], '(Platform)');
+	setOptions($('#filter_platform'), [''].concat([...new Set(games.map(game => game.platform))]), '(Platform)');
 }
 function updateFiltersGame() {
-	setOptions($('#filter_game'), [''].concat([...new Set(games.map(game => game.game))]), '(Game)');
+	const filtered = filters.platform != '' ? games.filter(game => game.platform === filters.platform) : games;
+	setOptions($('#filter_game'), [''].concat([...new Set(filtered.map(game => game.game))]), '(Game)');
 }
 function updateFiltersSong() {
 	const songs = games.find(game => game.game === filters.game)?.songs || [];
