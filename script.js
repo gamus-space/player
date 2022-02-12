@@ -526,6 +526,7 @@ function loadMusicFromURL(url) {
 		if (xhr.readyState !== XMLHttpRequest.DONE) return;
 		unloading = true;
 		player.startingSong = url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
+		window.neoart.initialize();
 		if (!loader.load(xhr.response)) return;
 		unloading = false;
 		player.play();
