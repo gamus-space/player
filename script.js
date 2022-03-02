@@ -88,7 +88,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 28);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm))$/i;
+	const compat = /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm|s3m))(#\d+)?$/i;
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs
 		.filter(song => !invalidSongs.includes(song.song_link))
@@ -96,7 +96,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	], []);
 	$('#library').DataTable({
 		data: songs.map(song => ({
-			status: compat.test(song.song) ? '<i class="fas fa-stop"></i>' : '',
+			status: compat.test(song.song_link) ? '<i class="fas fa-stop"></i>' : '',
 			song: song.song,
 			song_label: song.song + (issuesMap[song.song_link] ? ` <i class="issue fas fa-exclamation-circle" title="${issuesMap[song.song_link].join(`\n`)}"></i>` : ""),
 			composer: song.composer,
@@ -133,17 +133,17 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	$('#filter_song').on('change', filterChangeSong);
 	updateRoute(history.state);
 	$('#stats_songs_total').text(songs.length);
-	const supportedSongs = songs.filter(song => compat.test(song.song)).length;
+	const supportedSongs = songs.filter(song => compat.test(song.song_link)).length;
 	$('#stats_songs_supported').text(supportedSongs);
 	$('#stats_bar .ui-slider-handle').text((supportedSongs / songs.length * 100).toFixed(1) + '%');
 	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: songs.length, disabled: true });
 	const formatPrefix = /(?:^|\/)(\w+)\.[^\/]+$/i;
-	const formatSuffix = /\.(\w+)$/i;
+	const formatSuffix = /\.(\w+)(?:#\d+)?$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
 		db.reduce((flat, game) => [...flat, ...game.songs.map(song => ({ ...song, source: game.source }))], [])
 		.filter(song => !invalidSongs.includes(song.song_link))
 		.filter(song => !/\/songs\//.test(song.song_link))
-		.map(song => (song.source === "UnExoticA" ? formatPrefix : formatSuffix).exec(song.song)?.[1])
+		.map(song => (song.source === "UnExoticA" ? formatPrefix : formatSuffix).exec(song.song_link)?.[1])
 		.map(fmt => fmt?.toLowerCase())
 		.reduce((res, fmt) => ({ ...res, [fmt]: (res[fmt]||0)+1 }), {})
 	).sort(((a, b) => b[1]-a[1])));
@@ -216,8 +216,8 @@ function updateStatus(update) {
 		$('#info_composer').text(song.composer);
 		$('#info_size').text(Math.round(song.size / 1024));
 		$('#info_source').text(song.source).attr('href', song.source_link);
-		$('#info_developers').empty().append(...song.developers.map(developer => $('<li>', { text: developer })));
-		$('#info_publishers').empty().append(...song.publishers.map(publisher => $('<li>', { text: publisher })));
+		$('#info_developers').empty().append(...(song.developers || []).map(developer => $('<li>', { text: developer })));
+		$('#info_publishers').empty().append(...(song.publishers || []).map(publisher => $('<li>', { text: publisher })));
 		if (status.playing && details.view === null)
 			setDetails('info');
 	}
