@@ -16,7 +16,13 @@ let games;
 
 let details = { view: null };
 
-const invalidSongs = ["UnExoticA/Turrican_2/mdat.world_1.zip#31", "UnExoticA/Turrican_2/Unused/mdat.world_1.zip#31", "UnExoticA/Turrican_2/mdat.world_3.zip#31", "UnExoticA/Turrican_2/mdat.world_4.zip#31", "UnExoticA/Turrican_3/mdat.world_3.zip#10","UnExoticA/Turrican/mdat.ingame_1.zip#6", "UnExoticA/Turrican/mdat.ingame_2.zip#4", "UnExoticA/Turrican/mdat.ingame_3.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#9", "UnExoticA/Turrican/mdat.ingame_5.zip#6", "UnExoticA/Turrican/mdat.title.zip#4", "UnExoticA/Turrican/mdat.title.zip#5", "UnExoticA/Apidya/mdat.title.zip#2", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#17", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#18", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#19", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#20", "UnExoticA/Agony/Unused/mod.foret#30", "UnExoticA/Project-X/mod.px.bladswede remix!#37", "UnExoticA/Pinball_Dreams/di.steelwheels#45", "UnExoticA/Pinball_Dreams/di.steelwheels#52", "UnExoticA/Pinball_Dreams/di.steelwheels#60"];
+const invalidSongs = [
+	"UnExoticA/Turrican_2/mdat.world_1.zip#31", "UnExoticA/Turrican_2/Unused/mdat.world_1.zip#31", "UnExoticA/Turrican_2/mdat.world_3.zip#31", "UnExoticA/Turrican_2/mdat.world_4.zip#31", "UnExoticA/Turrican_3/mdat.world_3.zip#10","UnExoticA/Turrican/mdat.ingame_1.zip#6", "UnExoticA/Turrican/mdat.ingame_2.zip#4", "UnExoticA/Turrican/mdat.ingame_3.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#9", "UnExoticA/Turrican/mdat.ingame_5.zip#6", "UnExoticA/Turrican/mdat.title.zip#4", "UnExoticA/Turrican/mdat.title.zip#5", "UnExoticA/Apidya/mdat.title.zip#2",
+	"UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#17", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#18", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#19", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#20",
+	"UnExoticA/Agony/Unused/mod.foret#30", "UnExoticA/Project-X/mod.px.bladswede remix!#37",
+	"UnExoticA/Pinball_Dreams/di.steelwheels#45", "UnExoticA/Pinball_Dreams/di.steelwheels#52", "UnExoticA/Pinball_Dreams/di.steelwheels#60",
+	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#4", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#15", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#23", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#33", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1.MOD#1", "World of Game MODs/PC/Pinball Dreams 2/LEVEL2.MOD#25", "World of Game MODs/PC/Pinball Dreams 2/LEVEL4.MOD#36",
+];
 
 const issues = [
 	{ name: "The Player 4.1a issues", groups: [
@@ -30,6 +36,10 @@ const issues = [
 		{ name: "tuning", songs: ["UnExoticA/Apidya/mdat.ingame_4.zip#1", "UnExoticA/Apidya/mdat.ingame_4.zip#2", "UnExoticA/Apidya/mdat.ingame_4.zip#5", "UnExoticA/Apidya/mdat.ingame_4.zip#6", "UnExoticA/Turrican_3/mdat.world_5.zip#2", "UnExoticA/Turrican_3/mdat.world_5.zip#3"] },
 		{ name: "sample", songs: ["UnExoticA/Turrican/mdat.ingame_4.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#6", "UnExoticA/Turrican/mdat.ingame_4.zip#8"] },
 		{ name: "instant end", songs: ["UnExoticA/Apidya/mdat.ingame_5.zip#2"] },
+	]},
+	{ name: "invalid song", groups: [
+		{ name: "bad sample", songs: ["World of Game MODs/PC/Crusader No Remorse/M07.MOD#1", "World of Game MODs/PC/Crusader No Remorse/M07.MOD#18"] },
+		{ name: "bad tempo change", songs: ["UnExoticA/Settlers/mod.siedler ii"] },
 	]},
 ];
 const issuesMap = issues
