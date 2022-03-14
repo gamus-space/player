@@ -9,7 +9,7 @@ let status = {
 	song: null, url: null, playing: false,
 	loadingSong: null, loadingUrl: null, autoplay: null,
 	playlistEntry: null, playlist: [],
-	repeat: null, random: null, availableSongs: null,
+	mono: null, repeat: null, random: null, availableSongs: null,
 };
 let songs;
 let games;
@@ -95,7 +95,7 @@ class Autoscroll {
 		this._element.text(this._chars.slice(this._scroll, this._scroll + this._length).join(''));
 	}
 }
-const songAutoscroll = new Autoscroll($('#song'), 28);
+const songAutoscroll = new Autoscroll($('#song'), 30);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm|s3m))(#\d+)?$/i;
@@ -198,11 +198,14 @@ function updateStatus(update) {
 		$('#time_slider').slider({ value: 0, max: 0 });
 		$('#time_slider').slider('option', 'disabled', true);
 	}
+	$('#mono').toggleClass('inactive', !status.mono);
 	$('#random').toggleClass('inactive', !status.random);
 	$('#repeat').toggleClass('inactive', !status.repeat);
+	localStorage.setItem('mono', status.mono);
 	localStorage.setItem('repeat', status.repeat);
 	localStorage.setItem('random', status.random);
 	player.loop = status.playlistEntry != null ? false : status.repeat;
+	player.stereoSeparation = status.mono ? 0 : 1;
 
 	if (status.song) {
 		const table = $('#library').DataTable();
@@ -284,7 +287,10 @@ $('#repeat').on('click', () => {
 	updateStatus({ repeat: !status.repeat });
 });
 $('#random').on('click', () => {
-	updateStatus({ random: !status.random});
+	updateStatus({ random: !status.random });
+});
+$('#mono').on('click', () => {
+	updateStatus({ mono: !status.mono });
 });
 
 function playableSongs() {
@@ -552,6 +558,7 @@ const loader = window.neoart.FileLoader();
 const player = loader.player;
 document.addEventListener("flodStop", () => { if (!unloading) onTrackEnd(); });
 updateStatus({
+	mono: localStorage.getItem('mono') == 'true',
 	repeat: localStorage.getItem('repeat') == 'true',
 	random: localStorage.getItem('random') == 'true',
 });
