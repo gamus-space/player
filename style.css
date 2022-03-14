@@ -200,7 +200,7 @@ section.details.playlist .title {
 .status {
 	display: flex;
 	flex-direction: column;
-	width: 23.4em;
+	width: 25.0em;
 
 	padding: 6px;
 	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
@@ -232,6 +232,7 @@ section.details.playlist .title {
 	transform: rotate(270deg);
 	width: 1.5em;
 	height: 10px;
+	margin: 0 -0.2em 0.1em -0.2em;
 	-webkit-appearance: none;
 	background: #000;
 	border: 1px solid black;
@@ -255,10 +256,12 @@ section.details.playlist .title {
 	background: #befc03;
 }
 #volume2 {
+	display: inline-block;
+	vertical-align: bottom;
 	width: 0.5em;
 	height: 1.2em;
 	background: #8fbe02;
-	margin: 0 0.4em;
+	margin: 0 0.2em;
 	position: relative;
 	cursor: pointer;
 }
