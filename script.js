@@ -360,7 +360,7 @@ $('#playlist').on('click', 'li', event => {
 $('#playlist').on('click', 'button', event => {
 	event.stopPropagation();
 	const position = $(event.target).parents('li').index() + 1;
-	const entry = position === status.playlistEntry ? 0: status.playlistEntry - (position < status.playlistEntry ? 1 : 0);
+	const entry = position === status.playlistEntry ? null : status.playlistEntry - (position < status.playlistEntry ? 1 : 0);
 	$(event.target).parents('li').remove();
 	updatePlaylist(entry);
 });
@@ -478,11 +478,14 @@ function updateFiltersGame() {
 	setOptions($('#filter_game'), [''].concat([...new Set(filtered.map(game => game.game))]), '(Game)');
 }
 function updateFiltersSong() {
-	const songs = games.find(game => game.game === filters.game)?.songs || [];
+	const songs = games.filter(game => game.game === filters.game && (!filters.platform || game.platform === filters.platform)).map(game => game.songs).flat();
 	setOptions($('#filter_song'), [''].concat(songs.map(song => song.song)), '(Song)');
 }
 function filterChangePlatform(event) {
-	enterState({ platform: event.target.value });
+	const platform = event.target.value;
+	const games_ = games.filter(game => game.game === filters.game && (!platform || game.platform === platform));
+	const song = games_.map(game => game.songs).flat().find(song => song.song === filters.song);
+	enterState({ platform, game: games_[0]?.game, song: song?.song });
 }
 function filterChangeGame(event) {
 	enterState({ platform: filters.platform, game: event.target.value });
