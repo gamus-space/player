@@ -175,6 +175,7 @@ function updateStatus(update) {
 		status.playlist = update.playlist;
 		if (update.playlistEntry != null)
 			status.playlistEntry = update.playlistEntry;
+		player.loop = status.playlistEntry ? false : status.repeat;
 		$('#playlist_clear').attr('disabled', !status.playlist.length);
 		updatePlaylistStatus();
 		return;
@@ -204,7 +205,7 @@ function updateStatus(update) {
 	localStorage.setItem('mono', status.mono);
 	localStorage.setItem('repeat', status.repeat);
 	localStorage.setItem('random', status.random);
-	player.loop = status.playlistEntry != null ? false : status.repeat;
+	player.loop = status.playlistEntry ? false : status.repeat;
 	player.stereoSeparation = status.mono ? 0 : 1;
 
 	if (status.song) {
@@ -316,7 +317,7 @@ function onTrackReadyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
 function onTrackEnd() {
-	if (status.playlistEntry != null) {
+	if (status.playlistEntry) {
 		playNext();
 		return;
 	}
@@ -366,7 +367,7 @@ $('#playlist').on('click', 'li', event => {
 $('#playlist').on('click', 'button', event => {
 	event.stopPropagation();
 	const position = $(event.target).parents('li').index() + 1;
-	const entry = position === status.playlistEntry ? null : status.playlistEntry - (position < status.playlistEntry ? 1 : 0);
+	const entry = position === status.playlistEntry ? 0 : status.playlistEntry - (position < status.playlistEntry ? 1 : 0);
 	$(event.target).parents('li').remove();
 	updatePlaylist(entry);
 });
@@ -442,8 +443,6 @@ function addToPlaylist(data) {
 	);
 	updatePlaylist();
 }
-
-(localStorage.getItem('playlist') ? JSON.parse(localStorage.getItem('playlist')) : []).forEach(addToPlaylist);
 
 function updatePlaylist(playlistEntry) {
 	const playlist = $('#playlist li').get().map(li => ({ game: $(li).attr('data-game'), song: $(li).attr('data-song'), song_link: $(li).attr('data-song-link') }));
@@ -562,3 +561,5 @@ updateStatus({
 	repeat: localStorage.getItem('repeat') == 'true',
 	random: localStorage.getItem('random') == 'true',
 });
+
+(localStorage.getItem('playlist') ? JSON.parse(localStorage.getItem('playlist')) : []).forEach(addToPlaylist);
