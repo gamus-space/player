@@ -1,5 +1,7 @@
 'use strict';
 
+import { Player } from './player.js';
+
 const ROOT_URL = document.getElementsByTagName('base')[0].href;
 const ROOT_PATH = document.getElementsByTagName('base')[0].attributes.href.value;
 const DATA_ROOT = location.hostname === 'localhost' ? '/scraper/data' : 'https://db.gamus.space';
@@ -215,7 +217,7 @@ function updateStatus(update) {
 	}
 
 	if (status.song) {
-		songAutoscroll.value = '>>> ' + [status.song, player.formats()[player.version], loader.packer, player.title].filter(s => s).join(' ~ ') + ' <<<';
+		songAutoscroll.value = '>>> ' + [status.song, ...player.status()].filter(s => s).join(' ~ ') + ' <<<';
 		const volume = $('#volume2').length ? $('#volume2').slider('option', 'value') : $('#volume').val();
 		player.volume = volume;
 	} else
@@ -282,7 +284,7 @@ if (typeof $().slider === 'function') {
 }
 $('#time_slider').slider({ orientation: 'horizontal', range: 'min', min: 0, value: 0, max: 0, step: 1 });
 $('#time_slider').on('slide', (event, ui) => {
-	player.seek(ui.value * 1000);
+	player.seek(ui.value);
 });
 $('#repeat').on('click', () => {
 	updateStatus({ repeat: !status.repeat });
@@ -313,18 +315,18 @@ function playRandomSong() {
 	return false;
 }
 
-function onTrackReadyToPlay() {
+function readyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
-function onTrackEnd() {
+function stopped() {
 	if (status.playlistEntry) {
 		playNext();
 		return;
 	}
 	if (status.random && playRandomSong()) return;
 	updateStatus({ playing: false });
-	$('#time').text(`${time(0)} / ${time(player.duration / 1000)}`);
-	$('#time_slider').slider({ value: 0, max: player.duration / 1000 });
+	$('#time').text(`${time(0)} / ${time(player.duration)}`);
+	$('#time_slider').slider({ value: 0, max: player.duration });
 	$('#time_slider').slider('option', 'disabled', true);
 }
 
@@ -354,8 +356,8 @@ function updateTime(timestamp) {
 	if (timestamp - lastUpdate < 200 || !status.song || !status.playing)
 		return;
 	lastUpdate = timestamp;
-	$('#time').text(time(player.position / 1000) + ' / ' + time(player.duration / 1000));
-	$('#time_slider').slider({ value: player.position / 1000, max: player.duration / 1000 });
+	$('#time').text(time(player.position) + ' / ' + time(player.duration));
+	$('#time_slider').slider({ value: player.position, max: player.duration });
 	$('#time_slider').slider('option', 'disabled', false);
 }
 updateTime();
@@ -535,27 +537,23 @@ window.onpopstate = (event) => {
 	updateRoute(event.state);
 };
 
-let unloading = false;
 function loadMusicFromURL(url) {
 	const xhr = new XMLHttpRequest();
 	xhr.open("GET", url, true);
 	xhr.responseType = "arraybuffer";
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState !== XMLHttpRequest.DONE) return;
-		unloading = true;
 		player.startingSong = url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
-		window.neoart.initialize();
-		if (!loader.load(xhr.response)) return;
-		unloading = false;
+		player.init();
+		if (!player.open(xhr.response)) return;
 		player.play();
-		onTrackReadyToPlay();
+		readyToPlay();
 	};
 	xhr.send();
 }
 
-const loader = window.neoart.FileLoader();
-const player = loader.player;
-document.addEventListener("flodStop", () => { if (!unloading) onTrackEnd(); });
+const player = new Player();
+player.stopped = stopped;
 updateStatus({
 	mono: localStorage.getItem('mono') == 'true',
 	repeat: localStorage.getItem('repeat') == 'true',
