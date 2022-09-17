@@ -319,10 +319,7 @@ function readyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
 function stopped() {
-	if (status.playlistEntry) {
-		playNext();
-		return;
-	}
+	if (status.playlistEntry && playNext()) return;
 	if (status.random && playRandomSong()) return;
 	updateStatus({ playing: false });
 	$('#time').text(`${time(0)} / ${time(player.duration)}`);
@@ -397,29 +394,31 @@ $('#playlist').on('sortupdate', (event, ui) => {
 function playNext() {
 	if (!status.playlistEntry) {
 		if (status.random) {
-			playRandomSong();
+			return playRandomSong();
 		} else {
 			const songs = playableSongs();
-			if (songs.length === 0) return;
+			if (songs.length === 0) return false;
 			const i = songs.findIndex(song => song.song_url === status.url);
 			playSong(songs[i < songs.length-1 ? i+1 : 0]);
 		}
-		return;
+		return true;
 	}
 	if (status.random) {
 		for (let i = 0; i < status.playlist.length; i++) {
-			if (playPlaylist(randomInt(status.playlist.length) + 1)) break;
+			if (playPlaylist(randomInt(status.playlist.length) + 1)) return true;
 		}
+		return false;
 	} else {
 		let i;
 		for (i = status.playlistEntry + 1; i <= status.playlist.length; i++) {
-			if (playPlaylist(i)) break;
+			if (playPlaylist(i)) return true;
 		}
 		if (i > status.playlist.length && status.repeat) {
 			for (i = 1; i <= status.playlist.length; i++) {
-				if (playPlaylist(i)) break;
+				if (playPlaylist(i)) return true;
 			}
 		}
+		return false;
 	}
 }
 $('#next').on('click', () => playNext());
