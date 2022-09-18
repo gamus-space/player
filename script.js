@@ -1,5 +1,7 @@
 'use strict';
 
+import { Player } from './player.js';
+
 const ROOT_URL = document.getElementsByTagName('base')[0].href;
 const ROOT_PATH = document.getElementsByTagName('base')[0].attributes.href.value;
 const DATA_ROOT = location.hostname === 'localhost' ? '/scraper/data' : 'https://db.gamus.space';
@@ -98,7 +100,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 30);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm|s3m))(#\d+)?$/i;
+	const compat = player.files();
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs
 		.filter(song => !invalidSongs.includes(song.song_link))
@@ -215,7 +217,7 @@ function updateStatus(update) {
 	}
 
 	if (status.song) {
-		songAutoscroll.value = '>>> ' + [status.song, player.formats()[player.version], loader.packer, player.title].filter(s => s).join(' ~ ') + ' <<<';
+		songAutoscroll.value = '>>> ' + [status.song, ...player.status].filter(s => s).join(' ~ ') + ' <<<';
 		const volume = $('#volume2').length ? $('#volume2').slider('option', 'value') : $('#volume').val();
 		player.volume = volume;
 	} else
@@ -282,7 +284,7 @@ if (typeof $().slider === 'function') {
 }
 $('#time_slider').slider({ orientation: 'horizontal', range: 'min', min: 0, value: 0, max: 0, step: 1 });
 $('#time_slider').on('slide', (event, ui) => {
-	player.seek(ui.value * 1000);
+	player.seek(ui.value);
 });
 $('#repeat').on('click', () => {
 	updateStatus({ repeat: !status.repeat });
@@ -313,18 +315,15 @@ function playRandomSong() {
 	return false;
 }
 
-function onTrackReadyToPlay() {
+function readyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
-function onTrackEnd() {
-	if (status.playlistEntry) {
-		playNext();
-		return;
-	}
+function stopped() {
+	if (status.playlistEntry && playNext()) return;
 	if (status.random && playRandomSong()) return;
 	updateStatus({ playing: false });
-	$('#time').text(`${time(0)} / ${time(player.duration / 1000)}`);
-	$('#time_slider').slider({ value: 0, max: player.duration / 1000 });
+	$('#time').text(`${time(0)} / ${time(player.duration)}`);
+	$('#time_slider').slider({ value: 0, max: player.duration });
 	$('#time_slider').slider('option', 'disabled', true);
 }
 
@@ -354,8 +353,8 @@ function updateTime(timestamp) {
 	if (timestamp - lastUpdate < 200 || !status.song || !status.playing)
 		return;
 	lastUpdate = timestamp;
-	$('#time').text(time(player.position / 1000) + ' / ' + time(player.duration / 1000));
-	$('#time_slider').slider({ value: player.position / 1000, max: player.duration / 1000 });
+	$('#time').text(time(player.position) + ' / ' + time(player.duration));
+	$('#time_slider').slider({ value: player.position, max: player.duration });
 	$('#time_slider').slider('option', 'disabled', false);
 }
 updateTime();
@@ -395,29 +394,31 @@ $('#playlist').on('sortupdate', (event, ui) => {
 function playNext() {
 	if (!status.playlistEntry) {
 		if (status.random) {
-			playRandomSong();
+			return playRandomSong();
 		} else {
 			const songs = playableSongs();
-			if (songs.length === 0) return;
+			if (songs.length === 0) return false;
 			const i = songs.findIndex(song => song.song_url === status.url);
 			playSong(songs[i < songs.length-1 ? i+1 : 0]);
 		}
-		return;
+		return true;
 	}
 	if (status.random) {
 		for (let i = 0; i < status.playlist.length; i++) {
-			if (playPlaylist(randomInt(status.playlist.length) + 1)) break;
+			if (playPlaylist(randomInt(status.playlist.length) + 1)) return true;
 		}
+		return false;
 	} else {
 		let i;
 		for (i = status.playlistEntry + 1; i <= status.playlist.length; i++) {
-			if (playPlaylist(i)) break;
+			if (playPlaylist(i)) return true;
 		}
 		if (i > status.playlist.length && status.repeat) {
 			for (i = 1; i <= status.playlist.length; i++) {
-				if (playPlaylist(i)) break;
+				if (playPlaylist(i)) return true;
 			}
 		}
+		return false;
 	}
 }
 $('#next').on('click', () => playNext());
@@ -535,27 +536,23 @@ window.onpopstate = (event) => {
 	updateRoute(event.state);
 };
 
-let unloading = false;
 function loadMusicFromURL(url) {
 	const xhr = new XMLHttpRequest();
 	xhr.open("GET", url, true);
 	xhr.responseType = "arraybuffer";
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState !== XMLHttpRequest.DONE) return;
-		unloading = true;
+		player.init(url);
 		player.startingSong = url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
-		window.neoart.initialize();
-		if (!loader.load(xhr.response)) return;
-		unloading = false;
+		if (!player.open(xhr.response)) return;
 		player.play();
-		onTrackReadyToPlay();
+		readyToPlay();
 	};
 	xhr.send();
 }
 
-const loader = window.neoart.FileLoader();
-const player = loader.player;
-document.addEventListener("flodStop", () => { if (!unloading) onTrackEnd(); });
+const player = new Player();
+player.stopped = stopped;
 updateStatus({
 	mono: localStorage.getItem('mono') == 'true',
 	repeat: localStorage.getItem('repeat') == 'true',
