@@ -100,7 +100,7 @@ class Autoscroll {
 const songAutoscroll = new Autoscroll($('#song'), 30);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
-	const compat = /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm|s3m))(#\d+)?$/i;
+	const compat = player.files();
 	games = db;
 	songs = db.reduce((flat, game) => [...flat, ...game.songs
 		.filter(song => !invalidSongs.includes(song.song_link))
@@ -217,7 +217,7 @@ function updateStatus(update) {
 	}
 
 	if (status.song) {
-		songAutoscroll.value = '>>> ' + [status.song, ...player.status()].filter(s => s).join(' ~ ') + ' <<<';
+		songAutoscroll.value = '>>> ' + [status.song, ...player.status].filter(s => s).join(' ~ ') + ' <<<';
 		const volume = $('#volume2').length ? $('#volume2').slider('option', 'value') : $('#volume').val();
 		player.volume = volume;
 	} else
@@ -542,8 +542,8 @@ function loadMusicFromURL(url) {
 	xhr.responseType = "arraybuffer";
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState !== XMLHttpRequest.DONE) return;
+		player.init(url);
 		player.startingSong = url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
-		player.init();
 		if (!player.open(xhr.response)) return;
 		player.play();
 		readyToPlay();
