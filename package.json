@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "serve": "node utils/serve.js",
-    "build": "mkdir -p dist && cp -R index.html script.js style.css assets/ lib/ dist/"
+    "build": "mkdir -p dist && cp -R index.html script.js player.js style.css assets/ lib/ dist/"
   },
   "author": "krzykos",
   "license": "ISC",
