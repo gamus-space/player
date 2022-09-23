@@ -543,7 +543,6 @@ function loadMusicFromURL(url) {
 	xhr.onreadystatechange = () => {
 		if (xhr.readyState !== XMLHttpRequest.DONE) return;
 		player.init(url);
-		player.startingSong = url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
 		if (!player.open(xhr.response)) return;
 		player.play();
 		readyToPlay();
