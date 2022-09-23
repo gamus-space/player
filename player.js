@@ -8,6 +8,9 @@ class PlayerBase {
 	init(url) {
 		throw 'not implemented';
 	}
+	url_param(url) {
+		return url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
+	}
 	shutdown() {
 		throw 'not implemented';
 	}
@@ -21,8 +24,6 @@ class PlayerBase {
 		throw 'not implemented';
 	}
 	seek(v) {
-	}
-	set startingSong(v) {
 	}
 
 	get position() {
@@ -66,8 +67,9 @@ class ModPlayer extends PlayerBase {
 		return /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm|s3m))(#\d+)?$/i;
 	}
 
-	init() {
+	init(url) {
 		window.neoart.initialize();
+		this.player.startingSong = this.url_param(url);
 	}
 	shutdown() {
 		this.ignoreStop = true;
@@ -88,9 +90,6 @@ class ModPlayer extends PlayerBase {
 	}
 	seek(v) {
 		this.player.seek(v * 1000);
-	}
-	set startingSong(v) {
-		this.player.startingSong = v;
 	}
 
 	get position() {
@@ -207,13 +206,16 @@ class ImfPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	init() {
+	init(url) {
 		super.init();
-		this.player = new OPL3.Player(OPL3.format.IMF, { prebuffer: 1000 });
+		this.player = new OPL3.Player(OPL3.format.IMF, {
+			prebuffer: 1000,
+			rate: this.url_param(url),
+		});
 		this.postInit();
 	}
 	files() {
-		return /\.imf$/;
+		return /\.imf#\d+$/;
 	}
 	get status() {
 		return [...super.status, "IMF"];
@@ -228,7 +230,7 @@ class MultiPlayer extends PlayerBase {
 	}
 	files() {
 		const re2str = re => /^\/(.*)\/\w?$/.exec(re.toString())[1];
-		return new RegExp(this.players.map(({ files }) => re2str(files())).join('|'));
+		return new RegExp(this.players.map(({ files }) => re2str(files())).join('|'), 'i');
 	}
 
 	init(url) {
@@ -237,7 +239,7 @@ class MultiPlayer extends PlayerBase {
 			this.current?.shutdown();
 			this.current = newPlayer;
 		}
-		this.current.init();
+		this.current.init(url);
 		this.current.loop = this.loop;
 		this.current.stereoSeparation = this.stereoSeparation;
 	}
@@ -252,9 +254,6 @@ class MultiPlayer extends PlayerBase {
 	}
 	seek(v) {
 		this.current.seek(v);
-	}
-	set startingSong(v) {
-		this.current.startingSong = v;
 	}
 
 	get position() {
