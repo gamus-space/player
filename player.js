@@ -208,14 +208,15 @@ class ImfPlayer extends Opl3Player {
 	}
 	init(url) {
 		super.init();
+		const ext = this.files().exec(url)[1].toLowerCase();
 		this.player = new OPL3.Player(OPL3.format.IMF, {
 			prebuffer: 1000,
-			rate: this.url_param(url),
+			rate: this.url_param(url) || { imf: 560, wlf: 700 }[ext],
 		});
 		this.postInit();
 	}
 	files() {
-		return /\.imf#\d+$/;
+		return /\.(imf|wlf)(#\d+)?$/i;
 	}
 	get status() {
 		return [...super.status, "IMF"];
