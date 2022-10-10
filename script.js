@@ -555,8 +555,7 @@ async function loadMusicFromURL(url) {
 	const songData = await fetchFile(url);
 	const samplesUrl = songsByUrl[url]?.samples && song2url({ song_link: songsByUrl[url].samples });
 	const samplesData = samplesUrl && await fetchFile(samplesUrl);
-	player.init(url, samplesData);
-	if (!player.open(songData)) return;
+	if (!player.open(url, songData, samplesData)) return;
 	player.play();
 	readyToPlay();
 }

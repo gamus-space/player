@@ -5,16 +5,13 @@ class PlayerBase {
 		throw 'not implemented';
 	}
 
-	init(url, samplesData) {
-		throw 'not implemented';
-	}
 	url_param(url) {
 		return url.indexOf('#') < 0 ? null : Number(url.replace(/^.*\#/, ''));
 	}
 	shutdown() {
 		throw 'not implemented';
 	}
-	open(buffer) {
+	open(url, songData, samplesData) {
 		throw 'not implemented';
 	}
 	play() {
@@ -67,18 +64,16 @@ class ModPlayer extends PlayerBase {
 		return /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm|s3m))(#\d+)?$/i;
 	}
 
-	init(url) {
-		window.neoart.initialize();
-		this.player.startingSong = this.url_param(url);
-	}
 	shutdown() {
 		this.ignoreStop = true;
 		this.player.stop();
 		this.ignoreStop = false;
 	}
-	open(buffer) {
+	open(url, songData) {
+		window.neoart.initialize();
+		this.player.startingSong = this.url_param(url);
 		this.ignoreStop = true;
-		const result = this.loader.load(buffer);
+		const result = this.loader.load(songData);
 		this.ignoreStop = false;
 		return result;
 	}
@@ -134,10 +129,10 @@ class Opl3Player extends PlayerBase {
 		this._stopped = undefined;
 	}
 
-	init() {
+	preInit() {
 		this.shutdown();
 	}
-	postInit() {
+	postInit(songData) {
 		this.player.on('position', position => {
 			if (position < this.player.length)
 				return;
@@ -147,14 +142,12 @@ class Opl3Player extends PlayerBase {
 				this._stopped?.();
 			}
 		});
+		this.player.play(songData);
+		this.player.pause();
+		return true;
 	}
 	shutdown() {
 		this.player?.abort();
-	}
-	open(buffer) {
-		this.player.play(buffer);
-		this.player.pause();
-		return true;
 	}
 	play() {
 		this.player.play();
@@ -206,14 +199,14 @@ class ImfPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	init(url) {
-		super.init();
+	open(url, songData, samplesData) {
+		this.preInit();
 		const ext = this.files().exec(url)[1].toLowerCase();
 		this.player = new OPL3.Player(OPL3.format.IMF, {
 			prebuffer: 1000,
 			rate: this.url_param(url) || { imf: 560, wlf: 700 }[ext],
 		});
-		this.postInit();
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(imf|wlf)(#\d+)?$/i;
@@ -227,14 +220,14 @@ class MusPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	init(url, samplesData) {
-		super.init();
+	open(url, songData, samplesData) {
+		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.MUS, {
 			prebuffer: 2000,
 			rate: this.url_param(url) || 140,
 			instruments: samplesData,
 		});
-		this.postInit();
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(mus)(#\d+)?$/i;
@@ -255,18 +248,16 @@ class MultiPlayer extends PlayerBase {
 		return new RegExp(this.players.map(({ files }) => re2str(files())).join('|'), 'i');
 	}
 
-	init(url, samplesData) {
+	open(url, songData, samplesData) {
 		const newPlayer = this.players.find(({ files }) => files().test(url));
 		if (newPlayer !== this.current) {
 			this.current?.shutdown();
 			this.current = newPlayer;
 		}
-		this.current.init(url, samplesData);
+		const result = this.current.open(url, songData, samplesData);
 		this.current.loop = this.loop;
 		this.current.stereoSeparation = this.stereoSeparation;
-	}
-	open(buffer) {
-		return this.current.open(buffer);
+		return result;
 	}
 	play() {
 		this.current.play();
