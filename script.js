@@ -13,7 +13,7 @@ let status = {
 	playlistEntry: null, playlist: [],
 	mono: null, repeat: null, random: null, availableSongs: null,
 };
-let songs;
+let songs, songsByUrl;
 let games;
 
 let details = { view: null };
@@ -24,6 +24,8 @@ const invalidSongs = [
 	"UnExoticA/Agony/Unused/mod.foret#30", "UnExoticA/Project-X/mod.px.bladswede remix!#37",
 	"UnExoticA/Pinball_Dreams/di.steelwheels#45", "UnExoticA/Pinball_Dreams/di.steelwheels#52", "UnExoticA/Pinball_Dreams/di.steelwheels#60",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#4", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#15", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#23", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#33", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1.MOD#1", "World of Game MODs/PC/Pinball Dreams 2/LEVEL2.MOD#25", "World of Game MODs/PC/Pinball Dreams 2/LEVEL4.MOD#36",
+	"VGMPF/PC/Raptor Call of the Shadows/15 - Boss 1.mus#140",
+	"resources/OPL3/Final Doom - TNT Evilution/READ_M.MUS",
 ];
 
 const issues = [
@@ -42,6 +44,9 @@ const issues = [
 	{ name: "invalid song", groups: [
 		{ name: "bad sample", songs: ["World of Game MODs/PC/Crusader No Remorse/M07.MOD#1", "World of Game MODs/PC/Crusader No Remorse/M07.MOD#18"] },
 		{ name: "bad tempo change", songs: ["UnExoticA/Settlers/mod.siedler ii"] },
+	]},
+	{ name: "OPL3 issues", groups: [
+		{ name: "bad sample", songs: ["VGMPF/PC/Doom II Hell On Earth/10 - The Dave D. Taylor Blues.mus", "VGMPF/PC/Doom II Hell On Earth/17 - Getting Too Tense.mus", "resources/OPL3/Final Doom - The Plutonia Experiment/DDTBL3.MUS", "resources/OPL3/Final Doom - TNT Evilution/THEDA2.MUS" ] },
 	]},
 ];
 const issuesMap = issues
@@ -106,6 +111,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		.filter(song => !invalidSongs.includes(song.song_link))
 		.map(song => ({ ...song, ...game, song_url: song2url(song) }))
 	], []);
+	songsByUrl = Object.fromEntries(songs.map(song => [song.song_url, song]));
 	$('#library').DataTable({
 		data: songs.map(song => ({
 			status: compat.test(song.song_link) ? '<i class="fas fa-stop"></i>' : '',
@@ -536,18 +542,23 @@ window.onpopstate = (event) => {
 	updateRoute(event.state);
 };
 
-function loadMusicFromURL(url) {
-	const xhr = new XMLHttpRequest();
-	xhr.open("GET", url, true);
-	xhr.responseType = "arraybuffer";
-	xhr.onreadystatechange = () => {
-		if (xhr.readyState !== XMLHttpRequest.DONE) return;
-		player.init(url);
-		if (!player.open(xhr.response)) return;
-		player.play();
-		readyToPlay();
-	};
-	xhr.send();
+async function fetchFile(url) {
+	const response = await fetch(url);
+	if (!response.ok) {
+		console.error(response);
+		throw new Error('failed to fetch');
+	}
+	return response.arrayBuffer();
+}
+
+async function loadMusicFromURL(url) {
+	const songData = await fetchFile(url);
+	const samplesUrl = songsByUrl[url]?.samples && song2url({ song_link: songsByUrl[url].samples });
+	const samplesData = samplesUrl && await fetchFile(samplesUrl);
+	player.init(url, samplesData);
+	if (!player.open(songData)) return;
+	player.play();
+	readyToPlay();
 }
 
 const player = new Player();

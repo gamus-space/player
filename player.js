@@ -5,7 +5,7 @@ class PlayerBase {
 		throw 'not implemented';
 	}
 
-	init(url) {
+	init(url, samplesData) {
 		throw 'not implemented';
 	}
 	url_param(url) {
@@ -223,10 +223,31 @@ class ImfPlayer extends Opl3Player {
 	}
 }
 
+class MusPlayer extends Opl3Player {
+	constructor() {
+		super();
+	}
+	init(url, samplesData) {
+		super.init();
+		this.player = new OPL3.Player(OPL3.format.MUS, {
+			prebuffer: 2000,
+			rate: this.url_param(url) || 140,
+			instruments: samplesData,
+		});
+		this.postInit();
+	}
+	files() {
+		return /\.(mus)(#\d+)?$/i;
+	}
+	get status() {
+		return [...super.status, "MUS"];
+	}
+}
+
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer()];
+		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer()];
 		this.current = undefined;
 	}
 	files() {
@@ -234,13 +255,13 @@ class MultiPlayer extends PlayerBase {
 		return new RegExp(this.players.map(({ files }) => re2str(files())).join('|'), 'i');
 	}
 
-	init(url) {
+	init(url, samplesData) {
 		const newPlayer = this.players.find(({ files }) => files().test(url));
 		if (newPlayer !== this.current) {
 			this.current?.shutdown();
 			this.current = newPlayer;
 		}
-		this.current.init(url);
+		this.current.init(url, samplesData);
 		this.current.loop = this.loop;
 		this.current.stereoSeparation = this.stereoSeparation;
 	}
