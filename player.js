@@ -176,12 +176,10 @@ class Opl3Player extends PlayerBase {
 		this.player.volume = v * 8;
 	}
 	get stereoSeparation() {
-		return 1;
+		return this.player.stereoSeparation;
 	}
 	set stereoSeparation(v) {
-		if (v < 1) {
-			console.warn("OPL3 player does not support mono playback");
-		}
+		this.player.stereoSeparation = v;
 	}
 	get loop() {
 		return this._loop;
