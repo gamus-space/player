@@ -150,11 +150,14 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	$('#filter_game').on('change', filterChangeGame);
 	$('#filter_song').on('change', filterChangeSong);
 	updateRoute(history.state);
-	$('#stats_songs_total').text(songs.length);
-	const supportedSongs = songs.filter(song => compat.test(song.song_link)).length;
+	$('#pc_songs').text(songs.filter(({ platform }) => platform === 'PC').length);
+	const amigaSongs = songs.filter(({ platform }) => platform === 'Amiga');
+	const totalSongs = amigaSongs.length;
+	const supportedSongs = amigaSongs.filter(song => compat.test(song.song_link)).length;
+	$('#stats_songs_total').text(totalSongs);
 	$('#stats_songs_supported').text(supportedSongs);
-	$('#stats_bar .ui-slider-handle').text((supportedSongs / songs.length * 100).toFixed(1) + '%');
-	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: songs.length, disabled: true });
+	$('#stats_bar .ui-slider-handle').text((supportedSongs / totalSongs * 100).toFixed(1) + '%');
+	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: totalSongs, disabled: true });
 	const formatPrefix = /(?:^|\/)(\w+)\.[^\/]+$/i;
 	const formatSuffix = /\.(\w+)(?:#\d+)?$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
@@ -555,8 +558,7 @@ async function loadMusicFromURL(url) {
 	const songData = await fetchFile(url);
 	const samplesUrl = songsByUrl[url]?.samples && song2url({ song_link: songsByUrl[url].samples });
 	const samplesData = samplesUrl && await fetchFile(samplesUrl);
-	player.init(url, samplesData);
-	if (!player.open(songData)) return;
+	if (!player.open(url, songData, samplesData)) return;
 	player.play();
 	readyToPlay();
 }
