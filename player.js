@@ -11,7 +11,7 @@ class PlayerBase {
 	shutdown() {
 		throw 'not implemented';
 	}
-	open(url, songData, samplesData) {
+	open(url, songData, samplesData, ready) {
 		throw 'not implemented';
 	}
 	play() {
@@ -69,12 +69,13 @@ class ModPlayer extends PlayerBase {
 		this.player.stop();
 		this.ignoreStop = false;
 	}
-	open(url, songData) {
+	open(url, songData, samplesData, ready) {
 		window.neoart.initialize();
 		this.player.startingSong = this.url_param(url);
 		this.ignoreStop = true;
 		const result = this.loader.load(songData);
 		this.ignoreStop = false;
+		if (result) setTimeout(ready);
 		return result;
 	}
 	play() {
@@ -132,7 +133,7 @@ class Opl3Player extends PlayerBase {
 	preInit() {
 		this.shutdown();
 	}
-	postInit(songData) {
+	postInit(songData, ready) {
 		this.player.on('position', position => {
 			if (position < this.player.length)
 				return;
@@ -144,6 +145,7 @@ class Opl3Player extends PlayerBase {
 		});
 		this.player.play(songData);
 		this.player.pause();
+		setTimeout(ready);
 		return true;
 	}
 	shutdown() {
@@ -197,14 +199,14 @@ class ImfPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData) {
+	open(url, songData, samplesData, ready) {
 		this.preInit();
 		const ext = this.files().exec(url)[1].toLowerCase();
 		this.player = new OPL3.Player(OPL3.format.IMF, {
 			prebuffer: 1000,
 			rate: this.url_param(url) || { imf: 560, wlf: 700 }[ext],
 		});
-		return this.postInit(songData);
+		return this.postInit(songData, ready);
 	}
 	files() {
 		return /\.(imf|wlf)(#\d+)?$/i;
@@ -218,14 +220,14 @@ class MusPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData) {
+	open(url, songData, samplesData, ready) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.MUS, {
 			prebuffer: 2000,
 			rate: this.url_param(url) || 140,
 			instruments: samplesData,
 		});
-		return this.postInit(songData);
+		return this.postInit(songData, ready);
 	}
 	files() {
 		return /\.(mus)(#\d+)?$/i;
@@ -241,8 +243,9 @@ class AdPlugPlayer extends PlayerBase {
 		this._stopped = () => {};
 		this._loop = false;
 		this._stereo = 1;
+		this.ready = () => {};
 
-		const onTrackReadyToPlay = () => {};
+		const onTrackReadyToPlay = () => { this.ready(); };
 		const onTrackEnd = () => {
 			this.seek(0);
 			if (this._loop) return;
@@ -253,13 +256,14 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(s3m)$/i;
+		return /\.(m|s3m)$/i;
 	}
 
 	shutdown() {
 		this.player.pause();
 	}
-	open(url, songData) {
+	open(url, songData, samplesData, ready) {
+		this.ready = ready;
 		this.player.loadMusicFromURL(url, {}, () => {}, () => {});
 		return true;
 	}
@@ -320,8 +324,8 @@ class MultiPlayer extends PlayerBase {
 		return new RegExp(this.players.map(({ files }) => re2str(files())).join('|'), 'i');
 	}
 
-	open(url, songData, samplesData) {
-		const newPlayer = this.players.find(player => player.files().test(url) && player.open(url, songData, samplesData));
+	open(url, songData, samplesData, ready) {
+		const newPlayer = this.players.find(player => player.files().test(url) && player.open(url, songData, samplesData, ready));
 		if (newPlayer !== this.current) {
 			this.current?.shutdown();
 			this.current = newPlayer;

@@ -243,7 +243,7 @@ function updateStatus(update) {
 		$('#info_year').text(song.year);
 		$('#info_song').text(song.song);
 		$('#info_composer').text(song.composer);
-		$('#info_size').text(Math.round(song.size / 1024));
+		$('#info_size').text((song.size / 1024).toPrecision(1));
 		$('#info_source').text(song.source).attr('href', song.source_link);
 		$('#info_developers').empty().append(...(song.developers || []).map(developer => $('<li>', { text: developer })));
 		$('#info_publishers').empty().append(...(song.publishers || []).map(publisher => $('<li>', { text: publisher })));
@@ -562,9 +562,10 @@ async function loadMusicFromURL(url) {
 	const songData = await fetchFile(url);
 	const samplesUrl = songsByUrl[url]?.samples && song2url({ song_link: songsByUrl[url].samples });
 	const samplesData = samplesUrl && await fetchFile(samplesUrl);
-	if (!player.open(url, songData, samplesData)) return;
-	player.play();
-	readyToPlay();
+	player.open(url, songData, samplesData, () => {
+		player.play();
+		readyToPlay();
+	});
 }
 
 const player = new Player();
