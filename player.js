@@ -235,10 +235,84 @@ class MusPlayer extends Opl3Player {
 	}
 }
 
+class AdPlugPlayer extends PlayerBase {
+	constructor() {
+		super();
+		this._stopped = () => {};
+		this._loop = false;
+		this._stereo = 1;
+
+		const onTrackReadyToPlay = () => {};
+		const onTrackEnd = () => {
+			this.seek(0);
+			if (this._loop) return;
+			this._stopped();
+			this.shutdown();
+		}
+		ScriptNodePlayer.createInstance(new AdPlugBackendAdapter(), '', [], false, () => {}, onTrackReadyToPlay, onTrackEnd);
+		this.player = ScriptNodePlayer.getInstance();
+	}
+	files() {
+		return /\.(s3m)$/i;
+	}
+
+	shutdown() {
+		this.player.pause();
+	}
+	open(url, songData) {
+		this.player.loadMusicFromURL(url, {}, () => {}, () => {});
+		return true;
+	}
+	play() {
+		this.player.play();
+	}
+	pause() {
+		this.player.pause();
+	}
+	seek(v) {
+		this.player.seekPlaybackPosition(v * 1000);
+	}
+
+	get position() {
+		return this.player.getPlaybackPosition() / 1000;
+	}
+	get duration() {
+		return this.player.getMaxPlaybackPosition() / 1000;
+	}
+	get status() {
+		const info = this.player.getSongInfo();
+		return [info.player, info.title].filter(v => !!v);
+	}
+
+	get volume() {
+		return this.player.getVolume() / 2;
+	}
+	set volume(v) {
+		this.player.setVolume(v * 2);
+	}
+	get stereoSeparation() {
+		return this._stereo;
+	}
+	set stereoSeparation(v) {
+		this._stereo = v;
+		this.player.setPanning(-v);
+	}
+	get loop() {
+		return this._loop;
+	}
+	set loop(v) {
+		this._loop = v;
+	}
+
+	set stopped(v) {
+		this._stopped = v;
+	}
+}
+
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer()];
+		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new AdPlugPlayer()];
 		this.current = undefined;
 	}
 	files() {
@@ -247,15 +321,16 @@ class MultiPlayer extends PlayerBase {
 	}
 
 	open(url, songData, samplesData) {
-		const newPlayer = this.players.find(({ files }) => files().test(url));
+		const newPlayer = this.players.find(player => player.files().test(url) && player.open(url, songData, samplesData));
 		if (newPlayer !== this.current) {
 			this.current?.shutdown();
 			this.current = newPlayer;
 		}
-		const result = this.current.open(url, songData, samplesData);
-		this.current.loop = this.loop;
-		this.current.stereoSeparation = this.stereoSeparation;
-		return result;
+		if (this.current) {
+			this.current.loop = this.loop;
+			this.current.stereoSeparation = this.stereoSeparation;
+		}
+		return !!this.current;
 	}
 	play() {
 		this.current.play();
