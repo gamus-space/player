@@ -72,10 +72,15 @@ section.details .content {
 	overflow-y: auto;
 	left: 1em;
 	right: 0;
+}
+section.details.info .content {
 	padding: 0 1em;
 }
 section.details h1 {
 	font-size: 2.4em;
+	margin: 0 1em;
+}
+section.details.info h1 {
 	margin: 0;
 	inline-size: max-content;
 }

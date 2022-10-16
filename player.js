@@ -256,7 +256,7 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(m|s3m)$/i;
+		return /\.(adl|m|s3m)(#\d+)?$/i;
 	}
 
 	shutdown() {
@@ -264,7 +264,9 @@ class AdPlugPlayer extends PlayerBase {
 	}
 	open(url, songData, samplesData, ready) {
 		this.ready = ready;
-		this.player.loadMusicFromURL(url, {}, () => {}, () => {});
+		this.player.loadMusicFromURL(url.replace(/#.+$/, ''), {
+			track: this.url_param(url) != null ? this.url_param(url) - 1 : null,
+		}, () => {}, () => {});
 		return true;
 	}
 	play() {

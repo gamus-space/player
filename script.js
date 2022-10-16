@@ -26,7 +26,8 @@ const invalidSongs = [
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#4", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#15", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#23", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#33", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1.MOD#1", "World of Game MODs/PC/Pinball Dreams 2/LEVEL2.MOD#25", "World of Game MODs/PC/Pinball Dreams 2/LEVEL4.MOD#36",
 	"VGMPF/PC/Raptor Call of the Shadows/15 - Boss 1.mus#140",
 	"resources/OPL3/Final Doom - TNT Evilution/READ_M.MUS",
-	"resources/OPL3/Polanie/muzyka09.s3m", "resources/OPL3/Polanie/muzyka10.s3m", "resources/OPL3/Polanie/muzyka15.s3m"
+	"resources/OPL3/Polanie/muzyka09.s3m", "resources/OPL3/Polanie/muzyka10.s3m", "resources/OPL3/Polanie/muzyka15.s3m",
+	"VGMPF/PC/Dune II The Building of a Dynasty/DUNE1.ADL#3",
 ];
 
 const issues = [
@@ -51,6 +52,7 @@ const issues = [
 	]},
 	{ name: "AdPlug issues", groups: [
 		{ name: "lock up", songs: ["resources/OPL3/Polanie/muzyka07.s3m", "resources/OPL3/Polanie/muzyka08.s3m"] },
+		{ name: "ADL song too long", songs: ["VGMPF/PC/Dune II The Building of a Dynasty/DUNE16.ADL#8", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE17.ADL#5", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#3", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#4", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#5", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#7", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE8.ADL#3", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE8.ADL#4"] },
 	]},
 ];
 const issuesMap = issues
