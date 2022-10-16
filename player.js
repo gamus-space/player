@@ -256,7 +256,7 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(adl|m|s3m)(#\d+)?$/i;
+		return /\.(adl|m|mdi|s3m)(#\d+)?$/i;
 	}
 
 	shutdown() {

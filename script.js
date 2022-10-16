@@ -53,6 +53,7 @@ const issues = [
 	{ name: "AdPlug issues", groups: [
 		{ name: "lock up", songs: ["resources/OPL3/Polanie/muzyka07.s3m", "resources/OPL3/Polanie/muzyka08.s3m"] },
 		{ name: "ADL song too long", songs: ["VGMPF/PC/Dune II The Building of a Dynasty/DUNE16.ADL#8", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE17.ADL#5", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#3", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#4", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#5", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#7", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE8.ADL#3", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE8.ADL#4"] },
+		{ name: "MDI invalid speed", songs: ["VGMPF/PC/Golden Axe/INTRO.MDI", "VGMPF/PC/Golden Axe/INTRO2.MDI", "VGMPF/PC/Golden Axe/OLDMAP.MDI", "VGMPF/PC/Golden Axe/RD4.MDI"] },
 	]},
 ];
 const issuesMap = issues
@@ -245,7 +246,7 @@ function updateStatus(update) {
 		$('#info_year').text(song.year);
 		$('#info_song').text(song.song);
 		$('#info_composer').text(song.composer);
-		$('#info_size').text((song.size / 1024).toPrecision(1));
+		$('#info_size').text((song.size / 1024).toFixed(1));
 		$('#info_source').text(song.source).attr('href', song.source_link);
 		$('#info_developers').empty().append(...(song.developers || []).map(developer => $('<li>', { text: developer })));
 		$('#info_publishers').empty().append(...(song.publishers || []).map(publisher => $('<li>', { text: publisher })));
