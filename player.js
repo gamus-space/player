@@ -11,7 +11,7 @@ class PlayerBase {
 	shutdown() {
 		throw 'not implemented';
 	}
-	open(url, songData, samplesData) {
+	open(url, songData, samplesData, ready) {
 		throw 'not implemented';
 	}
 	play() {
@@ -69,12 +69,13 @@ class ModPlayer extends PlayerBase {
 		this.player.stop();
 		this.ignoreStop = false;
 	}
-	open(url, songData) {
+	open(url, songData, samplesData, ready) {
 		window.neoart.initialize();
 		this.player.startingSong = this.url_param(url);
 		this.ignoreStop = true;
 		const result = this.loader.load(songData);
 		this.ignoreStop = false;
+		if (result) setTimeout(ready);
 		return result;
 	}
 	play() {
@@ -132,7 +133,7 @@ class Opl3Player extends PlayerBase {
 	preInit() {
 		this.shutdown();
 	}
-	postInit(songData) {
+	postInit(songData, ready) {
 		this.player.on('position', position => {
 			if (position < this.player.length)
 				return;
@@ -144,6 +145,7 @@ class Opl3Player extends PlayerBase {
 		});
 		this.player.play(songData);
 		this.player.pause();
+		setTimeout(ready);
 		return true;
 	}
 	shutdown() {
@@ -197,14 +199,14 @@ class ImfPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData) {
+	open(url, songData, samplesData, ready) {
 		this.preInit();
 		const ext = this.files().exec(url)[1].toLowerCase();
 		this.player = new OPL3.Player(OPL3.format.IMF, {
 			prebuffer: 1000,
 			rate: this.url_param(url) || { imf: 560, wlf: 700 }[ext],
 		});
-		return this.postInit(songData);
+		return this.postInit(songData, ready);
 	}
 	files() {
 		return /\.(imf|wlf)(#\d+)?$/i;
@@ -218,14 +220,14 @@ class MusPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData) {
+	open(url, songData, samplesData, ready) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.MUS, {
 			prebuffer: 2000,
 			rate: this.url_param(url) || 140,
 			instruments: samplesData,
 		});
-		return this.postInit(songData);
+		return this.postInit(songData, ready);
 	}
 	files() {
 		return /\.(mus)(#\d+)?$/i;
@@ -235,10 +237,88 @@ class MusPlayer extends Opl3Player {
 	}
 }
 
+class AdPlugPlayer extends PlayerBase {
+	constructor() {
+		super();
+		this._stopped = () => {};
+		this._loop = false;
+		this._stereo = 1;
+		this.ready = () => {};
+
+		const onTrackReadyToPlay = () => { this.ready(); };
+		const onTrackEnd = () => {
+			this.seek(0);
+			if (this._loop) return;
+			this._stopped();
+			this.shutdown();
+		}
+		ScriptNodePlayer.createInstance(new AdPlugBackendAdapter(), '', [], false, () => {}, onTrackReadyToPlay, onTrackEnd);
+		this.player = ScriptNodePlayer.getInstance();
+	}
+	files() {
+		return /\.(adl|m|mdi|s3m)(#\d+)?$/i;
+	}
+
+	shutdown() {
+		this.player.pause();
+	}
+	open(url, songData, samplesData, ready) {
+		this.ready = ready;
+		this.player.loadMusicFromURL(url.replace(/#.+$/, ''), {
+			track: this.url_param(url) != null ? this.url_param(url) - 1 : null,
+		}, () => {}, () => {});
+		return true;
+	}
+	play() {
+		this.player.play();
+	}
+	pause() {
+		this.player.pause();
+	}
+	seek(v) {
+		this.player.seekPlaybackPosition(v * 1000);
+	}
+
+	get position() {
+		return this.player.getPlaybackPosition() / 1000;
+	}
+	get duration() {
+		return this.player.getMaxPlaybackPosition() / 1000;
+	}
+	get status() {
+		const info = this.player.getSongInfo();
+		return [info.player, info.title].filter(v => !!v);
+	}
+
+	get volume() {
+		return this.player.getVolume() / 2;
+	}
+	set volume(v) {
+		this.player.setVolume(v * 2);
+	}
+	get stereoSeparation() {
+		return this._stereo;
+	}
+	set stereoSeparation(v) {
+		this._stereo = v;
+		this.player.setPanning(-v);
+	}
+	get loop() {
+		return this._loop;
+	}
+	set loop(v) {
+		this._loop = v;
+	}
+
+	set stopped(v) {
+		this._stopped = v;
+	}
+}
+
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer()];
+		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new AdPlugPlayer()];
 		this.current = undefined;
 	}
 	files() {
@@ -246,16 +326,17 @@ class MultiPlayer extends PlayerBase {
 		return new RegExp(this.players.map(({ files }) => re2str(files())).join('|'), 'i');
 	}
 
-	open(url, songData, samplesData) {
-		const newPlayer = this.players.find(({ files }) => files().test(url));
+	open(url, songData, samplesData, ready) {
+		const newPlayer = this.players.find(player => player.files().test(url) && player.open(url, songData, samplesData, ready));
 		if (newPlayer !== this.current) {
 			this.current?.shutdown();
 			this.current = newPlayer;
 		}
-		const result = this.current.open(url, songData, samplesData);
-		this.current.loop = this.loop;
-		this.current.stereoSeparation = this.stereoSeparation;
-		return result;
+		if (this.current) {
+			this.current.loop = this.loop;
+			this.current.stereoSeparation = this.stereoSeparation;
+		}
+		return !!this.current;
 	}
 	play() {
 		this.current.play();
