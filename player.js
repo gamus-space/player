@@ -209,7 +209,7 @@ class ImfPlayer extends Opl3Player {
 		return this.postInit(songData, ready);
 	}
 	files() {
-		return /\.(imf|wlf)(#\d+)?$/i;
+		return /\.(imf|wlf)(#\d+)$/i;
 	}
 	get status() {
 		return [...super.status, "IMF"];
@@ -256,7 +256,7 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(adl|m|mdi|s3m)(#\d+)?$/i;
+		return /\.(adl|imf|m|mdi|s3m|wlf)(#\d+)?$/i;
 	}
 
 	shutdown() {
