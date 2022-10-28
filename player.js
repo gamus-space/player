@@ -209,7 +209,7 @@ class ImfPlayer extends Opl3Player {
 		return this.postInit(songData, ready);
 	}
 	files() {
-		return /\.(imf|wlf)(#\d+)?$/i;
+		return /\.(imf|wlf)(#\d+)$/i;
 	}
 	get status() {
 		return [...super.status, "IMF"];
@@ -237,6 +237,28 @@ class MusPlayer extends Opl3Player {
 	}
 }
 
+
+class LaaPlayer extends Opl3Player {
+	constructor() {
+		super();
+	}
+	open(url, songData, samplesData, ready) {
+		if (String.fromCharCode.apply(null, new Uint8Array(songData.slice(0, 3))) !== 'ADL')
+			return false;
+		this.preInit();
+		this.player = new OPL3.Player(OPL3.format.LAA, {
+			prebuffer: 2000,
+		});
+		return this.postInit(songData, ready);
+	}
+	files() {
+		return /\.(laa)$/i;
+	}
+	get status() {
+		return [...super.status, "LAA"];
+	}
+}
+
 class AdPlugPlayer extends PlayerBase {
 	constructor() {
 		super();
@@ -256,7 +278,7 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(adl|m|mdi|s3m)(#\d+)?$/i;
+		return /\.(adl|imf|laa|m|mdi|s3m|wlf)(#\d+)?$/i;
 	}
 
 	shutdown() {
@@ -318,7 +340,7 @@ class AdPlugPlayer extends PlayerBase {
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new AdPlugPlayer()];
+		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new LaaPlayer(), new AdPlugPlayer()];
 		this.current = undefined;
 	}
 	files() {
