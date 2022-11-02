@@ -1,5 +1,6 @@
 'use strict';
 
+import { invalidSongs, songIssues } from './db.js';
 import { Player } from './player.js';
 
 const ROOT_URL = document.getElementsByTagName('base')[0].href;
@@ -17,50 +18,6 @@ let songs, songsByUrl;
 let games;
 
 let details = { view: null };
-
-const invalidSongs = [
-	"UnExoticA/Turrican_2/mdat.world_1.zip#31", "UnExoticA/Turrican_2/Unused/mdat.world_1.zip#31", "UnExoticA/Turrican_2/mdat.world_3.zip#31", "UnExoticA/Turrican_2/mdat.world_4.zip#31", "UnExoticA/Turrican_3/mdat.world_3.zip#10","UnExoticA/Turrican/mdat.ingame_1.zip#6", "UnExoticA/Turrican/mdat.ingame_2.zip#4", "UnExoticA/Turrican/mdat.ingame_3.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#9", "UnExoticA/Turrican/mdat.ingame_5.zip#6", "UnExoticA/Turrican/mdat.title.zip#4", "UnExoticA/Turrican/mdat.title.zip#5", "UnExoticA/Apidya/mdat.title.zip#2",
-	"UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#17", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#18", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#19", "UnExoticA/Monkey_Island/mdat.Monkey_Island.zip#20",
-	"UnExoticA/Agony/Unused/mod.foret#30", "UnExoticA/Project-X/mod.px.bladswede remix!#37",
-	"UnExoticA/Pinball_Dreams/di.steelwheels#45", "UnExoticA/Pinball_Dreams/di.steelwheels#52", "UnExoticA/Pinball_Dreams/di.steelwheels#60",
-	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#4", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#15", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#23", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#33", "World of Game MODs/PC/Pinball Dreams 2/LEVEL1.MOD#1", "World of Game MODs/PC/Pinball Dreams 2/LEVEL2.MOD#25", "World of Game MODs/PC/Pinball Dreams 2/LEVEL4.MOD#36",
-	"VGMPF/PC/Raptor Call of the Shadows/15 - Boss 1.mus#140",
-	"resources/OPL3/Final Doom - TNT Evilution/READ_M.MUS",
-	"resources/OPL3/Polanie/muzyka09.s3m", "resources/OPL3/Polanie/muzyka10.s3m", "resources/OPL3/Polanie/muzyka15.s3m",
-	"VGMPF/PC/Dune II The Building of a Dynasty/DUNE1.ADL#3",
-];
-
-const issues = [
-	{ name: "The Player 4.1a issues", groups: [
-		{ name: "clipped", songs: ["UnExoticA/Superfrog/p4x.intro_tune_5"] },
-	]},
-	{ name: "RichardJoseph issues", groups: [
-		{ name: "silence", songs: ["UnExoticA/Chaos_Engine/rjp.ingame_2.zip"] },
-	]},
-	{ name: "TFMX issues", groups: [
-		{ name: "SID not supported", songs: ["UnExoticA/Turrican_2/mdat.loader.zip#1", "UnExoticA/Turrican_2/Unfixed_Loader/mdat.loader.zip#1",  "UnExoticA/Turrican_3/mdat.loader.zip#1", "UnExoticA/Turrican_3/mdat.loader.zip#2", "UnExoticA/Turrican_3/mdat.loader.zip#3"] },
-		{ name: "tuning", songs: ["UnExoticA/Apidya/mdat.ingame_4.zip#1", "UnExoticA/Apidya/mdat.ingame_4.zip#2", "UnExoticA/Apidya/mdat.ingame_4.zip#5", "UnExoticA/Apidya/mdat.ingame_4.zip#6", "UnExoticA/Turrican_3/mdat.world_5.zip#2", "UnExoticA/Turrican_3/mdat.world_5.zip#3"] },
-		{ name: "sample", songs: ["UnExoticA/Turrican/mdat.ingame_4.zip#3", "UnExoticA/Turrican/mdat.ingame_4.zip#6", "UnExoticA/Turrican/mdat.ingame_4.zip#8"] },
-		{ name: "instant end", songs: ["UnExoticA/Apidya/mdat.ingame_5.zip#2"] },
-	]},
-	{ name: "invalid song", groups: [
-		{ name: "bad sample", songs: ["World of Game MODs/PC/Crusader No Remorse/M07.MOD#1", "World of Game MODs/PC/Crusader No Remorse/M07.MOD#18"] },
-		{ name: "bad tempo change", songs: ["UnExoticA/Settlers/mod.siedler ii"] },
-	]},
-	{ name: "OPL3 issues", groups: [
-		{ name: "bad sample", songs: ["VGMPF/PC/Doom II Hell On Earth/10 - The Dave D. Taylor Blues.mus", "VGMPF/PC/Doom II Hell On Earth/17 - Getting Too Tense.mus", "resources/OPL3/Final Doom - The Plutonia Experiment/DDTBL3.MUS", "resources/OPL3/Final Doom - TNT Evilution/THEDA2.MUS" ] },
-	]},
-	{ name: "AdPlug issues", groups: [
-		{ name: "lock up", songs: ["resources/OPL3/Polanie/muzyka07.s3m", "resources/OPL3/Polanie/muzyka08.s3m"] },
-		{ name: "ADL song too long", songs: ["VGMPF/PC/Dune II The Building of a Dynasty/DUNE16.ADL#8", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE17.ADL#5", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#3", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#4", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#5", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE7.ADL#7", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE8.ADL#3", "VGMPF/PC/Dune II The Building of a Dynasty/DUNE8.ADL#4"] },
-		{ name: "MDI invalid speed", songs: ["VGMPF/PC/Golden Axe/INTRO.MDI", "VGMPF/PC/Golden Axe/INTRO2.MDI", "VGMPF/PC/Golden Axe/OLDMAP.MDI", "VGMPF/PC/Golden Axe/RD4.MDI"] },
-	]},
-];
-const issuesMap = issues
-	.map(issue => issue.groups.map(group => group.songs.map(song => ({ song, group: group.name, issue: issue.name }))).reduce((a, e) => [...a, ...e], []))
-	.reduce((a, e) => [...a, ...e], [])
-	.map(({ song, group, issue }) => [song, `${issue} - ${group}`])
-	.reduce((res, [song, issue]) => ({ ...res, [song]: [...res[song] || [], issue] }), {});
 
 function time(t) {
 	t = t.toFixed(0);
@@ -123,7 +80,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		data: songs.map(song => ({
 			status: compat.test(song.song_link) ? '<i class="fas fa-stop"></i>' : '',
 			song: song.song,
-			song_label: song.song + (issuesMap[song.song_link] ? ` <i class="issue fas fa-exclamation-circle" title="${issuesMap[song.song_link].join(`\n`)}"></i>` : ""),
+			song_label: song.song + (songIssues[song.song_link] ? ` <i class="issue fas fa-exclamation-circle" title="${songIssues[song.song_link].join(`\n`)}"></i>` : ""),
 			composer: song.composer,
 			game: song.game,
 			platform: song.platform,

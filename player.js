@@ -270,9 +270,12 @@ class AdPlugPlayer extends PlayerBase {
 		const onTrackReadyToPlay = () => { this.ready(); };
 		const onTrackEnd = () => {
 			this.seek(0);
-			if (this._loop) return;
-			this._stopped();
-			this.shutdown();
+			if (this._loop) {
+				this.play();
+			} else {
+				this._stopped();
+				this.shutdown();
+			}
 		}
 		ScriptNodePlayer.createInstance(new AdPlugBackendAdapter(), '', [], false, () => {}, onTrackReadyToPlay, onTrackEnd);
 		this.player = ScriptNodePlayer.getInstance();
