@@ -84,11 +84,15 @@ const issues = [
 		] },
 	]},
 	{ name: "OPL3 issues", groups: [
-		{ name: "bad sample", songs: [
+		{ name: "MUS bad sample", songs: [
 			"VGMPF/PC/Doom II Hell On Earth/10 - The Dave D. Taylor Blues.mus",
 			"VGMPF/PC/Doom II Hell On Earth/17 - Getting Too Tense.mus",
 			"resources/OPL3/Final Doom - The Plutonia Experiment/DDTBL3.MUS",
 			"resources/OPL3/Final Doom - TNT Evilution/THEDA2.MUS",
+		] },
+		{ name: "XMI inaccurate percussion", songs: [
+			"VGMPF/PC/Lost Vikings, The/505.xmi",
+			"VGMPF/PC/Lost Vikings, The/506.xmi",
 		] },
 	]},
 	{ name: "AdPlug issues", groups: [
