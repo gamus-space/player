@@ -140,7 +140,7 @@ class Opl3Player extends PlayerBase {
 			this.player.seek(0);
 			if (!this.loop) {
 				this.player.pause();
-				this._stopped?.();
+				setTimeout(() => { this._stopped?.(); }, 100);
 			}
 		});
 		this.player.play(songData);
