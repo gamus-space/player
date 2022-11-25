@@ -258,6 +258,26 @@ class XmiPlayer extends Opl3Player {
 	}
 }
 
+class MidPlayer extends Opl3Player {
+	constructor() {
+		super();
+	}
+	open(url, songData, samplesData, ready) {
+		this.preInit();
+		this.player = new OPL3.Player(OPL3.format.MID, {
+			prebuffer: 1000,
+			instruments: samplesData,
+		});
+		return this.postInit(songData, ready);
+	}
+	files() {
+		return /\.(mff|mid)$/i;
+	}
+	get status() {
+		return [...super.status, "MID"];
+	}
+}
+
 class LaaPlayer extends Opl3Player {
 	constructor() {
 		super();
@@ -363,7 +383,7 @@ class AdPlugPlayer extends PlayerBase {
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new LaaPlayer(), new AdPlugPlayer()];
+		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new LaaPlayer(), new AdPlugPlayer()];
 		this.current = undefined;
 	}
 	files() {
