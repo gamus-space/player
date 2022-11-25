@@ -94,6 +94,9 @@ const issues = [
 			"VGMPF/PC/Lost Vikings, The/505.xmi",
 			"VGMPF/PC/Lost Vikings, The/506.xmi",
 		] },
+		{ name: "MID invalid timing", songs: [
+			"VGMPF/PC/Duke Nukem 3D/15 - Aliens, Say Your Prayers!.mid",
+		] },
 	]},
 	{ name: "AdPlug issues", groups: [
 		{ name: "lock up", songs: [
