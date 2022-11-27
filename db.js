@@ -97,6 +97,11 @@ const issues = [
 		{ name: "MID invalid timing", songs: [
 			"VGMPF/PC/Duke Nukem 3D/15 - Aliens, Say Your Prayers!.mid",
 		] },
+		{ name: "KLM volume problem", songs: [
+			"resources/OPL3/Wacky Wheels/APOGEE.KLM",
+			"resources/OPL3/Wacky Wheels/ASHES.KLM",
+			"resources/OPL3/Wacky Wheels/MAINMENU.KLM",
+		] },
 	]},
 	{ name: "AdPlug issues", groups: [
 		{ name: "lock up", songs: [
