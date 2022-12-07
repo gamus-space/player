@@ -244,7 +244,7 @@ class XmiPlayer extends Opl3Player {
 	open(url, songData, samplesData, ready) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.XMI, {
-			prebuffer: 2000,
+			prebuffer: 1000,
 			instruments: samplesData,
 			song: this.url_param(url) || 1,
 		});
@@ -326,7 +326,7 @@ class AdPlugPlayer extends PlayerBase {
 		this._stereo = 1;
 		this.ready = () => {};
 
-		const onTrackReadyToPlay = () => { this.ready(); };
+		const onTrackReadyToPlay = () => { setTimeout(() => { this.ready(); }); };
 		const onTrackEnd = () => {
 			this.seek(0);
 			if (this._loop) {
@@ -340,7 +340,7 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(adl|imf|laa|m|mdi|s3m|wlf)(#\d+)?$/i;
+		return /\.(adl|cmf|imf|laa|m|mdi|s3m|wlf)(#\d+)?$/i;
 	}
 
 	shutdown() {
