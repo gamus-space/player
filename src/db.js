@@ -187,6 +187,13 @@ const issues = [
 			"VGMPF/PC/Golden Axe/OLDMAP.MDI",
 			"VGMPF/PC/Golden Axe/RD4.MDI",
 		] },
+		{ name: "CMF song too long", songs: [
+			"resources/OPL3/Alien Breed/ALARMED.CMF",
+			"resources/OPL3/Alien Breed/INGAME.CMF",
+			"resources/OPL3/Alien Breed/INTEX.CMF",
+			"resources/OPL3/Alien Breed/MONSTER.CMF",
+			"resources/OPL3/Alien Breed/TITLE.CMF",
+		] },
 	]},
 ];
 
