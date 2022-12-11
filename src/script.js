@@ -191,8 +191,6 @@ function updateStatus(update) {
 
 	if (status.song) {
 		songAutoscroll.value = '>>> ' + [status.song, ...player.status].filter(s => s).join(' ~ ') + ' <<<';
-		const volume = $('#volume2').length ? $('#volume2').slider('option', 'value') : $('#volume').val();
-		player.volume = volume;
 	} else
 		songAutoscroll.value = '~ Pick a song ~';
 
@@ -243,6 +241,7 @@ if (typeof $().slider === 'function') {
 		player.volume = volume;
 		localStorage.setItem('volume', volume);
 	});
+	setTimeout(() => { player.volume = volume; });
 } else {
 	const volume = localStorage.getItem('volume') ?? 1;
 	$('#volume').val(volume);
@@ -254,6 +253,7 @@ if (typeof $().slider === 'function') {
 		$('#volume').toggleClass('silent', volume == 0);
 		localStorage.setItem('volume', volume);
 	});
+	setTimeout(() => { player.volume = volume; });
 }
 $('#time_slider').slider({ orientation: 'horizontal', range: 'min', min: 0, value: 0, max: 0, step: 1 });
 $('#time_slider').on('slide', (event, ui) => {

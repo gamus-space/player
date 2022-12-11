@@ -404,6 +404,11 @@ class MultiPlayer extends PlayerBase {
 		super();
 		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new LaaPlayer(), new AdPlugPlayer()];
 		this.current = undefined;
+
+		this._volume = 1;
+		this._stereoSeparation = 1;
+		this._loop = false;
+		Object.seal(this);
 	}
 	files() {
 		const re2str = re => /^\/(.*)\/\w?$/.exec(re.toString())[1];
@@ -419,6 +424,7 @@ class MultiPlayer extends PlayerBase {
 		if (this.current) {
 			this.current.loop = this.loop;
 			this.current.stereoSeparation = this.stereoSeparation;
+			this.current.volume = this.volume;
 		}
 		return !!this.current;
 	}
@@ -443,10 +449,11 @@ class MultiPlayer extends PlayerBase {
 	}
 
 	get volume() {
-		return this.current.volume;
+		return this._volume;
 	}
 	set volume(v) {
-		this.current.volume = v;
+		this._volume = v;
+		if (this.current) this.current.volume = v;
 	}
 	get stereoSeparation() {
 		return this._stereoSeparation;
