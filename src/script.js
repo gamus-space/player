@@ -71,11 +71,19 @@ const songAutoscroll = new Autoscroll($('#song'), 30);
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = player.files();
 	games = db;
-	songs = db.reduce((flat, game) => [...flat, ...game.songs
-		.filter(song => !invalidSongs.includes(song.song_link))
+	const allSongs = db.reduce((flat, game) => [...flat, ...game.songs
 		.map(song => ({ ...song, ...game, song_url: song2url(song) }))
 	], []);
-	songsByUrl = Object.fromEntries(songs.map(song => [song.song_url, song]));
+	songsByUrl = Object.fromEntries(allSongs.map(song => [song.song_url, song]));
+	songs = allSongs.filter(song => !invalidSongs.includes(song.song_link));
+
+	const unmatchedInvalid = invalidSongs.filter(song_link => !songsByUrl[song2url({ song_link })]);
+	if (unmatchedInvalid.length > 0)
+		console.warn('unmatched invalid song filter', unmatchedInvalid);
+	const unmatchedIssues = Object.keys(songIssues).filter(song_link => !songsByUrl[song2url({ song_link })]);
+	if (unmatchedIssues.length > 0)
+		console.warn('unmatched song issues filter', unmatchedIssues);
+
 	$('#library').DataTable({
 		data: songs.map(song => ({
 			status: compat.test(song.song_link) ? '<i class="fas fa-stop"></i>' : '',
