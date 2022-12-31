@@ -193,6 +193,19 @@ const issues = [
 			"resources/OPL3/Alien Breed/MONSTER.CMF",
 			"resources/OPL3/Alien Breed/TITLE.CMF",
 		] },
+		{ name: "HMP invalid effect", songs: [
+			"resources/OPL3/Super Street Fighter II Turbo/INTRO_F.HMP",
+		] },
+		{ name: "HMP invalid percussion", songs: [
+			"resources/OPL3/Super Street Fighter II Turbo/CAMM_F.HMP",
+			"resources/OPL3/Super Street Fighter II Turbo/CAMM_KOF.HMP",
+			"resources/OPL3/Super Street Fighter II Turbo/HAWK_F.HMP",
+			"resources/OPL3/Super Street Fighter II Turbo/HAWK_KOF.HMP",
+			"resources/OPL3/Super Street Fighter II Turbo/RYU_F.HMP",
+			"resources/OPL3/Super Street Fighter II Turbo/RYU_KOF.HMP",
+			"resources/OPL3/Super Street Fighter II Turbo/SAGA_F.HMP",
+			"resources/OPL3/Super Street Fighter II Turbo/SAGA_KOF.HMP",
+		] },
 	]},
 ];
 
