@@ -317,6 +317,26 @@ class HmpPlayer extends Opl3Player {
 	}
 }
 
+class HmiPlayer extends Opl3Player {
+	constructor() {
+		super();
+	}
+	open(url, songData, samplesData, ready) {
+		this.preInit();
+		this.player = new OPL3.Player(OPL3.format.HMI, {
+			prebuffer: 1000,
+			instruments: samplesData,
+		});
+		return this.postInit(songData, ready);
+	}
+	files() {
+		return /\.(hmi)$/i;
+	}
+	get status() {
+		return [...super.status, "HMI"];
+	}
+}
+
 class LaaPlayer extends Opl3Player {
 	constructor() {
 		super();
@@ -422,7 +442,7 @@ class AdPlugPlayer extends PlayerBase {
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new HmpPlayer(), new LaaPlayer(), new AdPlugPlayer()];
+		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new HmpPlayer(), new HmiPlayer(), new LaaPlayer(), new AdPlugPlayer()];
 		this.current = undefined;
 
 		this._volume = 1;
