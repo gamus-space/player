@@ -101,6 +101,12 @@ const issues = [
 			"VGMPF/PC/Wacky Wheels/02 - Main Menu.klm",
 			"VGMPF/PC/Wacky Wheels/03 - Ashes.klm",
 		] },
+		{ name: "HMP invalid effect", songs: [
+			"resources/OPL3/Super Street Fighter II Turbo/INTRO_F.HMP",
+		] },
+		{ name: "HMI excessive instruments", songs: [
+			"resources/OPL3/Battle Arena Toshinden/EIJI-AMIDI.HMI",
+		] },
 	]},
 	{ name: "AdPlug issues", groups: [
 		{ name: "lock up", songs: [
@@ -192,19 +198,6 @@ const issues = [
 			"resources/OPL3/Alien Breed/INTEX.CMF",
 			"resources/OPL3/Alien Breed/MONSTER.CMF",
 			"resources/OPL3/Alien Breed/TITLE.CMF",
-		] },
-		{ name: "HMP invalid effect", songs: [
-			"resources/OPL3/Super Street Fighter II Turbo/INTRO_F.HMP",
-		] },
-		{ name: "HMP invalid percussion", songs: [
-			"resources/OPL3/Super Street Fighter II Turbo/CAMM_F.HMP",
-			"resources/OPL3/Super Street Fighter II Turbo/CAMM_KOF.HMP",
-			"resources/OPL3/Super Street Fighter II Turbo/HAWK_F.HMP",
-			"resources/OPL3/Super Street Fighter II Turbo/HAWK_KOF.HMP",
-			"resources/OPL3/Super Street Fighter II Turbo/RYU_F.HMP",
-			"resources/OPL3/Super Street Fighter II Turbo/RYU_KOF.HMP",
-			"resources/OPL3/Super Street Fighter II Turbo/SAGA_F.HMP",
-			"resources/OPL3/Super Street Fighter II Turbo/SAGA_KOF.HMP",
 		] },
 	]},
 ];
