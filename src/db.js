@@ -101,6 +101,19 @@ const issues = [
 			"VGMPF/PC/Wacky Wheels/02 - Main Menu.klm",
 			"VGMPF/PC/Wacky Wheels/03 - Ashes.klm",
 		] },
+		{ name: "HMP invalid effect", songs: [
+			"resources/OPL3/Super Street Fighter II Turbo/INTRO_F.HMP",
+		] },
+		{ name: "HMP invalid instruments", songs: [
+			"VGMPF/PC/Theme Park/INTRO.HMP",
+			"VGMPF/PC/Theme Park/INTRO2.HMP",
+			"VGMPF/PC/Theme Park/INTRO3.HMP",
+			"VGMPF/PC/Theme Park/INTRO4.HMP",
+			"VGMPF/PC/Theme Park/INTRO5.HMP",
+		] },
+		{ name: "HMI excessive instruments", songs: [
+			"resources/OPL3/Battle Arena Toshinden/EIJI-AMIDI.HMI",
+		] },
 	]},
 	{ name: "AdPlug issues", groups: [
 		{ name: "lock up", songs: [
