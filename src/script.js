@@ -528,8 +528,13 @@ async function fetchFile(url) {
 
 async function loadMusicFromURL(url) {
 	const songData = await fetchFile(url);
-	const samplesUrl = songsByUrl[url]?.samples && song2url({ song_link: songsByUrl[url].samples });
-	const samplesData = samplesUrl && await fetchFile(samplesUrl);
+	let samplesData;
+	if (typeof songsByUrl[url]?.samples === 'string') {
+		samplesData = await fetchFile(song2url({ song_link: songsByUrl[url].samples }));
+	}
+	if (songsByUrl[url]?.samples instanceof Array) {
+		samplesData = await Promise.all(songsByUrl[url]?.samples.map(samples => fetchFile(song2url({ song_link: samples }))));
+	}
 	player.open(url, songData, samplesData, () => {
 		player.play();
 		readyToPlay();
