@@ -206,6 +206,14 @@ const issues = [
 			"resources/OPL3/Alien Breed/MONSTER.CMF",
 			"resources/OPL3/Alien Breed/TITLE.CMF",
 		] },
+		{ name: "SDB/AGD song too long", songs: [
+			"VGMPF/PC/Dune/MORNING.AGD",
+			"VGMPF/PC/Dune/MORNING.SDB",
+			"VGMPF/PC/KGB/MACHINE.SDB",
+		] },
+		{ name: "SDB/AGD invalid effect", songs: [
+			"VGMPF/PC/Dune/WORMINTR.AGD",
+		] },
 	]},
 ];
 

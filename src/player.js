@@ -380,7 +380,7 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(adl|cmf|imf|laa|m|mdi|s3m|wlf)(#\d+)?$/i;
+		return /\.(adl|agd|cmf|imf|laa|m|mdi|s3m|sdb|wlf)(#\d+)?$/i;
 	}
 
 	shutdown() {
