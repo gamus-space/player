@@ -337,6 +337,25 @@ class HmiPlayer extends Opl3Player {
 	}
 }
 
+class AdlPlayer extends Opl3Player {
+	constructor() {
+		super();
+	}
+	open(url, songData, samplesData, ready) {
+		this.preInit();
+		this.player = new OPL3.Player(OPL3.format.ADL, {
+			prebuffer: 2000,
+		});
+		return this.postInit(songData, ready);
+	}
+	files() {
+		return /\.(adl)$/i;
+	}
+	get status() {
+		return [...super.status, "ADL (Coktel Vision)"];
+	}
+}
+
 class LaaPlayer extends Opl3Player {
 	constructor() {
 		super();
@@ -442,7 +461,7 @@ class AdPlugPlayer extends PlayerBase {
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new HmpPlayer(), new HmiPlayer(), new LaaPlayer(), new AdPlugPlayer()];
+		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new HmpPlayer(), new HmiPlayer(), new AdlPlayer(), new LaaPlayer(), new AdPlugPlayer()];
 		this.current = undefined;
 
 		this._volume = 1;
