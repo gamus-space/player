@@ -114,13 +114,21 @@ const issues = [
 		{ name: "HMI excessive instruments", songs: [
 			"resources/OPL3/Battle Arena Toshinden/EIJI-AMIDI.HMI",
 		] },
+		{ name: "ADL (Coktel Vision) wrong percussion instrument", songs: [
+			"VGMPF/PC/Lost in Time/DORA10.ADL",
+			"VGMPF/PC/Lost in Time/DORA11.ADL",
+			"VGMPF/PC/Lost in Time/DORA15.ADL",
+			"VGMPF/PC/Lost in Time/DORA16.ADL",
+			"VGMPF/PC/Lost in Time/DORA18.ADL",
+			"VGMPF/PC/Lost in Time/DORA2.ADL",
+		] },
 	]},
 	{ name: "AdPlug issues", groups: [
 		{ name: "lock up", songs: [
 			"resources/OPL3/Polanie/muzyka07.s3m",
 			"resources/OPL3/Polanie/muzyka08.s3m",
 		] },
-		{ name: "ADL song too long", songs: [
+		{ name: "ADL (Westwood) song too long", songs: [
 			"VGMPF/PC/Dune II/DUNE16.ADL#8",
 			"VGMPF/PC/Dune II/DUNE17.ADL#5",
 			"VGMPF/PC/Dune II/DUNE7.ADL#3",
@@ -205,6 +213,14 @@ const issues = [
 			"resources/OPL3/Alien Breed/INTEX.CMF",
 			"resources/OPL3/Alien Breed/MONSTER.CMF",
 			"resources/OPL3/Alien Breed/TITLE.CMF",
+		] },
+		{ name: "SDB/AGD song too long", songs: [
+			"VGMPF/PC/Dune/MORNING.AGD",
+			"VGMPF/PC/Dune/MORNING.SDB",
+			"VGMPF/PC/KGB/MACHINE.SDB",
+		] },
+		{ name: "SDB/AGD invalid effect", songs: [
+			"VGMPF/PC/Dune/WORMINTR.AGD",
 		] },
 	]},
 ];
