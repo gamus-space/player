@@ -207,6 +207,15 @@ const issues = [
 			"VGMPF/PC/Golden Axe/OLDMAP.MDI",
 			"VGMPF/PC/Golden Axe/RD4.MDI",
 		] },
+		{ name: "MDI samples missing", songs: [
+			"resources/OPL3/Lure of the Temptress/disk1.vga_001.mdi",
+			"resources/OPL3/Lure of the Temptress/disk1.vga_002.mdi",
+			"resources/OPL3/Lure of the Temptress/disk1.vga_003.mdi",
+			"resources/OPL3/Lure of the Temptress/disk1.vga_004.mdi",
+			"resources/OPL3/Lure of the Temptress/disk1.vga_068.mdi",
+			"resources/OPL3/Lure of the Temptress/disk1.vga_069.mdi",
+			"resources/OPL3/Lure of the Temptress/disk4.vga_007.mdi",
+		] },
 		{ name: "CMF song too long", songs: [
 			"resources/OPL3/Alien Breed/ALARMED.CMF",
 			"resources/OPL3/Alien Breed/INGAME.CMF",
