@@ -61,7 +61,7 @@ class ModPlayer extends PlayerBase {
 		this.ignoreStop = false;
 	}
 	files() {
-		return /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(mod|xm|s3m))(#\d+)?$/i;
+		return /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(dum|mod|xm|s3m))(#\d+)?$/i;
 	}
 
 	shutdown() {
@@ -73,7 +73,7 @@ class ModPlayer extends PlayerBase {
 		window.neoart.initialize();
 		this.player.startingSong = this.url_param(url);
 		this.ignoreStop = true;
-		const result = this.loader.load(songData);
+		const result = this.loader.load(songData, samplesData);
 		this.ignoreStop = false;
 		if (result) setTimeout(ready);
 		return result;
