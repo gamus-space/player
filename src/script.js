@@ -72,7 +72,7 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = player.files();
 	games = db;
 	const allSongs = db.reduce((flat, game) => [...flat, ...game.songs
-		.map(song => ({ ...song, ...game, song_url: song2url(song) }))
+		.map(song => ({ ...game, ...song, song_url: song2url(song) }))
 	], []);
 	songsByUrl = Object.fromEntries(allSongs.map(song => [song.song_url, song]));
 	songs = allSongs.filter(song => !invalidSongs.includes(song.song_link));
