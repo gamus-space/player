@@ -23,6 +23,8 @@ export const invalidSongs = [
 	"UnExoticA/Pinball_Dreams/di.steelwheels#45",
 	"UnExoticA/Pinball_Dreams/di.steelwheels#52",
 	"UnExoticA/Pinball_Dreams/di.steelwheels#60",
+	"World of Game MODs/PC/Death Rally/MENUTUNE.S3M#41",
+	"World of Game MODs/PC/Death Rally/MENUTUNE.S3M#46",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#4",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#15",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1 - Neptune Table - original.mod#23",
