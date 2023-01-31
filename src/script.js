@@ -210,7 +210,7 @@ function updateStatus(update) {
 		$('#info_song').text(song.song);
 		$('#info_composer').text(song.composer);
 		$('#info_size').text((song.size / 1024).toFixed(1));
-		$('#info_source').text(song.source).attr('href', song.source_link);
+		$('#info_source').text(song.source).attr('href', song.source_link ?? '');
 		$('#info_developers').empty().append(...(song.developers || []).map(developer => $('<li>', { text: developer })));
 		$('#info_publishers').empty().append(...(song.publishers || []).map(publisher => $('<li>', { text: publisher })));
 		if (status.playing && details.view === null)

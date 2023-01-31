@@ -40,16 +40,6 @@ export const invalidSongs = [
 ];
 
 const issues = [
-	{ name: "The Player 4.1a issues", groups: [
-		{ name: "clipped", songs: [
-			"UnExoticA/Superfrog/p4x.intro_tune_5",
-		] },
-	]},
-	{ name: "RichardJoseph issues", groups: [
-		{ name: "silence", songs: [
-			"UnExoticA/Chaos_Engine/rjp.ingame_2.zip",
-		] },
-	]},
 	{ name: "TFMX issues", groups: [
 		{ name: "SID not supported", songs: [
 			"UnExoticA/Turrican_2/mdat.loader.zip",
@@ -76,6 +66,9 @@ const issues = [
 		] },
 	]},
 	{ name: "invalid song", groups: [
+		{ name: "clipped", songs: [
+			"UnExoticA/Superfrog/p4x.intro_tune_5",
+		] },
 		{ name: "bad sample", songs: [
 			"World of Game MODs/PC/Crusader No Remorse/M07.MOD#1",
 			"World of Game MODs/PC/Crusader No Remorse/M07.MOD#18",
