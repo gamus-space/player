@@ -171,6 +171,7 @@ section.details.playlist .title {
 }
 .controls .title h1 a {
 	color: black;
+	white-space: nowrap;
 }
 .controls .title h2 {
 	margin: 10px;
@@ -372,4 +373,33 @@ i.issue {
 .library_filters select.active {
 	background: #888;
 	color: #eee;
+}
+
+.overlay {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: #00000080;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.overlay .dialog {
+	box-shadow: inset -3px -3px #555, inset 3px 3px #bbb;
+	background-color: #ffffffbb;
+	padding: 2em;
+}
+.overlay .dialog h1 {
+	font-size: 1.8em;
+	text-align: center;
+	margin-top: 0;
+}
+.overlay .buttons {
+	display: flex;
+	justify-content: space-evenly;
+}
+.overlay .buttons i {
+	margin-right: 0.5em;
 }
