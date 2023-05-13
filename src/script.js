@@ -111,6 +111,9 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	}).on('search.dt', (...a) => {
 		updateStatus({ availableSongs: playableSongs().length > 0 });
 	});
+	new ResizeObserver(([{ target }]) => {
+		 $(target).css('max-height', `calc(100vh - ${target.getBoundingClientRect().y + 60}px)`);
+	}).observe($('#library').parent().get(0));
 	$('.library_filters').text('Filter:').append([
 		$('<select>', { id: 'filter_platform'}),
 		$('<i>', { class: "fas fa-chevron-right" }),
@@ -550,3 +553,16 @@ updateStatus({
 });
 
 (localStorage.getItem('playlist') ? JSON.parse(localStorage.getItem('playlist')) : []).forEach(addToPlaylist);
+
+if (localStorage.getItem('dismissNewVersion') != 'true') {
+	setTimeout(() => {
+		$('.overlay').show('fade', {}, 1000);
+	}, 1000);
+}
+$('.overlay .dialog .dismiss').on('click', () => {
+	$('.overlay').hide('fade', {}, 1000);
+});
+$('.overlay .dialog .dismissPermanent').on('click', () => {
+	$('.overlay').hide('fade', {}, 1000);
+	localStorage.setItem('dismissNewVersion', true);
+});
