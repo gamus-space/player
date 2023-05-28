@@ -61,7 +61,7 @@ class ModPlayer extends PlayerBase {
 		this.ignoreStop = false;
 	}
 	files() {
-		return /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(dum|mod|xm|s3m))(#\d+)?$/i;
+		return /((^|\/)(bp|di|dw|gmc|mdat|mod|np2|np3|ntp|p4x|pp21|pru2|rh|rjp|sfx|xm)\.[^\/]+)|(\.(dum|mod|xm|s3m)(.zip)?)(#\d+)?$/i;
 	}
 
 	shutdown() {

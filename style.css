@@ -46,7 +46,8 @@ section.main {
 	margin-bottom: 1em;
 }
 section.details {
-	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
 	padding-left: 1em;
 	flex-basis: 40em;
 	transition: flex-basis 1s;
@@ -61,17 +62,11 @@ section.details_hidden * {
 	display: none;
 }
 section.details .header {
-	position: absolute;
-	left: 1em;
-	right: 4px;
+	padding-right: 4px;
+	padding-bottom: 1em;
 }
 section.details .content {
-	position: absolute;
-	top: 4em;
-	bottom: 0;
 	overflow-y: auto;
-	left: 1em;
-	right: 0;
 }
 section.details.info .content {
 	padding: 0 1em;
@@ -82,10 +77,9 @@ section.details h1 {
 }
 section.details.info h1 {
 	margin: 0;
-	inline-size: max-content;
 }
 section.details h2 {
-	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 }
 section.details .hide {
 	float: right;
