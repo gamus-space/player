@@ -271,7 +271,7 @@ class MidPlayer extends Opl3Player {
 		return this.postInit(songData, ready);
 	}
 	files() {
-		return /\.(mff|mid)$/i;
+		return /\.(mff|mid|rmi)$/i;
 	}
 	get status() {
 		return [...super.status, "MID"];
