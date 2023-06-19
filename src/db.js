@@ -91,6 +91,13 @@ const issues = [
 		{ name: "MID invalid timing", songs: [
 			"VGMPF/PC/Duke Nukem 3D/15 - Aliens, Say Your Prayers!.mid",
 		] },
+		{ name: "MID using AdLib instruments", songs: [
+			"resources/OPL3/Chips Challenge/CANYON.MID",
+			"resources/OPL3/Chips Challenge/CHIP01.MID",
+			"resources/OPL3/Chips Challenge/CHIP02.MID",
+			"resources/OPL3/Windows 95/CANYON.MID",
+			"resources/OPL3/Windows 95/PASSPORT.MID",
+		] },
 		{ name: "KLM volume problem", songs: [
 			"VGMPF/PC/Wacky Wheels/01 - Apogee.klm",
 			"VGMPF/PC/Wacky Wheels/02 - Main Menu.klm",
