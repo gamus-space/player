@@ -32,6 +32,8 @@ export const invalidSongs = [
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1.MOD#1",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL2.MOD#25",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL4.MOD#36",
+	"VGMPF/PC/Blackthorne/01.xmi",
+	"VGMPF/PC/Blackthorne/02.xmi",
 	"VGMPF/PC/Dune II/DUNE1.ADL#3",
 	"VGMPF/PC/Raptor Call of the Shadows/15 - Boss 1.mus#140",
 	"resources/OPL3/Polanie/muzyka09.s3m",
