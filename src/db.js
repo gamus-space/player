@@ -90,6 +90,10 @@ const issues = [
 			"VGMPF/PC/Lost Vikings, The/505.xmi",
 			"VGMPF/PC/Lost Vikings, The/506.xmi",
 		] },
+		{ name: "XMI missing voices", songs: [
+			"resources/OPL3/Mega Man X/POWER.XMI",
+			"resources/OPL3/Super Street Fighter II/S_VEGA.XMI",
+		] },
 		{ name: "MID invalid timing", songs: [
 			"VGMPF/PC/Duke Nukem 3D/15 - Aliens, Say Your Prayers!.mid",
 		] },
