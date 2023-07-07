@@ -105,7 +105,6 @@ const issues = [
 			"resources/OPL3/Windows 95/PASSPORT.MID",
 		] },
 		{ name: "KLM volume problem", songs: [
-			"VGMPF/PC/Wacky Wheels/01 - Apogee.klm",
 			"VGMPF/PC/Wacky Wheels/02 - Main Menu.klm",
 			"VGMPF/PC/Wacky Wheels/03 - Ashes.klm",
 		] },
