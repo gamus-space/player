@@ -66,7 +66,7 @@ class Autoscroll {
 		this._element.text(this._chars.slice(this._scroll, this._scroll + this._length).join(''));
 	}
 }
-const songAutoscroll = new Autoscroll($('#song'), 30);
+const songAutoscroll = new Autoscroll($('#song'), 31);
 
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = player.files();
