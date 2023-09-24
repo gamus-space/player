@@ -36,6 +36,7 @@
 <body>
 	<section class="header">
 		<div class="controls">
+			<div class="space"></div>
 			<div class="title">
 				<h1><a href=".">GAme MUSic</a></h1>
 				<h2>space of retro game music</h2>
@@ -60,6 +61,9 @@
 					</span>
 				</div>
 			</div>
+			<div class="buttons">
+				<button class="toggle_gallery" title="Gallery"><i class="fas fa-image"></i></button>
+			</div>
 		</div>
 	</section>
 	<section class="body">
@@ -70,10 +74,25 @@
 				<button class="show_details" data-details="playlist" title="Playlist"><i class="fas fa-list"></i></button>
 				<button class="show_details" data-details="about" title="About this site"><i class="fas fa-question"></i></button>
 			</div>
-			<table id="library" width="100%">
-				<thead />
-				<tbody />
-			</table>
+			<div class="center">
+				<table id="library" width="100%">
+					<thead />
+					<tbody />
+				</table>
+				<div class="gallery">
+					<div class="image active"></div>
+					<div class="image passive"></div>
+					<div class="game active"></div>
+					<div class="game passive"></div>
+					<div class="source">
+						from <a href="#" target="_blank"></a>
+					</div>
+					<div class="count">
+						<span class="current">?</span> /
+						<span class="total">?</span>
+					</div>
+				</div>
+			</div>
 			<section class="footer">
 				&copy; 2023 krzykos
 				<a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a>
@@ -101,6 +120,8 @@
 				<h3>game published by</h3>
 				<ul id="info_publishers"></ul>
 				<h3>from <a id="info_source" href="#" target="_blank">source</a></h3>
+				<h3 id="title_links">links</h3>
+				<ul id="info_links"></ul>
 			</div>
 		</section>
 		<section class="details details_hidden playlist">
@@ -164,6 +185,11 @@
 				<h1>news</h1>
 			</div>
 			<div class="content">
+				<div>
+					<h2>Screenshot gallery</h2>
+					<h3>2023-09-24</h3>
+					<p>From now almost all (99%) game will have a gallery! :-)</p>
+				</div>
 				<div>
 					<h2>PRO version</h2>
 					<h3>2023-05-08</h3>
