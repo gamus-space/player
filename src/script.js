@@ -71,9 +71,15 @@ const songAutoscroll = new Autoscroll($('#song'), 30);
 fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const compat = player.files();
 	games = db;
-	const allSongs = db.reduce((flat, game) => [...flat, ...game.songs
-		.map(song => ({ ...game, ...song, song_url: song2url(song) }))
-	], []);
+	const allSongs = db.flatMap(game => {
+		const gallery = game.links?.flatMap(link => (link.gallery ?? []).map(image => ({ ...link, image })))
+		return game.songs.map(song => ({
+			...game,
+			...song,
+			song_url: song2url(song),
+			gallery,
+		}));
+	});
 	songsByUrl = Object.fromEntries(allSongs.map(song => [song.song_url, song]));
 	songs = allSongs.filter(song => !invalidSongs.includes(song.song_link));
 
@@ -216,9 +222,51 @@ function updateStatus(update) {
 		$('#info_source').text(song.source).attr('href', song.source_link ?? '');
 		$('#info_developers').empty().append(...(song.developers || []).map(developer => $('<li>', { text: developer })));
 		$('#info_publishers').empty().append(...(song.publishers || []).map(publisher => $('<li>', { text: publisher })));
-		if (status.playing && details.view === null)
+		$('#title_links').toggle((song.links || []).length > 0);
+		$('#info_links').empty().append(...(song.links || []).map(link => $('<li>').append($('<a>', { text: link.site, href: link.url, target: '_blank' }))));
+		if (status.playing && details.view === null && !$('.center').hasClass('gallery'))
 			setDetails('info');
+		setGallery(song.gallery, song.game);
 	}
+}
+
+let galleryStatus = {
+	list: null,
+	index: 0,
+};
+let galleryInterval;
+function setGallery(gallery, game) {
+	if (galleryStatus.list != null &&
+		(gallery?.length ?? 0) === galleryStatus.list.length &&
+		galleryStatus.list.every((item, i) => item === gallery[i]) &&
+		(galleryStatus.list.length > 0 || galleryStatus.game === game)) return;
+
+	galleryStatus = { list: gallery || [], index: 0, game };
+	if (galleryInterval)
+		clearInterval(galleryInterval);
+	updateGallery();
+	galleryInterval = setInterval(updateGallery, 15000);
+}
+function updateGallery() {
+	const previous = $('.center .gallery .active');
+	$('.center .gallery .image.passive')
+		.removeClass('passive').addClass('active')
+		.toggle(galleryStatus.list.length > 0)
+		.css('background-image', `url("${galleryStatus.list[galleryStatus.index]?.image}")`);
+	$('.center .gallery .game.passive')
+		.removeClass('passive').addClass('active')
+		.text(galleryStatus.list.length === 0 ? galleryStatus.game : '');
+	previous.removeClass('active').addClass('passive');
+	$('.center .gallery .count')
+		.toggle(galleryStatus.list.length > 0)
+		.find('.current').text(galleryStatus.index + 1).end()
+		.find('.total').text(galleryStatus.list.length).end();
+	$('.center .gallery .source')
+		.toggle(galleryStatus.list.length > 0)
+		.find('a')
+			.attr('href', galleryStatus.list[galleryStatus.index]?.url ?? '#')
+			.text(galleryStatus.list[galleryStatus.index]?.site ?? '?');
+	galleryStatus.index = (galleryStatus.index + 1) % galleryStatus.list.length;
 }
 
 function setDetails(view) {
@@ -321,6 +369,15 @@ $('#playpause').on('click', () => {
 	updateStatus({ playing: !status.playing });
 });
 
+$('.toggle_gallery').on('click', event => {
+	$('.center').toggleClass('gallery');
+	$(event.currentTarget)
+		.attr('title', $('.center').hasClass('gallery') ? 'Library' : 'Gallery')
+		.find('.fas')
+			.toggleClass('fa-image', !$('.center').hasClass('gallery'))
+			.toggleClass('fa-folder', $('.center').hasClass('gallery'));
+	$('#playlist_add').attr('disabled', $('.center').hasClass('gallery'));
+});
 $('.show_details').on('click', event => {
 	setDetails(event.currentTarget.attributes['data-details'].value);
 });

@@ -36,11 +36,65 @@ section.main {
 	height: 100%;
 	overflow: hidden;
 }
+.center {
+	position: relative;
+}
+.center.gallery {
+	background: #000000a0;
+}
+.center.gallery > * {
+	display: none;
+}
+.center .gallery {
+	display: none;
+}
+.center.gallery .gallery .image {
+	position: absolute;
+	inset: 10%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+	transition: opacity 8s ease 1s;
+}
+.center.gallery .gallery .active {
+	opacity: 1;
+}
+.center.gallery .gallery .passive {
+	opacity: 0;
+}
+.center.gallery .gallery {
+	display: block;
+	height: calc(100vh - 10em)
+}
+.center.gallery .gallery .game {
+	position: absolute;
+	top: 40%;
+	width: 100%;
+	text-align: center;
+	color: #ffffffc0;
+	font-size: 2em;
+	transition: opacity 8s ease 1s;
+}
+.center.gallery .gallery .count {
+	position: absolute;
+	bottom: 0.5em;
+	left: 0.5em;
+	color: #ffffffc0;
+}
+.center.gallery .gallery .source {
+	position: absolute;
+	bottom: 0.5em;
+	right: 0.5em;
+	color: #ffffffc0;
+}
+.center.gallery .gallery .source a {
+	color: lightskyblue;
+}
 .menu {
 	position: absolute;
 	right: 4px;
 }
-.show_details {
+.menu button {
 	display: block;
 	width: 3em;
 	margin-bottom: 1em;
@@ -150,12 +204,12 @@ section.details.playlist .title {
 .controls {
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
 	margin-top: 1em;
 }
 
 .controls .title {
-	flex-grow: 0.5;
+	flex-grow: 0.1;
 }
 .controls .title h1 {
 	margin: 10px;
@@ -172,6 +226,18 @@ section.details.playlist .title {
 	font-size: 1.0em;
 	font-weight: bold;
 	font-style: italic;
+}
+.controls .buttons .toggle_gallery {
+    background: #000000a0;
+    color: #ffffffc0;
+	width: 3em;
+}
+.controls .buttons .toggle_gallery:hover {
+    background: #00000080;
+    color: #ffffff;
+}
+.controls .space {
+	flex-grow: 0.2;
 }
 
 #time_slider {
@@ -202,7 +268,7 @@ section.details.playlist .title {
 .status {
 	display: flex;
 	flex-direction: column;
-	width: 25.0em;
+	width: 26em;
 
 	padding: 6px;
 	box-shadow: inset -2px -2px #ccc, inset 2px 2px #555;
