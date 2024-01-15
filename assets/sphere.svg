@@ -1,0 +1,29 @@
+
+<svg width="64" height="64" viewBox="-1.5 -1.5 3 3" xmlns="http://www.w3.org/2000/svg">
+<g transform="rotate(15)">
+
+  <path d="M 1.0000 -0.0000 L 0.8660 -0.0000 L 0.5000 -0.0000 L 0.0000 -0.0000 L -0.5000 -0.0000 L -0.8660 -0.0000 L -1.0000 -0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0.8660 -0.5000 L 0.7500 -0.5000 L 0.4330 -0.5000 L 0.0000 -0.5000 L -0.4330 -0.5000 L -0.7500 -0.5000 L -0.8660 -0.5000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0.5000 -0.8660 L 0.4330 -0.8660 L 0.2500 -0.8660 L 0.0000 -0.8660 L -0.2500 -0.8660 L -0.4330 -0.8660 L -0.5000 -0.8660 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0.0000 0.0000 L 0.0000 0.0000 L 0.0000 0.0000 L 0.0000 0.0000 L 0.0000 0.0000 L 0.0000 0.0000 L 0.0000 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M -0.5000 0.8660 L -0.4330 0.8660 L -0.2500 0.8660 L 0.0000 0.8660 L 0.2500 0.8660 L 0.4330 0.8660 L 0.5000 0.8660 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M -0.8660 0.5000 L -0.7500 0.5000 L -0.4330 0.5000 L 0.0000 0.5000 L 0.4330 0.5000 L 0.7500 0.5000 L 0.8660 0.5000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M -1.0000 0.0000 L -0.8660 0.0000 L -0.5000 0.0000 L 0.0000 0.0000 L 0.5000 0.0000 L 0.8660 0.0000 L 1.0000 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0 1L -0.5000 0.8660 L -0.8660 0.5000 L -1.0000 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 1.0000 -0.0000 L 0.8660 -0.5000 L 0.5000 -0.8660 L 0 -1" fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0 1L -0.4330 0.8660 L -0.7500 0.5000 L -0.8660 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0.8660 -0.0000 L 0.7500 -0.5000 L 0.4330 -0.8660 L 0 -1" fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0 1L -0.2500 0.8660 L -0.4330 0.5000 L -0.5000 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0.5000 -0.0000 L 0.4330 -0.5000 L 0.2500 -0.8660 L 0 -1" fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0 1L 0.0000 0.8660 L 0.0000 0.5000 L 0.0000 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0.0000 -0.0000 L 0.0000 -0.5000 L 0.0000 -0.8660 L 0 -1" fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0 1L 0.2500 0.8660 L 0.4330 0.5000 L 0.5000 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M -0.5000 -0.0000 L -0.4330 -0.5000 L -0.2500 -0.8660 L 0 -1" fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0 1L 0.4330 0.8660 L 0.7500 0.5000 L 0.8660 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M -0.8660 -0.0000 L -0.7500 -0.5000 L -0.4330 -0.8660 L 0 -1" fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M 0 1L 0.5000 0.8660 L 0.8660 0.5000 L 1.0000 0.0000 " fill="transparent" stroke="black" stroke-width="0.09" />
+  <path d="M -1.0000 -0.0000 L -0.8660 -0.5000 L -0.5000 -0.8660 L 0 -1" fill="transparent" stroke="black" stroke-width="0.09" />
+
+</g>
+</svg>
+
