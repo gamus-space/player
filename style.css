@@ -208,8 +208,15 @@ section.details.playlist .title {
 	margin-top: 1em;
 }
 
-.controls .title {
+.controls .logo-title {
 	flex-grow: 0.1;
+	display: flex;
+}
+.controls .logo {
+	width: 100px;
+	height: 100px;
+	background: url(assets/sphere.svg);
+	background-size: contain;
 }
 .controls .title h1 {
 	margin: 10px;

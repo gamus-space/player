@@ -17,12 +17,13 @@
 	<script type="text/javascript">
 		document.write('<base href="' + (location.hostname == 'localhost' ? '/player/' : '/') + '">');
 	</script>
+	<link rel="icon" type="image/png" href="assets/sphere.png">
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="assets/fontawesome-free-5.15.3-web/css/all.min.css">
 	<link rel="stylesheet" href="assets/fonts-DSEG_v046/dseg.css">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
 	<script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
@@ -37,9 +38,14 @@
 	<section class="header">
 		<div class="controls">
 			<div class="space"></div>
-			<div class="title">
-				<h1><a href=".">GAme MUSic</a></h1>
-				<h2>space of retro game music</h2>
+			<div class="logo-title">
+				<a href=".">
+					<div class="logo"></div>
+				</a>
+				<div class="title">
+					<h1><a href=".">GAme MUSic</a></h1>
+					<h2>space of retro game music</h2>
+				</div>
 			</div>
 			<div class="status">
 				<div id="song"></div>
@@ -94,7 +100,7 @@
 				</div>
 			</div>
 			<section class="footer">
-				&copy; 2023 krzykos
+				&copy; 2022-2024 krzykos
 				<a href="https://github.com/gamus-space/player/issues" target="_blank">issue tracker</a>
 				<a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>
 				<a href="https://pro.gamus.space/" target="_blank">GAMUS pro</a>
