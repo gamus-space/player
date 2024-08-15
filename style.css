@@ -299,6 +299,11 @@ section.details.playlist .title {
 .multi_info a.inactive {
 	opacity: 0.25;
 }
+.multi_info #previous {
+	width: 16px;
+    display: inline-block;
+    text-align: right;
+}
 #song, #time {
 	padding: 2px;
 }
