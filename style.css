@@ -200,6 +200,17 @@ section.details.playlist .title {
 	float: left;
 	margin: -0.2em 0.5em;
 }
+.medal {
+	&.gold {
+		color: #ffee00;
+	}
+	&.silver {
+		color: #888877;
+	}
+	&.bronze {
+		color: #a05000;
+	}
+}
 
 .controls {
 	display: flex;

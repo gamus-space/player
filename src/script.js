@@ -555,8 +555,15 @@ function filterChangeGame(event) {
 function filterChangeSong(event) {
 	enterState({ platform: filters.platform, game: filters.game, song: event.target.value });
 }
+function customEncodeURIComponent(str) {
+	return str.replace(/ /g, '_').replace(
+		/[^/_\w():&"'\.,!\+\-]/g,
+		(c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+	);
+}
+
 function enterState(state) {
-	const routePath = (root, segments) => `${root}${segments.map(s => encodeURIComponent(s)).join('/')}`;
+	const routePath = (root, segments) => `${root}${segments.map(s => customEncodeURIComponent(s)).join('/')}`;
 	const segments = [state.platform, state.game, state.song].filter(s => s != null);
 	history.pushState(state, '', routePath(ROOT_URL, segments));
 	updateRoute(history.state);
@@ -585,7 +592,8 @@ function updateRoute(state) {
 function initRoute(path) {
 	const stripPrefix = (s, p) => s.startsWith(p) ? s.slice(p.length) : s;
 	const split = (s, d) => s === '' ? [] : s.split(d);
-	const segments = split(stripPrefix(path, ROOT_PATH), '/').map(s => decodeURIComponent(s));
+	const customDecode = s => s.replace(/_/g, ' ');
+	const segments = split(customDecode(stripPrefix(path, ROOT_PATH)), '/').map(s => decodeURIComponent(s));
 	return { platform: segments[0], game: segments[1], song: segments[2] };
 }
 window.onpopstate = (event) => {
