@@ -498,10 +498,10 @@ class MultiPlayer extends PlayerBase {
 	}
 
 	get position() {
-		return this.current.position;
+		return this.current?.position ?? 0;
 	}
 	get duration() {
-		return this.current.duration;
+		return this.current?.duration ?? 0;
 	}
 	get status() {
 		return this.current.status;
