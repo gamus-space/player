@@ -200,6 +200,17 @@ section.details.playlist .title {
 	float: left;
 	margin: -0.2em 0.5em;
 }
+.medal {
+	&.gold {
+		color: #ffee00;
+	}
+	&.silver {
+		color: #888877;
+	}
+	&.bronze {
+		color: #a05000;
+	}
+}
 
 .controls {
 	display: flex;
@@ -298,6 +309,11 @@ section.details.playlist .title {
 }
 .multi_info a.inactive {
 	opacity: 0.25;
+}
+.multi_info #previous {
+	width: 16px;
+    display: inline-block;
+    text-align: right;
 }
 #song, #time {
 	padding: 2px;

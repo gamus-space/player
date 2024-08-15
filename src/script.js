@@ -7,6 +7,7 @@ const ROOT_URL = document.getElementsByTagName('base')[0].href;
 const ROOT_PATH = document.getElementsByTagName('base')[0].attributes.href.value;
 const DATA_ROOT = location.hostname === 'localhost' ? '/scraper/data' : 'https://db.gamus.space';
 const DOC_TITLE = document.title;
+const SEEK_START_LIMIT = 2;
 
 let status = {
 	song: null, url: null, playing: false,
@@ -18,6 +19,8 @@ let songs, songsByUrl;
 let games;
 
 let details = { view: null };
+
+const player = new Player();
 
 function time(t) {
 	t = t.toFixed(0);
@@ -153,8 +156,11 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 
 function updatePlaylistStatus() {
 	$('#pos').text(status.playlistEntry ? `${String(status.playlistEntry).padStart(String(status.playlist.length).length, '0')}/${status.playlist.length}` : '');
-	$('#previous').attr('disabled', ((status.playlistEntry || !status.availableSongs) && (!status.playlistEntry || status.playlistEntry === 1)) || status.random);
 	$('#next').attr('disabled', (status.playlistEntry || !status.availableSongs) && (!status.playlistEntry || (status.playlistEntry === status.playlist.length && !status.random)));
+	updatePreviousDisabled();
+}
+function updatePreviousDisabled() {
+	$('#previous').attr('disabled', player.position <= SEEK_START_LIMIT && (((status.playlistEntry || !status.availableSongs) && (!status.playlistEntry || status.playlistEntry === 1)) || status.random));
 }
 
 function updateStatus(update) {
@@ -397,6 +403,11 @@ function updateTime(timestamp) {
 	$('#time').text(time(player.position) + ' / ' + time(player.duration));
 	$('#time_slider').slider({ value: player.position, max: player.duration });
 	$('#time_slider').slider('option', 'disabled', false);
+	if (player.position <= SEEK_START_LIMIT && $('#previous i').hasClass('fa-backward'))
+		$('#previous i').removeClass('fa-backward').addClass('fa-step-backward');
+	if (player.position > SEEK_START_LIMIT && $('#previous i').hasClass('fa-step-backward'))
+		$('#previous i').removeClass('fa-step-backward').addClass('fa-backward');
+	updatePreviousDisabled();
 }
 updateTime();
 
@@ -464,6 +475,10 @@ function playNext() {
 }
 $('#next').on('click', () => playNext());
 $('#previous').on('click', () => {
+	if (player.position > SEEK_START_LIMIT) {
+		player.seek(0);
+		return;
+	}
 	if (status.random) return;
 	if (!status.playlistEntry) {
 		const songs = playableSongs();
@@ -540,8 +555,15 @@ function filterChangeGame(event) {
 function filterChangeSong(event) {
 	enterState({ platform: filters.platform, game: filters.game, song: event.target.value });
 }
+function customEncodeURIComponent(str) {
+	return str.replace(/ /g, '_').replace(
+		/[^/_\w():&"'\.,!\+\-]/g,
+		(c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+	);
+}
+
 function enterState(state) {
-	const routePath = (root, segments) => `${root}${segments.map(s => encodeURIComponent(s)).join('/')}`;
+	const routePath = (root, segments) => `${root}${segments.map(s => customEncodeURIComponent(s)).join('/')}`;
 	const segments = [state.platform, state.game, state.song].filter(s => s != null);
 	history.pushState(state, '', routePath(ROOT_URL, segments));
 	updateRoute(history.state);
@@ -570,7 +592,8 @@ function updateRoute(state) {
 function initRoute(path) {
 	const stripPrefix = (s, p) => s.startsWith(p) ? s.slice(p.length) : s;
 	const split = (s, d) => s === '' ? [] : s.split(d);
-	const segments = split(stripPrefix(path, ROOT_PATH), '/').map(s => decodeURIComponent(s));
+	const customDecode = s => s.replace(/_/g, ' ');
+	const segments = split(customDecode(stripPrefix(path, ROOT_PATH)), '/').map(s => decodeURIComponent(s));
 	return { platform: segments[0], game: segments[1], song: segments[2] };
 }
 window.onpopstate = (event) => {
@@ -601,7 +624,6 @@ async function loadMusicFromURL(url) {
 	});
 }
 
-const player = new Player();
 player.stopped = stopped;
 updateStatus({
 	mono: localStorage.getItem('mono') == 'true',
