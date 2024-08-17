@@ -50,18 +50,8 @@ const issues = [
 			"UnExoticA/Turrican_3/mdat.loader.zip#2",
 			"UnExoticA/Turrican_3/mdat.loader.zip#3",
 		] },
-		{ name: "tuning", songs: [
-			"UnExoticA/Apidya/mdat.ingame_4.zip#1",
-			"UnExoticA/Apidya/mdat.ingame_4.zip#2",
-			"UnExoticA/Apidya/mdat.ingame_4.zip#5",
-			"UnExoticA/Apidya/mdat.ingame_4.zip#6",
-			"UnExoticA/Turrican_3/mdat.world_5.zip#2",
-			"UnExoticA/Turrican_3/mdat.world_5.zip#3",
-		] },
 		{ name: "sample", songs: [
-			"UnExoticA/Turrican/mdat.ingame_4.zip#3",
-			"UnExoticA/Turrican/mdat.ingame_4.zip#6",
-			"UnExoticA/Turrican/mdat.ingame_4.zip#8",
+			"UnExoticA/Turrican/mdat.ingame_4.zip#7",
 		] },
 		{ name: "instant end", songs: [
 			"UnExoticA/Apidya/mdat.ingame_5.zip#2",
