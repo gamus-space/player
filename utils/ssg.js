@@ -60,7 +60,7 @@ function customEncodeURIComponent(str) {
             <h1>game soundtrack</h1>
             <ul>
                 ${db.map(({ game, platform }) => 
-                    `<li><a href="${platform}/${customEncodeURIComponent(game)}/">${game} ${platform}</a></li>\n`
+                    `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>\n`
                 ).join('')}
             </ul>
         </section>
