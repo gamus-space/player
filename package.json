@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "serve": "node utils/serve.js",
-    "build": "mkdir -p dist && cp -R index.html style.css src/ assets/ lib/ dist/"
+    "build": "npm run emit && npm run ssg",
+    "emit": "mkdir -p dist && cp -R index.html style.css src/ assets/ lib/ dist/",
+    "ssg": "node utils/ssg.js dist/"
   },
   "author": "krzykos",
   "license": "ISC",
