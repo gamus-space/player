@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "serve": "node utils/serve.js",
-    "build": "npm run emit && npm run ssg && cp -f dist/index.html 404.html",
+    "build": "npm run emit && npm run ssg && cp --remove-destination dist/index.html 404.html",
     "emit": "mkdir -p dist && cp -R index.html style.css src/ assets/ lib/ dist/",
     "ssg": "node utils/ssg.js dist/"
   },
