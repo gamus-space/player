@@ -49,8 +49,7 @@ function customEncodeURIComponent(str) {
 
     const inject = `
         <script type="text/javascript">
-            if (location.pathname.startsWith('/__'))
-                history.replaceState(undefined, '', location.pathname.substring('/__'.length));
+            history.replaceState(undefined, '', location.pathname.replace(/^\/__|\/$/g, ''));
         </script>
 
         <section id="pre_list">
