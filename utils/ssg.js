@@ -49,7 +49,7 @@ function customEncodeURIComponent(str) {
 
     const inject = `
         <script type="text/javascript">
-            history.replaceState(undefined, '', location.pathname.replace(/^\/__|\/$/g, ''));
+            history.replaceState(undefined, '', location.pathname.replace(/^\\/__|\\/$/g, ''));
         </script>
 
         <section id="pre_list">
