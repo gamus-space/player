@@ -363,6 +363,7 @@ function stopped() {
 	$('#time').text(`${time(0)} / ${time(player.duration)}`);
 	$('#time_slider').slider({ value: 0, max: player.duration });
 	$('#time_slider').slider('option', 'disabled', true);
+	$('#previous i').removeClass('fa-backward').addClass('fa-step-backward');
 }
 
 $('#playpause').on('click', () => {
