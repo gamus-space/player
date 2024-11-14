@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
@@ -11,10 +13,10 @@ if (process.argv.length < 3) {
 const [,, dir] = process.argv;
 
 function customEncodeURIComponent(str) {
-	return str.replace(/ /g, '_').replace(
-		/[^/_\w():&"'\.,!\+\-]/g,
-		(c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
-	);
+    return str.replace(/ /g, '_').replace(
+        /[^/_\w():&"'\.,!\+\-]/g,
+        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+    );
 }
 
 (async () => {
@@ -26,6 +28,8 @@ function customEncodeURIComponent(str) {
         if (process.platform === 'win32' && game.match(/[:"]/))
             return;
         const content = `
+            <!DOCTYPE html>
+            <html><body>
             <script type="text/javascript">
                 location = '/__' + location.pathname;
             </script>
@@ -35,8 +39,9 @@ function customEncodeURIComponent(str) {
                     `<li>${song} - ${composer}</li>\n`
                 ).join('')}
             </ul>
+            </body></html>
         `;
-        contentPath = path.join(dir, platform, game, 'index.html');
+        const contentPath = path.join(dir, platform, game, 'index.html');
         try {
             fs.mkdirSync(path.join(dir, platform));
         } catch(e) {}
@@ -58,7 +63,7 @@ function customEncodeURIComponent(str) {
             </script>
             <h1>game soundtrack</h1>
             <ul>
-                ${db.map(({ game, platform }) => 
+                ${db.map(({ game, platform }) =>
                     `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>\n`
                 ).join('')}
             </ul>

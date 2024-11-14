@@ -133,7 +133,7 @@ section.details.info h1 {
 	margin: 0;
 }
 section.details h2 {
-	padding-bottom: 0.5em;
+	padding-top: 0.5em;
 }
 section.details .hide {
 	float: right;
@@ -173,32 +173,23 @@ section.details.playlist .title {
 #playlist li button {
 	margin-left: 1em;
 }
-#stats_bar {
-	margin: 1.2em 4em;
-
-	height: 0.8em;
-	background: #fff;
-	position: relative;
-}
-#stats_bar .ui-slider-range {
-	height: 100%;
-	background: #666;
-}
-#stats_bar .ui-slider-handle {
-	position: absolute;
-	z-index: 2;
-	top: -3px;
-	margin-left: -4em;
-	color: #fff;
-	font-size: 0.95em;
-}
-#stats_songs_total {
-	float: right;
-	margin: -0.2em 0.5em;
-}
-#stats_songs_supported {
-	float: left;
-	margin: -0.2em 0.5em;
+.stats_bar {
+	display: flex;
+	.songs_total, .songs_supported {
+		margin: -0.2em 0.5em;
+	}
+	.slider {
+		flex-grow: 1;
+		&::part(background) {
+			background: #fff;
+		}
+		&::part(slider) {
+			background: #666;
+		}
+		&::part(label after) {
+			color: #fff;
+		}
+	}
 }
 .medal {
 	&.gold {
@@ -258,31 +249,30 @@ section.details.playlist .title {
 	flex-grow: 0.2;
 }
 
-#time_slider {
+#time_slider_wrapper {
 	position: relative;
 	flex-basis: 9em;
 	flex-grow: 0.4;
-	height: 1.1em;
-	padding: 2px 0;
-	margin-top: 1px;
+	height: 1.3em;
 	border-left: 1px solid;
 	border-right: 1px solid;
-	cursor: pointer;
+	#time {
+		position: absolute;
+		inset: 0;
+		text-align: center;
+		pointer-events: none;
+	}
+	#time_slider {
+		position: absolute;
+		inset: 0;
+		cursor: pointer;
+		&::part(slider) {
+			background: #8fbe02;
+			opacity: 0.6;
+		}
+	}
 }
-#time_slider .ui-slider-range {
-	position: absolute;
-	top: 0;
-	height: 100%;
-	background: #8fbe02;
-	opacity: 0.6;
-}
-#time_slider .text {
-	position: absolute;
-	z-index: 1;
-	padding-top: 0;
-	width: 100%;
-	text-align: center;
-}
+
 .status {
 	display: flex;
 	flex-direction: column;
@@ -318,50 +308,21 @@ section.details.playlist .title {
 #song, #time {
 	padding: 2px;
 }
-
 #volume {
-	transform: rotate(270deg);
-	width: 1.5em;
-	height: 10px;
-	margin: 0 -0.2em 0.1em -0.2em;
-	-webkit-appearance: none;
-	background: #000;
-	border: 1px solid black;
-	cursor: pointer;
-}
-#volume.silent {
-	background: #befc03;
-}
-#volume::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	border: 1px solid black;
-	width: 4px;
-	height: 10px;
-	background: #befc03;
-}
-#volume::-moz-range-thumb {
-	border: 1px solid black;
-	border-radius: 0;
-	width: 4px;
-	height: 10px;
-	background: #befc03;
-}
-#volume2 {
 	display: inline-block;
-	vertical-align: bottom;
 	width: 0.5em;
-	height: 1.2em;
-	background: #8fbe02;
+	height: 1.3em;
 	margin: 0 0.2em;
-	position: relative;
+	vertical-align: sub;
 	cursor: pointer;
+	&::part(background) {
+		background: #8fbe02;
+	}
+	&::part(slider) {
+		background: #000;
+	}
 }
-#volume2 .ui-slider-range {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	background: #000;
-}
+
 
 button {
 	background: #ffffff60;
