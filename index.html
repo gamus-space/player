@@ -25,7 +25,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
 	<script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 	<script src="lib/flod.js"></script>
 	<script src="lib/opl3.js"></script>
@@ -297,12 +297,13 @@
 						<a id="next"><i class="fas fa-step-forward"></i></a>
 						<a id="random"><i class="fas fa-random"></i></a>
 					</span>
-					<div id="time_slider">
+					<div id="time_slider_wrapper">
+						<g-slider id="time_slider" direction="left" snap-percent="2"></g-slider>
 						<div id="time" class="text"></div>
 					</div>
 					<span>
 						<a id="mono"><i class="fas fa-headphones"></i></a>
-						<input id="volume" type="range" min="0" max="1" value="1" step="0.1" class="hidden" />
+						<g-slider id="volume" direction="bottom" snap-percent="5"></g-slider>
 					</span>
 				</div>
 			</div>
@@ -390,13 +391,11 @@
 			<div class="content">
 				<p>GAMUS player</p>
 				<h2>Amiga songs</h2>
-				<span>
-					<span id="stats_songs_total">0</span>
-					<span id="stats_songs_supported">0</span>
-					<div id="stats_bar">
-						<div class="ui-slider-handle"></div>
-					</div>
-				</span>
+				<div class="stats_bar">
+					<span class="songs_supported">0</span>
+					<g-slider class="slider" direction="left" readonly></g-slider>
+					<span class="songs_total">0</span>
+				</div>
 				<h2>PC songs</h2>
 				<span id="pc_songs">0</span>
 				<h2>user requests</h2>
@@ -551,5 +550,35 @@
 		</section>
 	</section>
 </body>
+
+<template id="g-slider">
+<style type="text/css">
+	.background {
+		position: relative;
+		height: 100%;
+	}
+	.slider {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+	.label {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		&.before {
+			left: 102%;
+		}
+		&.after {
+			right: 2%;
+		}
+	}
+</style>
+<div class="background" part="background">
+	<div class="slider" part="slider">
+		<span class="label" part="label"></span>
+	</div>
+</div>
+</template>
 
 </html>

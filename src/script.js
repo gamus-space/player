@@ -138,10 +138,10 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 	const amigaSongs = songs.filter(({ platform }) => platform === 'Amiga');
 	const totalSongs = amigaSongs.length;
 	const supportedSongs = amigaSongs.filter(song => compat.test(song.song_link)).length;
-	$('#stats_songs_total').text(totalSongs);
-	$('#stats_songs_supported').text(supportedSongs);
-	$('#stats_bar .ui-slider-handle').text((supportedSongs / totalSongs * 100).toFixed(1) + '%');
-	$('#stats_bar').slider({ range: 'min', min: 0, value: supportedSongs, max: totalSongs, disabled: true });
+	$('.stats_bar .songs_total').text(totalSongs);
+	$('.stats_bar .songs_supported').text(supportedSongs);
+	$('.stats_bar .slider').attr('value', supportedSongs / totalSongs);
+	$('.stats_bar .slider').attr('label', (supportedSongs / totalSongs * 100).toFixed(1) + '%');
 	const formatPrefix = /(?:^|\/)(\w+)\.[^\/]+$/i;
 	const formatSuffix = /\.(\w+)(?:#\d+)?$/i;
 	window.statByFormat = () => Object.fromEntries(Object.entries(
@@ -194,8 +194,8 @@ function updateStatus(update) {
 	updatePlaylistStatus();
 	if (!status.song) {
 		$('#time').text('00:00 / 00:00');
-		$('#time_slider').slider({ value: 0, max: 0 });
-		$('#time_slider').slider('option', 'disabled', true);
+		$('#time_slider').attr('value', 0);
+		$('#time_slider').attr('readonly', '');
 	}
 	$('#mono').toggleClass('inactive', !status.mono);
 	$('#random').toggleClass('inactive', !status.random);
@@ -297,32 +297,16 @@ $('#library tbody').on('click', 'tr', event => {
 		$(`#playlist li:nth-child(${status.playlistEntry})`).removeClass('playing');
 	playSong(data);
 });
-if (typeof $().slider === 'function') {
-	const volume = localStorage.getItem('volume') ?? 1;
-	$('#volume').replaceWith($('<div>', { id: 'volume2' }));
-	$('#volume2').slider({ orientation: 'vertical', range: 'min', min: 0, value: volume, max: 1, step: 0.05 });
-	$('#volume2').on('slide', (event, ui) => {
-		const volume = ui.value;
-		player.volume = volume;
-		localStorage.setItem('volume', volume);
-	});
-	setTimeout(() => { player.volume = volume; });
-} else {
-	const volume = localStorage.getItem('volume') ?? 1;
-	$('#volume').val(volume);
-	$('#volume').toggleClass('silent', volume == 0);
-	$('#volume').removeClass('hidden');
-	$('#volume').on('change', event => {
-		const volume = event.target.value;
-		player.volume = volume;
-		$('#volume').toggleClass('silent', volume == 0);
-		localStorage.setItem('volume', volume);
-	});
-	setTimeout(() => { player.volume = volume; });
-}
-$('#time_slider').slider({ orientation: 'horizontal', range: 'min', min: 0, value: 0, max: 0, step: 1 });
-$('#time_slider').on('slide', (event, ui) => {
-	player.seek(ui.value);
+const volume = localStorage.getItem('volume') ?? 1;
+$('#volume').attr('value', volume);
+$('#volume').on('change', event => {
+	const volume = event.detail.value;
+	player.volume = volume;
+	localStorage.setItem('volume', volume);
+});
+setTimeout(() => { player.volume = volume; });
+$('#time_slider').on('change', event => {
+	player.seek(event.detail.value * player.duration);
 });
 $('#repeat').on('click', () => {
 	updateStatus({ repeat: !status.repeat });
@@ -361,8 +345,8 @@ function stopped() {
 	if (status.random && playRandomSong()) return;
 	updateStatus({ playing: false });
 	$('#time').text(`${time(0)} / ${time(player.duration)}`);
-	$('#time_slider').slider({ value: 0, max: player.duration });
-	$('#time_slider').slider('option', 'disabled', true);
+	$('#time_slider').attr('value', 0);
+	$('#time_slider').attr('readonly', '');
 	$('#previous i').removeClass('fa-backward').addClass('fa-step-backward');
 }
 
@@ -402,8 +386,8 @@ function updateTime(timestamp) {
 		return;
 	lastUpdate = timestamp;
 	$('#time').text(time(player.position) + ' / ' + time(player.duration));
-	$('#time_slider').slider({ value: player.position, max: player.duration });
-	$('#time_slider').slider('option', 'disabled', false);
+	$('#time_slider').attr('value', player.position / player.duration);
+	$('#time_slider').attr('readonly', null);
 	if (player.position <= SEEK_START_LIMIT && $('#previous i').hasClass('fa-backward'))
 		$('#previous i').removeClass('fa-backward').addClass('fa-step-backward');
 	if (player.position > SEEK_START_LIMIT && $('#previous i').hasClass('fa-step-backward'))
@@ -646,3 +630,90 @@ $('.overlay .dialog .dismissPermanent').on('click', () => {
 	$('.overlay').hide('fade', {}, 1000);
 	localStorage.setItem('dismissNewVersion', true);
 });
+
+class GSlider extends HTMLElement {
+	static observedAttributes = ['value', 'label', 'snap-percent'];
+	snapPercent = 0;
+
+	connectedCallback() {
+		this.direction = this.getAttribute('direction');
+		switch (this.direction) {
+		case 'left':
+			this.opposite = 'right';
+			this.offsetField = 'offsetX';
+			this.dimensionField = 'clientWidth';
+			this.reverseValue = false;
+			break;
+		case 'bottom':
+			this.opposite = 'top';
+			this.offsetField = 'offsetY';
+			this.dimensionField = 'clientHeight';
+			this.reverseValue = true;
+			break;
+		default:
+			throw new Error(`unknown direction: ${this.direction}`);
+		}
+
+		this.attachShadow({ mode: "open" })
+			.appendChild(document.getElementById("g-slider").content.cloneNode(true));
+		this.setupChange();
+
+		Object.entries(this.initAttrs ?? {}).forEach(([name, value]) => {
+			this.attributeChangedCallback(name, null, value);
+		});
+	}
+
+	setupChange() {
+		let slide = false;
+		const slideEvent = event => {
+			if (this.getAttribute('readonly') != null) return;
+			let value = event[this.offsetField] / event.target[this.dimensionField];
+			if (this.reverseValue) value = 1 - value;
+			if (value < this.snapPercent / 100) value = 0;
+			if (value > 1 - this.snapPercent / 100) value = 1;
+			this.updateValue(value);
+			this.dispatchEvent(new CustomEvent('change', { detail: { value }}));
+		}
+		this.shadowRoot.addEventListener('mousedown', event => {
+			slide = true;
+			slideEvent(event);
+			this.ownerDocument.addEventListener('mouseup', () => {
+				slide = false;
+			}, { once: true });
+		});
+		this.shadowRoot.addEventListener('mousemove', event => {
+			if (!slide) return;
+			slideEvent(event);
+		});
+	}
+
+	attributeChangedCallback(name, _, value) {
+		if (!this.shadowRoot) {
+			this.initAttrs = { ...this.initAttrs, [name]: value };
+			return;
+		}
+		switch (name) {
+		case 'value':
+			this.updateValue(value);
+			break;
+		case 'label':
+			if (this.direction !== 'left') throw new Error(`no label for direction: ${this.direction}`);
+			this.shadowRoot.querySelector('.label').textContent = value;
+			break;
+		case 'snap-percent':
+			this.snapPercent = parseFloat(value);
+			break;
+		}
+	}
+
+	updateValue(value) {
+		this.shadowRoot.querySelector('.slider').style[this.opposite] = ((1-value) * 100).toFixed(4) + '%';
+		function setOrder(collection) {
+			collection.toggle('before', value <= 0.5);
+			collection.toggle('after', value > 0.5);
+		}
+		setOrder(this.shadowRoot.querySelector('.label').classList);
+		setOrder(this.shadowRoot.querySelector('.label').part);
+	}
+}
+customElements.define('g-slider', GSlider);
