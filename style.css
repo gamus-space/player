@@ -122,6 +122,9 @@ section.details .header {
 section.details .content {
 	overflow-y: auto;
 }
+section.details .content #info_song {
+	word-break: break-word;
+}
 section.details.info .content {
 	padding: 0 1em;
 }
@@ -288,6 +291,7 @@ section.details.playlist .title {
 	justify-content: space-between;
 	align-items: center;
 	gap: 5px;
+	user-select: none;
 }
 .multi_info a {
 	color: #000;
