@@ -156,6 +156,7 @@ section.details.playlist .title {
 }
 #playlist {
 	padding-left: 3em;
+	margin-top: 0;
 }
 #playlist li {
 	line-height: 2em;
@@ -164,8 +165,9 @@ section.details.playlist .title {
 #playlist li:hover {
 	background: #ffffff40;
 }
-#playlist li.ui-sortable-helper {
+#playlist li.dragged {
 	list-style: none;
+	background: #00000040;
 }
 #playlist li.playing {
 	text-decoration: underline;
