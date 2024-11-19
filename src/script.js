@@ -396,7 +396,18 @@ function updateTime(timestamp) {
 }
 updateTime();
 
-$('#playlist').sortable({ axis: 'y', helper: 'clone' });
+$('#playlist').on('dragged', event => {
+	const sortedPosition = event.detail.oldIndex + 1;
+	const newPosition = event.detail.newIndex + 1;
+	if (sortedPosition === newPosition) { return; }
+	const entry =
+		sortedPosition === status.playlistEntry ? newPosition :
+		sortedPosition < status.playlistEntry && newPosition >= status.playlistEntry ? status.playlistEntry - 1 :
+		sortedPosition > status.playlistEntry && newPosition <= status.playlistEntry ? status.playlistEntry + 1 :
+		null;
+	updatePlaylist(entry);
+});
+
 $('#playlist').on('click', 'li', event => {
 	playPlaylist($(event.target).index()+1);
 });
@@ -413,19 +424,6 @@ $('#playlist_add').on('click', () => {
 $('#playlist_clear').on('click', () => {
 	$('#playlist').empty();
 	updatePlaylist(0);
-});
-let sortedPosition;
-$('#playlist').on('sortstart', (event, ui) => {
-	sortedPosition = ui.item.index() + 1;
-});
-$('#playlist').on('sortupdate', (event, ui) => {
-	const newPosition = ui.item.index() + 1;
-	const entry =
-		sortedPosition === status.playlistEntry ? newPosition :
-		sortedPosition < status.playlistEntry && newPosition >= status.playlistEntry ? status.playlistEntry - 1 :
-		sortedPosition > status.playlistEntry && newPosition <= status.playlistEntry ? status.playlistEntry + 1 :
-		null;
-	updatePlaylist(entry);
 });
 
 function playNext() {
@@ -717,3 +715,51 @@ class GSlider extends HTMLElement {
 	}
 }
 customElements.define('g-slider', GSlider);
+
+class GDragDrop extends HTMLOListElement {
+	connectedCallback() {
+		const scroller = this.closest(this.getAttribute('scroller'));
+		this.style.position = 'relative';
+		let dragged, oldIndex, scrolling = 0;
+		this.addEventListener('mousedown', event => {
+			if (event.target.localName !== 'li') return;
+			dragged = event.target;
+			dragged.classList.add('dragged');
+			dragged.parentElement.style.userSelect = 'none';
+			oldIndex = [...dragged.parentNode.children].indexOf(dragged);
+			document.addEventListener('mouseup', () => {
+				const newIndex = [...dragged.parentNode.children].indexOf(dragged);
+				dragged.classList.remove('dragged');
+				dragged.parentElement.style.userSelect = null;
+				dragged = undefined;
+				scrolling = 0;
+				this.dispatchEvent(new CustomEvent('dragged', { detail: { oldIndex, newIndex }}));
+			}, { once: true });
+		});
+		this.addEventListener('mousemove', event => {
+			if (event.target.localName !== 'li') return;
+			if (!dragged) return;
+			const mouse = event.offsetY + event.target.offsetTop;
+			if (dragged) {
+				const scrollMargin = 0.1;
+				scrolling = Math.min(mouse - scroller.scrollTop - scroller.clientHeight * scrollMargin, 0) +
+					Math.max(mouse - scroller.scrollTop - scroller.clientHeight * (1-scrollMargin), 0);
+			}
+			if (dragged.nextSibling && mouse > dragged.nextSibling.offsetTop + dragged.nextSibling.offsetHeight / 2) {
+				dragged.parentElement.insertBefore(dragged, dragged.nextSibling.nextSibling);
+				return;
+			}
+			if (dragged.previousSibling && mouse < dragged.previousSibling.offsetTop + dragged.previousSibling.offsetHeight / 2) {
+				dragged.parentElement.insertBefore(dragged, dragged.previousSibling);
+				return;
+			}
+		});
+		this.scrollInterval = setInterval(() => {
+			if (scrolling) scroller.scrollBy({ top: 1 * scrolling, behavior: 'instant' });
+		}, 20);
+	}
+	disconnectedCallback() {
+		clearInterval(this.scrollInterval);
+	}
+}
+customElements.define('g-dragdrop', GDragDrop, { extends: 'ol' });
