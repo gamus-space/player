@@ -61,7 +61,7 @@ class ModPlayer extends PlayerBase {
 		this.ignoreStop = false;
 	}
 	files() {
-		return /((^|\/)(bd|bp|di|dw|gmc|hip|hipc|jcb|mdat|mii|mod|np2|np3|ntp|p4x|p60|pha|pp21|pru2|prun|rh|rjp|sog|sfx|xm)\.[^\/]+)|(\.(dum|mod|xm|s3m)(.zip)?)(#\d+)?$/i;
+		return /((^|\/)(bd|bp|di|dw|fred|gmc|hip|hipc|jcb|mdat|mii|mod|np2|np3|ntp|p4x|p6x|p60|pha|pp21|pru2|prun|rh|rjp|soc|sog|sfx|xm)\.[^\/]+)|(\.(dum|mod|xm|s3m)(.zip)?)(#\d+)?$/i;
 	}
 
 	shutdown() {
@@ -95,7 +95,7 @@ class ModPlayer extends PlayerBase {
 		return this.player.duration / 1000;
 	}
 	get status() {
-		return [this.player.formats()[this.player.version], this.loader.packer, this.player.title];
+		return [this.player.formats()[this.player.version], this.loader.packer, this.player.title, 'FLOD'];
 	}
 
 	get volume() {
@@ -212,7 +212,7 @@ class ImfPlayer extends Opl3Player {
 		return /\.(imf|wlf)(#\d+)$/i;
 	}
 	get status() {
-		return [...super.status, "IMF"];
+		return ["IMF", ...super.status];
 	}
 }
 
@@ -233,7 +233,7 @@ class MusPlayer extends Opl3Player {
 		return /\.(mus)(#\d+)?$/i;
 	}
 	get status() {
-		return [...super.status, "MUS"];
+		return ["MUS", ...super.status];
 	}
 }
 
@@ -254,7 +254,7 @@ class XmiPlayer extends Opl3Player {
 		return /\.(xmi)(#\d+)?$/i;
 	}
 	get status() {
-		return [...super.status, "XMI"];
+		return ["XMI", ...super.status];
 	}
 }
 
@@ -274,7 +274,7 @@ class MidPlayer extends Opl3Player {
 		return /\.(mff|mid|rmi)$/i;
 	}
 	get status() {
-		return [...super.status, "MID"];
+		return ["MID", ...super.status];
 	}
 }
 
@@ -293,7 +293,7 @@ class KlmPlayer extends Opl3Player {
 		return /\.(klm)$/i;
 	}
 	get status() {
-		return [...super.status, "KLM"];
+		return ["KLM", ...super.status];
 	}
 }
 
@@ -313,7 +313,7 @@ class HmpPlayer extends Opl3Player {
 		return /\.(hmp)$/i;
 	}
 	get status() {
-		return [...super.status, "HMP"];
+		return ["HMP", ...super.status];
 	}
 }
 
@@ -333,7 +333,7 @@ class HmiPlayer extends Opl3Player {
 		return /\.(hmi)$/i;
 	}
 	get status() {
-		return [...super.status, "HMI"];
+		return ["HMI", ...super.status];
 	}
 }
 
@@ -352,7 +352,7 @@ class AdlPlayer extends Opl3Player {
 		return /\.(adl)$/i;
 	}
 	get status() {
-		return [...super.status, "ADL (Coktel Vision)"];
+		return ["ADL (Coktel Vision)", ...super.status];
 	}
 }
 
@@ -373,7 +373,7 @@ class LaaPlayer extends Opl3Player {
 		return /\.(laa)$/i;
 	}
 	get status() {
-		return [...super.status, "LAA"];
+		return ["LAA", ...super.status];
 	}
 }
 
@@ -430,7 +430,7 @@ class AdPlugPlayer extends PlayerBase {
 	}
 	get status() {
 		const info = this.player.getSongInfo();
-		return [info.player, info.title].filter(v => !!v);
+		return [info.player, info.title, 'AdPlug'].filter(v => !!v);
 	}
 
 	get volume() {

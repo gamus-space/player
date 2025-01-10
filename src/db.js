@@ -50,6 +50,7 @@ export const invalidSongs = [
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL1.MOD#1",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL2.MOD#25",
 	"World of Game MODs/PC/Pinball Dreams 2/LEVEL4.MOD#36",
+	"World of Game MODs/PC/Pinball from Future Crew/PINBALL.S3M#87",
 	"VGMPF/PC/Blackthorne/01.xmi",
 	"VGMPF/PC/Blackthorne/02.xmi",
 	"VGMPF/PC/Dune II/DUNE1.ADL#3",

@@ -424,6 +424,12 @@ i.issue {
 	background: #888;
 	color: #eee;
 }
+#library_paginate.dataTables_paginate .paginate_button {
+	padding: 0.2em 0.3em;
+}
+#library_info {
+	padding: 0.4em 0 0.2em 0;
+}
 
 .overlay {
 	position: absolute;

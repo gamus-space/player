@@ -113,10 +113,17 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		],
 		order: [1, 'asc'],
 		lengthMenu: [[10, 100, 1000, -1], [10, 100, 1000, "All"]],
-		dom: 'f<"library_filters">lrtip',
+		dom: 'f<"library_filters">rtip',
 		scrollY: 'calc(100vh - 16em)',
 		scrollCollapse: true,
-		paging: false,
+		paging: true,
+		pageLength: 1000,
+		language: {
+			paginate: {
+				previous: '<',
+				next: '>',
+			},
+		},
 	}).on('search.dt', (...a) => {
 		updateStatus({ availableSongs: playableSongs().length > 0 });
 	});
@@ -341,8 +348,7 @@ function readyToPlay() {
 	updateStatus({ song: status.loadingSong, url: status.loadingUrl, playing: status.autoplay, autoplay: null });
 }
 function stopped() {
-	if (status.playlistEntry && playNext()) return;
-	if (status.random && playRandomSong()) return;
+	if (playNext(true)) return;
 	updateStatus({ playing: false });
 	$('#time').text(`${time(0)} / ${time(player.duration)}`);
 	$('#time_slider').attr('value', 0);
@@ -426,7 +432,7 @@ $('#playlist_clear').on('click', () => {
 	updatePlaylist(0);
 });
 
-function playNext() {
+function playNext(autoPlay) {
 	if (!status.playlistEntry) {
 		if (status.random) {
 			return playRandomSong();
@@ -434,6 +440,7 @@ function playNext() {
 			const songs = playableSongs();
 			if (songs.length === 0) return false;
 			const i = songs.findIndex(song => song.song_url === status.url);
+			if (autoPlay && (i < 0 || i === songs.length - 1)) return false;
 			playSong(songs[i < songs.length-1 ? i+1 : 0]);
 		}
 		return true;
@@ -456,7 +463,7 @@ function playNext() {
 		return false;
 	}
 }
-$('#next').on('click', () => playNext());
+$('#next').on('click', () => playNext(false));
 $('#previous').on('click', () => {
 	if (player.position > SEEK_START_LIMIT) {
 		player.seek(0);
