@@ -1,5 +1,6 @@
 'use strict';
 
+import { customEncodeURIComponent } from './common.js';
 import { invalidSongs, songIssues } from './db.js';
 import { Player } from './player.js';
 
@@ -544,12 +545,6 @@ function filterChangeGame(event) {
 }
 function filterChangeSong(event) {
 	enterState({ platform: filters.platform, game: filters.game, song: event.target.value });
-}
-function customEncodeURIComponent(str) {
-	return str.replace(/ /g, '_').replace(
-		/[^/_\w():&"'\.,!\+\-]/g,
-		(c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
-	);
 }
 
 function enterState(state) {
