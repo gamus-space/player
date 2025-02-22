@@ -50,7 +50,7 @@ const [,, dir] = process.argv;
         fs.writeFileSync(contentPath, content, 'utf-8');
         console.log(`written: ${contentPath}`);
 
-        if (game !== customEncodeURIComponent(game)) {
+        if (game !== customEncodeURIComponent(game) && !game.includes('/')) {
             const contentPath2 = path.join(dir, platform, game, 'index.html');
             try {
                 fs.mkdirSync(path.join(dir, platform, game));
@@ -62,7 +62,9 @@ const [,, dir] = process.argv;
 
     const inject = `
         <script type="text/javascript">
-            history.replaceState(undefined, '', location.pathname.replace(/^\\/__|\\/$/g, ''));
+            const path = location.pathname.replace(/^\\/__|\\/$/g, '');
+            if (path !== location.pathname)
+                history.replaceState(undefined, '', path);
         </script>
 
         <section id="pre_list">
