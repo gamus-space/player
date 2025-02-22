@@ -1,8 +1,9 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const process = require('process');
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+import { customEncodeURIComponent } from '../src/common.js';
 
 const DB_URL = 'https://db.gamus.space/index.json';
 
@@ -11,13 +12,6 @@ if (process.argv.length < 3) {
     process.exit(1);
 }
 const [,, dir] = process.argv;
-
-function customEncodeURIComponent(str) {
-    return str.replace(/ /g, '_').replace(
-        /[^/_\w():&"'\.,!\+\-]/g,
-        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
-    );
-}
 
 (async () => {
     const indexPath = path.join(dir, 'index.html');
@@ -29,7 +23,11 @@ function customEncodeURIComponent(str) {
             return;
         const content = `
             <!DOCTYPE html>
-            <html><body>
+            <html lang="en">
+            <head>
+            <title>GAMUS - ${game} ${platform} soundtrack</title>
+            </head>
+            <body>
             <script type="text/javascript">
                 location = '/__' + location.pathname;
             </script>
@@ -39,17 +37,27 @@ function customEncodeURIComponent(str) {
                     `<li>${song} - ${composer}</li>\n`
                 ).join('')}
             </ul>
-            </body></html>
+            </body>
+            </html>
         `;
-        const contentPath = path.join(dir, platform, game, 'index.html');
         try {
             fs.mkdirSync(path.join(dir, platform));
         } catch(e) {}
+        const contentPath = path.join(dir, platform, customEncodeURIComponent(game), 'index.html');
         try {
-            fs.mkdirSync(path.join(dir, platform, game));
+            fs.mkdirSync(path.join(dir, platform, customEncodeURIComponent(game)));
         } catch(e) {}
         fs.writeFileSync(contentPath, content, 'utf-8');
         console.log(`written: ${contentPath}`);
+
+        if (game !== customEncodeURIComponent(game)) {
+            const contentPath2 = path.join(dir, platform, game, 'index.html');
+            try {
+                fs.mkdirSync(path.join(dir, platform, game));
+            } catch(e) {}
+            fs.writeFileSync(contentPath2, content, 'utf-8');
+            console.log(`written: ${contentPath2}`);
+        }
     });
 
     const inject = `
