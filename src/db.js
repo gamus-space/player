@@ -61,6 +61,11 @@ export const invalidSongs = [
 ];
 
 const issues = [
+	{ name: "NP3 issues", groups: [
+		{ name: "invalid playback sequence", songs: [
+			"UnExoticA/Wonderdog/np3.game_complete",
+		] },
+	] },
 	{ name: "MOD issues", groups: [
 		{ name: "StarTrekker samples not supported", songs: [
 			"UnExoticA/Steg_the_Slug/mod.fx-chip",

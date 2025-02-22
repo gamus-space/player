@@ -35,7 +35,9 @@
 
 <body>
         <script type="text/javascript">
-            history.replaceState(undefined, '', location.pathname.replace(/^\/__|\/$/g, ''));
+            const path = location.pathname.replace(/^\/__|\/$/g, '');
+            if (path !== location.pathname)
+                history.replaceState(undefined, '', path);
         </script>
 
         <section id="pre_list">
@@ -45,8 +47,11 @@
             <h1>game soundtrack</h1>
             <ul>
                 <li><a href="Amiga/1869">1869 Amiga</a></li>
+<li><a href="Amiga/A320_Airbus">A320 Airbus Amiga</a></li>
 <li><a href="Amiga/ATR">ATR Amiga</a></li>
 <li><a href="Amiga/Aaargh!">Aaargh! Amiga</a></li>
+<li><a href="Amiga/After_Burner_(88)">After Burner (88) Amiga</a></li>
+<li><a href="Amiga/After_Burner_(89)">After Burner (89) Amiga</a></li>
 <li><a href="Amiga/Agony">Agony Amiga</a></li>
 <li><a href="Amiga/Aladdin">Aladdin Amiga</a></li>
 <li><a href="Amiga/Alfred_Chicken">Alfred Chicken Amiga</a></li>
@@ -60,8 +65,10 @@
 <li><a href="Amiga/All_New_World_Of_Lemmings">All New World Of Lemmings Amiga</a></li>
 <li><a href="Amiga/All_New_World_Of_Lemmings">All New World Of Lemmings Amiga</a></li>
 <li><a href="Amiga/Altered_Beast">Altered Beast Amiga</a></li>
+<li><a href="Amiga/Amnios">Amnios Amiga</a></li>
 <li><a href="Amiga/Another_World">Another World Amiga</a></li>
 <li><a href="Amiga/Apidya">Apidya Amiga</a></li>
+<li><a href="Amiga/Apprentice">Apprentice Amiga</a></li>
 <li><a href="Amiga/Arabian_Nights">Arabian Nights Amiga</a></li>
 <li><a href="Amiga/Arkanoid">Arkanoid Amiga</a></li>
 <li><a href="Amiga/Arnie">Arnie Amiga</a></li>
@@ -71,6 +78,7 @@
 <li><a href="Amiga/Assassin_Special_Edition">Assassin Special Edition Amiga</a></li>
 <li><a href="Amiga/Awesome">Awesome Amiga</a></li>
 <li><a href="Amiga/B.C._Kid">B.C. Kid Amiga</a></li>
+<li><a href="Amiga/Baal">Baal Amiga</a></li>
 <li><a href="Amiga/Banshee">Banshee Amiga</a></li>
 <li><a href="Amiga/Barbarian_II">Barbarian II Amiga</a></li>
 <li><a href="Amiga/Base_Jumpers">Base Jumpers Amiga</a></li>
@@ -105,10 +113,12 @@
 <li><a href="Amiga/Bump_'n'_Burn">Bump 'n' Burn Amiga</a></li>
 <li><a href="Amiga/Burntime">Burntime Amiga</a></li>
 <li><a href="Amiga/Cabal">Cabal Amiga</a></li>
+<li><a href="Amiga/Cadaver">Cadaver Amiga</a></li>
 <li><a href="PC/Cannon_Fodder">Cannon Fodder PC</a></li>
 <li><a href="Amiga/Cannon_Fodder">Cannon Fodder Amiga</a></li>
 <li><a href="Amiga/Cannon_Fodder_2">Cannon Fodder 2 Amiga</a></li>
 <li><a href="Amiga/Capital_Punishment">Capital Punishment Amiga</a></li>
+<li><a href="Amiga/Castle_Master">Castle Master Amiga</a></li>
 <li><a href="Amiga/Castlevania">Castlevania Amiga</a></li>
 <li><a href="PC/Catacomb_3-D">Catacomb 3-D PC</a></li>
 <li><a href="Amiga/Chambers_of_Shaolin">Chambers of Shaolin Amiga</a></li>
@@ -131,12 +141,14 @@
 <li><a href="Amiga/Cool_Spot">Cool Spot Amiga</a></li>
 <li><a href="PC/Corridor_7:_Alien_Invasion">Corridor 7: Alien Invasion PC</a></li>
 <li><a href="PC/Cosmo's_Cosmic_Adventure">Cosmo's Cosmic Adventure PC</a></li>
+<li><a href="Amiga/Covert_Action">Covert Action Amiga</a></li>
 <li><a href="Amiga/Crazy_Cars">Crazy Cars Amiga</a></li>
 <li><a href="Amiga/Crazy_Cars_II">Crazy Cars II Amiga</a></li>
 <li><a href="Amiga/Crazy_Cars_III">Crazy Cars III Amiga</a></li>
 <li><a href="PC/Crusader:_No_Regret">Crusader: No Regret PC</a></li>
 <li><a href="PC/Crusader:_No_Remorse">Crusader: No Remorse PC</a></li>
 <li><a href="Amiga/Crystal_Hammer">Crystal Hammer Amiga</a></li>
+<li><a href="Amiga/Cubulus">Cubulus Amiga</a></li>
 <li><a href="Amiga/Curse_of_Enchantia">Curse of Enchantia Amiga</a></li>
 <li><a href="Amiga/Cybernetix">Cybernetix Amiga</a></li>
 <li><a href="Amiga/Cytadela">Cytadela Amiga</a></li>
@@ -170,6 +182,7 @@
 <li><a href="Amiga/Dungeon_Master_II">Dungeon Master II Amiga</a></li>
 <li><a href="Amiga/Dyna_Blaster">Dyna Blaster Amiga</a></li>
 <li><a href="Amiga/Dynatech">Dynatech Amiga</a></li>
+<li><a href="Amiga/Elf">Elf Amiga</a></li>
 <li><a href="Amiga/Elfmania">Elfmania Amiga</a></li>
 <li><a href="Amiga/Elite">Elite Amiga</a></li>
 <li><a href="Amiga/Elvira">Elvira Amiga</a></li>
@@ -179,9 +192,11 @@
 <li><a href="Amiga/Enchanted_Land">Enchanted Land Amiga</a></li>
 <li><a href="PC/Epic_Pinball">Epic Pinball PC</a></li>
 <li><a href="Amiga/Escape_from_Colditz">Escape from Colditz Amiga</a></li>
+<li><a href="Amiga/Escape_from_the_Planet_of_the_Robot_Monsters">Escape from the Planet of the Robot Monsters Amiga</a></li>
 <li><a href="Amiga/European_Champions">European Champions Amiga</a></li>
 <li><a href="PC/Eye_of_the_Beholder">Eye of the Beholder PC</a></li>
 <li><a href="PC/Eye_of_the_Beholder_II:_The_Legend_of_Darkmoon">Eye of the Beholder II: The Legend of Darkmoon PC</a></li>
+<li><a href="Amiga/F%2FA-18_Interceptor">F/A-18 Interceptor Amiga</a></li>
 <li><a href="Amiga/Faery_Tale_Adventure,_The">Faery Tale Adventure, The Amiga</a></li>
 <li><a href="Amiga/Fears">Fears Amiga</a></li>
 <li><a href="PC/Final_Doom_-_TNT:_Evilution">Final Doom - TNT: Evilution PC</a></li>
@@ -217,6 +232,7 @@
 <li><a href="Amiga/Grand_Monster_Slam">Grand Monster Slam Amiga</a></li>
 <li><a href="Amiga/Great_Giana_Sisters,_The">Great Giana Sisters, The Amiga</a></li>
 <li><a href="Amiga/Great_Giana_Sisters,_The">Great Giana Sisters, The Amiga</a></li>
+<li><a href="Amiga/Harlequin">Harlequin Amiga</a></li>
 <li><a href="Amiga/Harley-Davidson">Harley-Davidson Amiga</a></li>
 <li><a href="Amiga/Heimdall">Heimdall Amiga</a></li>
 <li><a href="Amiga/Heimdall_2">Heimdall 2 Amiga</a></li>
@@ -224,6 +240,7 @@
 <li><a href="Amiga/Hero_Quest">Hero Quest Amiga</a></li>
 <li><a href="Amiga/Hero_Quest_II">Hero Quest II Amiga</a></li>
 <li><a href="PC/Hexen:_Beyond_Heretic">Hexen: Beyond Heretic PC</a></li>
+<li><a href="Amiga/Hill_Street_Blues">Hill Street Blues Amiga</a></li>
 <li><a href="Amiga/Hired_Guns">Hired Guns Amiga</a></li>
 <li><a href="PC/Hocus_Pocus">Hocus Pocus PC</a></li>
 <li><a href="Amiga/Holiday_Lemmings_1994">Holiday Lemmings 1994 Amiga</a></li>
@@ -259,7 +276,9 @@
 <li><a href="Amiga/Katakis">Katakis Amiga</a></li>
 <li><a href="Amiga/Kikstart_II">Kikstart II Amiga</a></li>
 <li><a href="Amiga/Killing_Game_Show,_The">Killing Game Show, The Amiga</a></li>
+<li><a href="Amiga/Kult">Kult Amiga</a></li>
 <li><a href="Amiga/Lamborghini_American_Challenge">Lamborghini American Challenge Amiga</a></li>
+<li><a href="Amiga/Laser_Squad">Laser Squad Amiga</a></li>
 <li><a href="Amiga/Last_Action_Hero">Last Action Hero Amiga</a></li>
 <li><a href="Amiga/Last_Ninja_2">Last Ninja 2 Amiga</a></li>
 <li><a href="Amiga/Last_Ninja_3">Last Ninja 3 Amiga</a></li>
@@ -286,6 +305,7 @@
 <li><a href="Amiga/Lotus_III">Lotus III Amiga</a></li>
 <li><a href="Amiga/Lotus_Turbo_Challenge_2">Lotus Turbo Challenge 2 Amiga</a></li>
 <li><a href="PC/Lure_of_the_Temptress">Lure of the Temptress PC</a></li>
+<li><a href="Amiga/Magic_Pockets">Magic Pockets Amiga</a></li>
 <li><a href="PC/Major_Stryker">Major Stryker PC</a></li>
 <li><a href="Amiga/Marble_Madness">Marble Madness Amiga</a></li>
 <li><a href="Amiga/Masterblazer">Masterblazer Amiga</a></li>
@@ -298,6 +318,7 @@
 <li><a href="Amiga/Metal_Mutant">Metal Mutant Amiga</a></li>
 <li><a href="Amiga/Micro_Machines">Micro Machines Amiga</a></li>
 <li><a href="PC/Micro_Machines_2:_Turbo_Tournament">Micro Machines 2: Turbo Tournament PC</a></li>
+<li><a href="Amiga/Midnight_Resistance">Midnight Resistance Amiga</a></li>
 <li><a href="PC/Monster_Bash">Monster Bash PC</a></li>
 <li><a href="Amiga/Moonstone">Moonstone Amiga</a></li>
 <li><a href="Amiga/Morph">Morph Amiga</a></li>
@@ -306,9 +327,12 @@
 <li><a href="Amiga/Mr._Nutz">Mr. Nutz Amiga</a></li>
 <li><a href="Amiga/Myth">Myth Amiga</a></li>
 <li><a href="PC/NAM">NAM PC</a></li>
+<li><a href="Amiga/Narco_Police">Narco Police Amiga</a></li>
+<li><a href="Amiga/Navy_SEALs">Navy SEALs Amiga</a></li>
 <li><a href="Amiga/Newzealand_Story,_The">Newzealand Story, The Amiga</a></li>
 <li><a href="Amiga/Nicky_Boom">Nicky Boom Amiga</a></li>
 <li><a href="Amiga/Nicky_Boom_II">Nicky Boom II Amiga</a></li>
+<li><a href="Amiga/Ninja_Warriors,_The">Ninja Warriors, The Amiga</a></li>
 <li><a href="Amiga/Nipper_Versus_The_Kats">Nipper Versus The Kats Amiga</a></li>
 <li><a href="Amiga/Nitro">Nitro Amiga</a></li>
 <li><a href="Amiga/Oh_No!_More_Lemmings">Oh No! More Lemmings Amiga</a></li>
@@ -348,6 +372,7 @@
 <li><a href="Amiga/Pool_of_Radiance">Pool of Radiance Amiga</a></li>
 <li><a href="Amiga/Pools_of_Darkness">Pools of Darkness Amiga</a></li>
 <li><a href="Amiga/Populous">Populous Amiga</a></li>
+<li><a href="Amiga/Powermonger">Powermonger Amiga</a></li>
 <li><a href="Amiga/Prehistoric_Tale,_A">Prehistoric Tale, A Amiga</a></li>
 <li><a href="PC/Prehistorik">Prehistorik PC</a></li>
 <li><a href="Amiga/Prehistorik">Prehistorik Amiga</a></li>
@@ -391,10 +416,12 @@
 <li><a href="Amiga/Secret_of_Monkey_Island,_The">Secret of Monkey Island, The Amiga</a></li>
 <li><a href="Amiga/Seek_&_Destroy">Seek & Destroy Amiga</a></li>
 <li><a href="Amiga/Sen">Sen Amiga</a></li>
+<li><a href="Amiga/Sensible_Soccer">Sensible Soccer Amiga</a></li>
 <li><a href="Amiga/Settlers,_The">Settlers, The Amiga</a></li>
 <li><a href="Amiga/Shadow_Dancer">Shadow Dancer Amiga</a></li>
 <li><a href="Amiga/Shadow_Fighter">Shadow Fighter Amiga</a></li>
 <li><a href="PC/Shadow_Warrior">Shadow Warrior PC</a></li>
+<li><a href="Amiga/Shadow_Warriors">Shadow Warriors Amiga</a></li>
 <li><a href="Amiga/Shadow_of_the_Beast">Shadow of the Beast Amiga</a></li>
 <li><a href="Amiga/Shadow_of_the_Beast_II">Shadow of the Beast II Amiga</a></li>
 <li><a href="Amiga/Shadow_of_the_Beast_III">Shadow of the Beast III Amiga</a></li>
@@ -413,9 +440,11 @@
 <li><a href="Amiga/Space_Crusade">Space Crusade Amiga</a></li>
 <li><a href="Amiga/Space_Harrier">Space Harrier Amiga</a></li>
 <li><a href="Amiga/Space_Harrier_II">Space Harrier II Amiga</a></li>
+<li><a href="Amiga/Space_Hulk">Space Hulk Amiga</a></li>
 <li><a href="PC/Spear_of_Destiny">Spear of Destiny PC</a></li>
 <li><a href="Amiga/Speedball">Speedball Amiga</a></li>
 <li><a href="Amiga/Speedball_2">Speedball 2 Amiga</a></li>
+<li><a href="Amiga/Spy_Who_Loved_Me,_The">Spy Who Loved Me, The Amiga</a></li>
 <li><a href="Amiga/Star_Wars">Star Wars Amiga</a></li>
 <li><a href="Amiga/Star_Wars">Star Wars Amiga</a></li>
 <li><a href="Amiga/Stardust">Stardust Amiga</a></li>
@@ -452,9 +481,11 @@
 <li><a href="Amiga/Tetris_Pro">Tetris Pro Amiga</a></li>
 <li><a href="PC/Theme_Hospital">Theme Hospital PC</a></li>
 <li><a href="PC/Theme_Park">Theme Park PC</a></li>
+<li><a href="Amiga/Thundercats">Thundercats Amiga</a></li>
 <li><a href="PC/Times_of_Lore">Times of Lore PC</a></li>
 <li><a href="Amiga/Titus_the_Fox">Titus the Fox Amiga</a></li>
 <li><a href="Amiga/Toki">Toki Amiga</a></li>
+<li><a href="Amiga/Total_Recall">Total Recall Amiga</a></li>
 <li><a href="Amiga/Traps_'n'_Treasures">Traps 'n' Treasures Amiga</a></li>
 <li><a href="Amiga/Treasure_Trap">Treasure Trap Amiga</a></li>
 <li><a href="Amiga/Trolls">Trolls Amiga</a></li>
@@ -470,6 +501,7 @@
 <li><a href="PC/Ultima_VI">Ultima VI PC</a></li>
 <li><a href="Amiga/Ultima_VI">Ultima VI Amiga</a></li>
 <li><a href="Amiga/Ultimate_Pinball_Quest,_The">Ultimate Pinball Quest, The Amiga</a></li>
+<li><a href="Amiga/Universe">Universe Amiga</a></li>
 <li><a href="Amiga/Unreal">Unreal Amiga</a></li>
 <li><a href="Amiga/Uridium_2">Uridium 2 Amiga</a></li>
 <li><a href="Amiga/Utopia">Utopia Amiga</a></li>
@@ -498,7 +530,6 @@
 <li><a href="Amiga/X-IT">X-IT Amiga</a></li>
 <li><a href="Amiga/X-Out">X-Out Amiga</a></li>
 <li><a href="Amiga/Xenon">Xenon Amiga</a></li>
-<li><a href="Amiga/Xenon_2:_Megablast">Xenon 2: Megablast Amiga</a></li>
 <li><a href="Amiga/Xenon_2:_Megablast">Xenon 2: Megablast Amiga</a></li>
 <li><a href="Amiga/Yo!_Joe!">Yo! Joe! Amiga</a></li>
 <li><a href="Amiga/Z-Out">Z-Out Amiga</a></li>
