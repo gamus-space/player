@@ -129,7 +129,9 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		updateStatus({ availableSongs: playableSongs().length > 0 });
 	});
 	new ResizeObserver(([{ target }]) => {
-		 $(target).css('max-height', `calc(100vh - ${target.getBoundingClientRect().y + 60}px)`);
+		setTimeout(() => {
+			$(target).css('max-height', `calc(100vh - ${target.getBoundingClientRect().y + 60}px)`);
+		});
 	}).observe($('#library').parent().get(0));
 	$('.library_filters').text('Filter:').append([
 		$('<select>', { id: 'filter_platform'}),
