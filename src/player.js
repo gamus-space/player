@@ -458,10 +458,100 @@ class AdPlugPlayer extends PlayerBase {
 	}
 }
 
+class OpenMptPlayer extends PlayerBase {
+	constructor() {
+		super();
+		this.player = new ChiptuneJsPlayer(new ChiptuneJsConfig(0, 100, 0));
+		this.ended = true;
+		this._duration = 0;
+		this.songData = undefined;
+		this._loop = false;
+		this._stereoSeparation = 1;
+		this._volume = 1;
+	}
+	files() {
+		return /((^|\/)(med)\.[^\/]+)|(\.(med))(#\d+)?$/i;
+	}
+
+	shutdown() {
+		this.player.stop();
+	}
+	open(url, songData, samplesData, ready) {
+		this.player.play(songData);
+		this.player.togglePause();
+		this.ended = false;
+		this._duration = this.player.duration();
+		this.songData = songData;
+		const result = true;
+		if (result) setTimeout(ready);
+		return result;
+	}
+	play() {
+		if (this.ended) {
+			this.player.play(this.songData);
+			this.ended = false;
+		} else {
+			this.player.togglePause();
+		}
+	}
+	pause() {
+		this.player.togglePause();
+	}
+	seek(v) {
+		this.player.setCurrentTime(v);
+	}
+
+	get position() {
+		return this.ended ? 0 : this.player.getCurrentTime() % this._duration;
+	}
+	get duration() {
+		return this._duration;
+	}
+	get status() {
+		if (this.ended) { return []; }
+		const meta = this.player.metadata();
+		return [meta.type_long, meta.tracker, 'OpenMPT'];
+	}
+
+	get volume() {
+		return this._volume;
+	}
+	set volume(v) {
+		this._volume = v;
+		this.player.setMasterGain(Math.log(Math.max(v, 0.01)) * 2000);
+	}
+	get stereoSeparation() {
+		return this._stereoSeparation;
+	}
+	set stereoSeparation(v) {
+		this._stereoSeparation = v;
+		this.player.setStereoSeparation(v * 100);
+	}
+	get loop() {
+		return this._loop;
+	}
+	set loop(v) {
+		this._loop = v;
+		this.player.setRepeatCount(v ? -1 : 0);
+	}
+
+	set stopped(v) {
+		this.player.onEnded(() => {
+			this.ended = true;
+			v();
+		});
+	}
+}
+
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.players = [new ModPlayer(), new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new HmpPlayer(), new HmiPlayer(), new AdlPlayer(), new LaaPlayer(), new AdPlugPlayer()];
+		this.players = [
+			new ModPlayer(),
+			new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new HmpPlayer(), new HmiPlayer(), new AdlPlayer(), new LaaPlayer(),
+			new AdPlugPlayer(),
+			new OpenMptPlayer(),
+		];
 		this.current = undefined;
 
 		this._volume = 1;

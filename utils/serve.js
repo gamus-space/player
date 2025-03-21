@@ -1,7 +1,7 @@
-const express = require('express');
-const opn = require('opn');
-const path = require('path');
-const process = require('process');
+import express from 'express';
+import opn from 'opn';
+import path from 'path';
+import process from 'process';
 
 const app = express();
 
