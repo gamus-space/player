@@ -461,7 +461,8 @@ class AdPlugPlayer extends PlayerBase {
 class OpenMptPlayer extends PlayerBase {
 	constructor() {
 		super();
-		this.player = new ChiptuneJsPlayer(new ChiptuneJsConfig(0, 100, 0));
+		this.player = undefined;
+		this._stopped = undefined;
 		this.ended = true;
 		this._duration = 0;
 		this.songData = undefined;
@@ -477,6 +478,13 @@ class OpenMptPlayer extends PlayerBase {
 		this.player.stop();
 	}
 	open(url, songData, samplesData, ready) {
+		if (!this.player) {
+			this.player = new ChiptuneJsPlayer(new ChiptuneJsConfig(0, 100, 0));
+			this.player.onEnded(() => {
+				this.ended = true;
+				v();
+			});
+		}
 		this.player.play(songData);
 		this.player.togglePause();
 		this.ended = false;
@@ -536,10 +544,7 @@ class OpenMptPlayer extends PlayerBase {
 	}
 
 	set stopped(v) {
-		this.player.onEnded(() => {
-			this.ended = true;
-			v();
-		});
+		this._stopped = v;
 	}
 }
 
