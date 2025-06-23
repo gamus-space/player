@@ -18,7 +18,7 @@ const [,, dir] = process.argv;
     const index = fs.readFileSync(indexPath, 'utf-8');
     const db = await (await fetch(DB_URL)).json();
 
-    db.forEach(({ platform, game, songs}) => {
+    db.forEach(({ platform, game, songs, year, developers, publishers, source, source_link, links }) => {
         if (process.platform === 'win32' && game.match(/[:"]/))
             return;
         const content = `
@@ -31,11 +31,32 @@ const [,, dir] = process.argv;
             <script type="text/javascript">
                 location = '/__' + location.pathname;
             </script>
-            <h1>${game} ${platform} soundtrack</h1>
+            <h1>${game} soundtrack</h1>
+            <h3>platform</h3>
+            <p>${platform}</p>
+            <h3>year</h3>
+            <p>${year}</p>
+            <h3>game developed by</h3>
+            <ul>
+              ${(developers ?? []).map(d => `<li>${d}</li>`).join('')}
+            </ul>
+            <h3>game published by</h3>
+            <ul>
+              ${(publishers ?? []).map(p => `<li>${p}</li>`).join('')}
+            </ul>
+            <h2>songs</h2>
             <ul>
                 ${songs.map(({ song, composer }) =>
                     `<li>${song} - ${composer}</li>\n`
                 ).join('')}
+            </ul>
+            <h3>from</h3>
+            <a target="_blank" href="${source_link ?? '/'}">${source}</a>
+            <h3>links</h3>
+            <ul>
+              ${(links ?? []).map(({ site, url }) =>
+                `<li><a target="_blank" href="${url}">${site}</a></li>`
+              ).join('')}
             </ul>
             </body>
             </html>
