@@ -310,7 +310,7 @@ class HmpPlayer extends Opl3Player {
 		return this.postInit(songData, ready);
 	}
 	files() {
-		return /\.(hmp)$/i;
+		return /\.(hmp|hmq)$/i;
 	}
 	get status() {
 		return ["HMP", ...super.status];
@@ -399,7 +399,7 @@ class AdPlugPlayer extends PlayerBase {
 		this.player = ScriptNodePlayer.getInstance();
 	}
 	files() {
-		return /\.(adl|agd|cmf|imf|laa|m|mdi|s3m|sdb|wlf)(#\d+)?$/i;
+		return /\.(adl|agd|cmf|imf|laa|lds|m|mdi|s3m|sdb|wlf)(#\d+)?$/i;
 	}
 
 	shutdown() {
