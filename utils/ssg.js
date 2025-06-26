@@ -38,17 +38,17 @@ const [,, dir] = process.argv;
             <p>${year}</p>
             <h3>game developed by</h3>
             <ul>
-              ${(developers ?? []).map(d => `<li>${d}</li>`).join('')}
+              ${(developers ?? []).map(d => `<li>${d}</li>`).join('\n')}
             </ul>
             <h3>game published by</h3>
             <ul>
-              ${(publishers ?? []).map(p => `<li>${p}</li>`).join('')}
+              ${(publishers ?? []).map(p => `<li>${p}</li>`).join('\n')}
             </ul>
             <h2>songs</h2>
             <ul>
                 ${songs.map(({ song, composer }) =>
-                    `<li>${song} - ${composer}</li>\n`
-                ).join('')}
+                    `<li>${song} - ${composer}</li>`
+                ).join('\n')}
             </ul>
             <h3>from</h3>
             <a target="_blank" href="${source_link ?? '/'}">${source}</a>
@@ -56,7 +56,7 @@ const [,, dir] = process.argv;
             <ul>
               ${(links ?? []).map(({ site, url }) =>
                 `<li><a target="_blank" href="${url}">${site}</a></li>`
-              ).join('')}
+              ).join('\n')}
             </ul>
             </body>
             </html>
@@ -95,8 +95,8 @@ const [,, dir] = process.argv;
             <h1>game soundtrack</h1>
             <ul>
                 ${db.map(({ game, platform }) =>
-                    `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>\n`
-                ).join('')}
+                    `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>`
+                ).join('\n')}
             </ul>
         </section>
     `;

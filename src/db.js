@@ -167,10 +167,6 @@ const issues = [
 			"VGMPF/PC/Final Doom - The Plutonia Experiment/DDTBL3.MUS",
 			"VGMPF/PC/Final Doom - TNT Evilution/THEDA2.MUS",
 		] },
-		{ name: "XMI inaccurate percussion", songs: [
-			"VGMPF/PC/Lost Vikings, The/505.xmi",
-			"VGMPF/PC/Lost Vikings, The/506.xmi",
-		] },
 		{ name: "XMI missing voices", songs: [
 			"resources/OPL3/Mega Man X/POWER.XMI",
 			"resources/OPL3/Super Street Fighter II/S_VEGA.XMI",
