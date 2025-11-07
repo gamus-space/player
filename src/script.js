@@ -622,14 +622,14 @@ updateStatus({
 
 if (localStorage.getItem('dismissNewVersion') != 'true') {
 	setTimeout(() => {
-		$('.overlay').show('fade', {}, 1000);
+		$('.overlay').fadeIn(1000);
 	}, 1000);
 }
 $('.overlay .dialog .dismiss').on('click', () => {
-	$('.overlay').hide('fade', {}, 1000);
+	$('.overlay').fadeOut(1000);
 });
 $('.overlay .dialog .dismissPermanent').on('click', () => {
-	$('.overlay').hide('fade', {}, 1000);
+	$('.overlay').fadeOut(1000);
 	localStorage.setItem('dismissNewVersion', true);
 });
 
