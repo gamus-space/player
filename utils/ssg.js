@@ -6,12 +6,24 @@ import process from 'process';
 import { customEncodeURIComponent } from '../src/common.js';
 
 const DB_URL = 'https://db.gamus.space/index.json';
+const ROOT_URL = 'https://gamus.space';
 
 if (process.argv.length < 3) {
     console.error('usage: ssg.js dir');
     process.exit(1);
 }
 const [,, dir] = process.argv;
+
+function XMLencodeURIComponent(component) {
+    return encodeURIComponent(component.replace(/ /g, '_')).replace(
+        /[']/g,
+        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+    );
+}
+
+function uniqByString(array, keyFn) {
+    return Object.values(array.reduce((res, row) => ({ ...res, [keyFn(row)]: row }), {}));
+}
 
 (async () => {
     const indexPath = path.join(dir, 'index.html');
@@ -95,7 +107,7 @@ const [,, dir] = process.argv;
             <h1>game soundtrack</h1>
             <ul>
                 ${db.map(({ game, platform }) =>
-                    `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>`
+                    `<li><a href="${platform}/${customEncodeURIComponent(game)}/">${game} ${platform}</a></li>`
                 ).join('\n')}
             </ul>
         </section>
@@ -103,4 +115,34 @@ const [,, dir] = process.argv;
     const newIndex = index.replace('<body>', `<body>${inject}`);
     fs.writeFileSync(indexPath, newIndex, 'utf-8');
     console.log(`injected: ${indexPath}`);
+
+    const sitemap =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${ROOT_URL}/</loc>
+    <lastmod>${new Date().toISOString().substring(0, 10)}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+${uniqByString(db, ({ game, platform}) => `${game}/${platform}`).map(({ game, platform }) =>
+`  <url>
+    <loc>${ROOT_URL}/${platform}/${XMLencodeURIComponent(game)}/</loc>
+    <changefreq>yearly</changefreq>
+  </url>`
+).join('\n')}
+</urlset>`;
+    const sitemapPath = path.join(dir, 'sitemap.xml');
+    fs.writeFileSync(sitemapPath, sitemap);
+    console.log(`written: ${sitemapPath}`);
+
+    const robots =
+`User-Agent: *
+Allow: /
+
+Sitemap: ${ROOT_URL}/sitemap.xml
+`;
+    const robotsPath = path.join(dir, 'robots.txt');
+    fs.writeFileSync(robotsPath, robots);
+    console.log(`written: ${robotsPath}`);
 })();
