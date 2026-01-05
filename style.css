@@ -23,6 +23,14 @@ section.footer {
 section.footer a {
 	padding-left: 5px;
 	font-weight: bold;
+	&.campaign {
+		animation: campaignAnimation 5s infinite alternate;
+		animation-delay: 5s;
+	}
+}
+@keyframes campaignAnimation {
+	0% { color: navy; }
+	100% { color: red; }
 }
 section.body {
 	width: calc(100% - 1em);
