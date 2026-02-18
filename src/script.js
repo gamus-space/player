@@ -633,13 +633,8 @@ $('.overlay .dialog .dismissPermanent').on('click', () => {
 	localStorage.setItem('dismissNewVersion', true);
 });
 
-const campaign = {
-	name: 'Kickstarter',
-	urls: [
-	  'https://www.kickstarter.com/projects/krzykos/gamus-game-music-meets-memory-soundblaster-awe32-midi',
-	],
-  };
-  if (campaign)
+const campaign = null;
+if (campaign)
 	$('.campaign')
 	  .css('display', '')
 	  .attr('href', campaign.urls[randomInt(campaign.urls.length)])
