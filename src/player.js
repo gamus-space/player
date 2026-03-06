@@ -548,6 +548,68 @@ class OpenMptPlayer extends PlayerBase {
 	}
 }
 
+class VgmPlayer extends PlayerBase {
+	constructor() {
+		super();
+		this.player = new VgmPlayPlayer(document.baseURI);
+	}
+	files() {
+		return /\.(vgm|vgz)$/i;
+	}
+
+	shutdown() {
+		this.player.stop();
+	}
+	open(url, songData, samplesData, ready) {
+		this.player.load(songData).then(() => {
+			ready();
+		});
+		return true;
+	}
+	play() {
+		this.player.play();
+	}
+	pause() {
+		this.player.pause();
+	}
+	seek(v) {
+		this.player.seek(v);
+	}
+
+	get position() {
+		return this.player.currentPosition;
+	}
+	get duration() {
+		return this.player.totalLength;
+	}
+	get status() {
+		return [...this.player.getInfo(), 'VGMPlay-js'];
+	}
+
+	get volume() {
+		return this.player.volume;
+	}
+	set volume(v) {
+		this.player.volume = v;
+	}
+	get stereoSeparation() {
+		return this.player.mono ? 0 : 1;
+	}
+	set stereoSeparation(v) {
+		this.player.mono = !v;
+	}
+	get loop() {
+		return this.player.loop;
+	}
+	set loop(v) {
+		this.player.loop = v;
+	}
+
+	set stopped(v) {
+		this.player.onStopped = v;
+	}
+}
+
 class MultiPlayer extends PlayerBase {
 	constructor() {
 		super();
@@ -556,6 +618,7 @@ class MultiPlayer extends PlayerBase {
 			new ImfPlayer(), new MusPlayer(), new XmiPlayer(), new MidPlayer(), new KlmPlayer(), new HmpPlayer(), new HmiPlayer(), new AdlPlayer(), new LaaPlayer(),
 			new AdPlugPlayer(),
 			new OpenMptPlayer(),
+			new VgmPlayer(),
 		];
 		this.current = undefined;
 
