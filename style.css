@@ -380,14 +380,13 @@ i.issue {
 	cursor: pointer;
 	background: #ffffff40;
 }
-#library thead .sorting {
-	filter: brightness(1.1);
-}
-#library thead .sorting_asc {
-	filter: grayscale(100%) brightness(0.75);
-}
-#library thead .sorting_desc {
-	filter: grayscale(100%) brightness(0.75);
+.dataTables_scrollHead table.dataTable thead > tr > th.sorting {
+	&::before {
+		bottom: 51%;
+	}
+	&::after {
+		top: 51%;
+	}
 }
 #library_filter {
 	float: left;
@@ -434,6 +433,9 @@ i.issue {
 }
 #library_paginate.dataTables_paginate .paginate_button {
 	padding: 0.2em 0.3em;
+	&.current {
+		background: linear-gradient(to bottom, white 0%, #dcdcdc 100%);
+	}
 }
 #library_info {
 	padding: 0.4em 0 0.2em 0;
