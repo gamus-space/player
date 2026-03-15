@@ -382,10 +382,10 @@ i.issue {
 }
 .dataTables_scrollHead table.dataTable thead > tr > th.sorting {
 	&::before {
-		bottom: 51%;
+		bottom: 52%;
 	}
 	&::after {
-		top: 51%;
+		top: 52%;
 	}
 }
 #library_filter {
