@@ -152,10 +152,6 @@ const issues = [
 		{ name: "clipped", songs: [
 			"UnExoticA/Superfrog/p4x.intro_tune_5",
 		] },
-		{ name: "bad sample", songs: [
-			"World of Game MODs/PC/Crusader No Remorse/M07.MOD#1",
-			"World of Game MODs/PC/Crusader No Remorse/M07.MOD#18",
-		] },
 		{ name: "bad tempo change", songs: [
 			"UnExoticA/Settlers/mod.siedler ii",
 		] },
