@@ -486,7 +486,7 @@ class OpenMptPlayer extends PlayerBase {
 			this.player = new ChiptuneJsPlayer(new ChiptuneJsConfig(0, 100, 1));
 			this.player.onEnded(() => {
 				this.ended = true;
-				v();
+				this._stopped?.();
 			});
 		}
 		this.player.play(songData);
