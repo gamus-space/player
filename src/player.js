@@ -1,5 +1,11 @@
 'use strict';
 
+function delayedContinue() {
+	return new Promise(resolve => {
+		setTimeout(resolve);
+	});
+}
+
 class PlayerBase {
 	files() {
 		throw 'not implemented';
@@ -11,7 +17,7 @@ class PlayerBase {
 	shutdown() {
 		throw 'not implemented';
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData, samplesData) {
 		throw 'not implemented';
 	}
 	play() {
@@ -69,14 +75,14 @@ class ModPlayer extends PlayerBase {
 		this.player.stop();
 		this.ignoreStop = false;
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData, samplesData) {
 		window.neoart.initialize();
 		this.player.startingSong = this.url_param(url);
 		this.ignoreStop = true;
 		const result = this.loader.load(songData, samplesData);
 		this.ignoreStop = false;
-		if (result) setTimeout(ready);
-		return result;
+		if (result) return delayedContinue();
+		else return Promise.reject('FLOD player cannot open file');
 	}
 	play() {
 		this.player.play();
@@ -133,7 +139,7 @@ class Opl3Player extends PlayerBase {
 	preInit() {
 		this.shutdown();
 	}
-	postInit(songData, ready) {
+	postInit(songData) {
 		this.player.on('position', position => {
 			if (position < this.player.length)
 				return;
@@ -145,8 +151,7 @@ class Opl3Player extends PlayerBase {
 		});
 		this.player.play(songData);
 		this.player.pause();
-		setTimeout(ready);
-		return true;
+		return delayedContinue();
 	}
 	shutdown() {
 		this.player?.abort();
@@ -199,14 +204,14 @@ class ImfPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData) {
 		this.preInit();
 		const ext = this.files().exec(url)[1].toLowerCase();
 		this.player = new OPL3.Player(OPL3.format.IMF, {
 			prebuffer: 1000,
 			rate: this.url_param(url) || { imf: 560, wlf: 700 }[ext],
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(imf|wlf)(#\d+)$/i;
@@ -220,14 +225,14 @@ class MusPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData, samplesData) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.MUS, {
 			prebuffer: 2000,
 			rate: this.url_param(url) || 140,
 			instruments: samplesData,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(mus)(#\d+)?$/i;
@@ -241,14 +246,14 @@ class XmiPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData, samplesData) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.XMI, {
 			prebuffer: 1000,
 			instruments: samplesData,
 			song: this.url_param(url) || 1,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(xmi)(#\d+)?$/i;
@@ -262,13 +267,13 @@ class MidPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData, samplesData) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.MID, {
 			prebuffer: 1000,
 			instruments: samplesData,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(mff|mid|rmi)$/i;
@@ -282,12 +287,12 @@ class KlmPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.KLM, {
 			prebuffer: 2000,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(klm)$/i;
@@ -301,13 +306,13 @@ class HmpPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData, samplesData) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.HMP, {
 			prebuffer: 1000,
 			instruments: samplesData,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(hmp|hmq)$/i;
@@ -321,13 +326,13 @@ class HmiPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData, samplesData) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.HMI, {
 			prebuffer: 1000,
 			instruments: samplesData,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(hmi)$/i;
@@ -341,12 +346,12 @@ class AdlPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData) {
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.ADL, {
 			prebuffer: 2000,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(adl)$/i;
@@ -360,14 +365,14 @@ class LaaPlayer extends Opl3Player {
 	constructor() {
 		super();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData) {
 		if (String.fromCharCode.apply(null, new Uint8Array(songData.slice(0, 3))) !== 'ADL')
-			return false;
+			return Promise.reject('LAA player cannot open file');
 		this.preInit();
 		this.player = new OPL3.Player(OPL3.format.LAA, {
 			prebuffer: 2000,
 		});
-		return this.postInit(songData, ready);
+		return this.postInit(songData);
 	}
 	files() {
 		return /\.(laa)$/i;
@@ -405,12 +410,11 @@ class AdPlugPlayer extends PlayerBase {
 	shutdown() {
 		this.player.pause();
 	}
-	open(url, songData, samplesData, ready) {
-		this.ready = ready;
+	open(url) {
 		this.player.loadMusicFromURL(url.replace(/#.+$/, ''), {
 			track: this.url_param(url) != null ? this.url_param(url) - 1 : null,
 		}, () => {}, () => {});
-		return true;
+		return new Promise(resolve => { this.ready = resolve; });
 	}
 	play() {
 		this.player.play();
@@ -471,15 +475,15 @@ class OpenMptPlayer extends PlayerBase {
 		this._volume = 1;
 	}
 	files() {
-		return /((^|\/)(med)\.[^\/]+)|(\.(med))(#\d+)?$/i;
+		return /((^|\/)(med)\.[^\/]+)|(\.(amf|med|mus|psm))(#\d+)?$/i;
 	}
 
 	shutdown() {
 		this.player.stop();
 	}
-	open(url, songData, samplesData, ready) {
+	open(url, songData) {
 		if (!this.player) {
-			this.player = new ChiptuneJsPlayer(new ChiptuneJsConfig(0, 100, 0));
+			this.player = new ChiptuneJsPlayer(new ChiptuneJsConfig(0, 100, 1));
 			this.player.onEnded(() => {
 				this.ended = true;
 				v();
@@ -487,12 +491,12 @@ class OpenMptPlayer extends PlayerBase {
 		}
 		this.player.play(songData);
 		this.player.togglePause();
+		const subsong = this.url_param(url);
+		if (subsong) this.player.selectSubsong(subsong-1);
 		this.ended = false;
 		this._duration = this.player.duration();
 		this.songData = songData;
-		const result = true;
-		if (result) setTimeout(ready);
-		return result;
+		return delayedContinue();
 	}
 	play() {
 		if (this.ended) {
@@ -526,7 +530,7 @@ class OpenMptPlayer extends PlayerBase {
 	}
 	set volume(v) {
 		this._volume = v;
-		this.player.setMasterGain(Math.log(Math.max(v, 0.01)) * 2000);
+		this.player.setMasterGain(Math.log(Math.max(v, 0.01)) * 2000 + 1000);
 	}
 	get stereoSeparation() {
 		return this._stereoSeparation;
@@ -560,11 +564,8 @@ class VgmPlayer extends PlayerBase {
 	shutdown() {
 		this.player.stop();
 	}
-	open(url, songData, samplesData, ready) {
-		this.player.load(songData).then(() => {
-			ready();
-		});
-		return true;
+	open(url, songData) {
+		return this.player.load(songData);
 	}
 	play() {
 		this.player.play();
@@ -632,18 +633,27 @@ class MultiPlayer extends PlayerBase {
 		return new RegExp(this.players.map(({ files }) => re2str(files())).join('|'), 'i');
 	}
 
-	open(url, songData, samplesData, ready) {
-		const newPlayer = this.players.find(player => player.files().test(url) && player.open(url, songData, samplesData, ready));
-		if (newPlayer !== this.current) {
-			this.current?.shutdown();
-			this.current = newPlayer;
+	async open(url, songData, samplesData) {
+		const players = this.players.filter(player => player.files().test(url));
+		for (const newPlayer of players) {
+			try {
+				await newPlayer.open(url, songData, samplesData);
+			} catch (e) {
+				// console.warn(e);
+				continue;
+			}
+			if (newPlayer !== this.current) {
+				this.current?.shutdown();
+				this.current = newPlayer;
+			}
+			if (this.current) {
+				this.current.loop = this.loop;
+				this.current.stereoSeparation = this.stereoSeparation;
+				this.current.volume = this.volume;
+			}
+			return;
 		}
-		if (this.current) {
-			this.current.loop = this.loop;
-			this.current.stereoSeparation = this.stereoSeparation;
-			this.current.volume = this.volume;
-		}
-		return !!this.current;
+		return Promise.reject('no player found');
 	}
 	play() {
 		this.current.play();

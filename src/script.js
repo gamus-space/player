@@ -39,6 +39,9 @@ function song2title({ game, song }) {
 function song2url({ song_link }) {
 	return `${DATA_ROOT}/${song_link}`;
 }
+function linkUncompressed(url) {
+	return url.replace(/\.(gz|br)(#.+)?$/, '$2');
+}
 
 class Autoscroll {
 	constructor(el, len) {
@@ -95,16 +98,19 @@ fetch(`${DATA_ROOT}/index.json`).then(response => response.json()).then(db => {
 		console.warn('unmatched song issues filter', unmatchedIssues);
 
 	$('#library').DataTable({
-		data: songs.map(song => ({
-			status: compat.test(song.song_link) ? '<i class="fas fa-stop"></i>' : '',
-			song: song.song,
-			song_label: song.song + (songIssues[song.song_link] ? ` <i class="issue fas fa-exclamation-circle" title="${songIssues[song.song_link].join(`\n`)}"></i>` : ""),
-			composer: song.composer,
-			game: song.game,
-			platform: song.platform,
-			song_link: song.song_link,
-			song_url: song.song_url,
-		})),
+		data: songs.map(song => {
+			const songLinkUncompressed = linkUncompressed(song.song_link);
+			return {
+				status: compat.test(songLinkUncompressed) ? '<i class="fas fa-stop"></i>' : '',
+				song: song.song,
+				song_label: song.song + (songIssues[songLinkUncompressed] ? ` <i class="issue fas fa-exclamation-circle" title="${songIssues[songLinkUncompressed].join(`\n`)}"></i>` : ""),
+				composer: song.composer,
+				game: song.game,
+				platform: song.platform,
+				song_link: song.song_link,
+				song_url: song.song_url,
+			};
+		}),
 		columns: [
 			{ name: "status", data: "status" },
 			{ name: "game", data: "game", title: "Game" },
@@ -593,11 +599,26 @@ async function fetchFile(url) {
 		console.error(response);
 		throw new Error('failed to fetch');
 	}
+	if (url.endsWith('.gz')) {
+		const stream = response.body.pipeThrough(new DecompressionStream('gzip'));
+		return new Response(stream).arrayBuffer();
+	}
+	if (url.endsWith('.br')) {
+		try {
+			const stream = response.body.pipeThrough(new DecompressionStream('brotli'));
+			return new Response(stream).arrayBuffer();
+		} catch {
+			const buffer = await response.arrayBuffer();
+			const brotliModule = await import('https://unpkg.com/brotli-wasm@3.0.1?module');
+			const brotli = await brotliModule.default;
+			return brotli.decompress(new Uint8Array(buffer));
+		}
+	}
 	return response.arrayBuffer();
 }
 
 async function loadMusicFromURL(url) {
-	const songData = await fetchFile(url);
+	const songData = await fetchFile(url.replace(/#.+$/, ''));
 	let samplesData;
 	if (typeof songsByUrl[url]?.samples === 'string') {
 		samplesData = await fetchFile(song2url({ song_link: songsByUrl[url].samples }));
@@ -605,10 +626,10 @@ async function loadMusicFromURL(url) {
 	if (songsByUrl[url]?.samples instanceof Array) {
 		samplesData = await Promise.all(songsByUrl[url]?.samples.map(samples => fetchFile(song2url({ song_link: samples }))));
 	}
-	player.open(url, songData, samplesData, () => {
+	player.open(linkUncompressed(url), songData, samplesData).then(() => {
 		player.play();
 		readyToPlay();
-	});
+	}).catch(console.error);
 }
 
 player.stopped = stopped;
