@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://gamus.space/</loc>
-    <lastmod>2026-04-02</lastmod>
+    <lastmod>2026-07-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -35,6 +35,10 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://gamus.space/PC/Aladdin/</loc>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://gamus.space/Amiga/Aladdin/</loc>
     <changefreq>yearly</changefreq>
   </url>
@@ -64,6 +68,10 @@
   </url>
   <url>
     <loc>https://gamus.space/Amiga/Alien_Breed_Special_Edition/</loc>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://gamus.space/PC/Alien_Breed%3A_Tower_Assault/</loc>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -316,6 +324,10 @@
   </url>
   <url>
     <loc>https://gamus.space/Amiga/Cannon_Fodder/</loc>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://gamus.space/PC/Cannon_Fodder_2/</loc>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -967,10 +979,6 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
-    <loc>https://gamus.space/PC/Jazz_Jackrabbit%3A_Holiday_Hare_1994/</loc>
-    <changefreq>yearly</changefreq>
-  </url>
-  <url>
     <loc>https://gamus.space/PC/Jill_of_the_Jungle/</loc>
     <changefreq>yearly</changefreq>
   </url>
@@ -1295,7 +1303,7 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
-    <loc>https://gamus.space/PC/One_Must_Fall_2097/</loc>
+    <loc>https://gamus.space/PC/One_Must_Fall%3A_2097/</loc>
     <changefreq>yearly</changefreq>
   </url>
   <url>
